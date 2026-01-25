@@ -13,10 +13,28 @@ const showUpload = ref(false);
 const title = ref("");
 const resume = ref(null);
 const editResumeId = ref("");
+// hàm tạo CV
 const createResume = async () => {
   showCreate.value = false;
   router.push("/app/builder/res123");
   title.value = "";
+};
+// hàm tải CV
+const uploadResume = async () => {
+  showUpload.value = false;
+  router.push("/app/builder/res123");
+  title.value = "";
+};
+const editTitle = async () => {};
+// hàm xóa CV khi biết id
+const deleteResume = (resumeId) => {
+  const confirm = window.confirm("Are you sure want to delete this resume ?");
+  if (confirm) {
+    const filteredResumes = allResumes.value.filter((items) => {
+      return items._id !== resumeId;
+    });
+    allResumes.value = filteredResumes;
+  }
 };
 onMounted(() => {
   loadAllResumes();
@@ -144,6 +162,12 @@ onMounted(() => {
               class="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-20"
             >
               <button
+                @click="
+                  () => {
+                    editResumeId = resume._id;
+                    title = resume.title;
+                  }
+                "
                 class="p-3 rounded-full bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-white border border-cyan-500/50 transition-all transform hover:scale-110"
                 title="Edit Resume"
               >
@@ -166,6 +190,7 @@ onMounted(() => {
               </button>
 
               <button
+                @click="deleteResume(resume._id)"
                 class="p-3 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/30 transition-all transform hover:scale-110"
                 title="Delete Resume"
               >
@@ -183,6 +208,33 @@ onMounted(() => {
                   <path d="M3 6h18" />
                   <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
                   <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                </svg>
+              </button>
+              <button
+                class="p-3 rounded-full bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-white border border-cyan-500/50 transition-all transform hover:scale-110"
+                title="View Resume"
+                @click="
+                  () => {
+                    router.push(`/app/builder/${resume._id}`);
+                  }
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-circle-ellipsis-icon lucide-circle-ellipsis"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M17 12h.01" />
+                  <path d="M12 12h.01" />
+                  <path d="M7 12h.01" />
                 </svg>
               </button>
             </div>
@@ -258,6 +310,7 @@ onMounted(() => {
           Create First Resume
         </button>
       </div>
+      <!-- modal cho phần tạo CV  -->
       <Transition
         enter-active-class="transition duration-300 ease-out"
         enter-from-class="opacity-0"
@@ -372,6 +425,7 @@ onMounted(() => {
           </div>
         </div>
       </Transition>
+      <!-- modal cho phần sửa CV  -->
       <Transition
         enter-active-class="transition duration-300 ease-out"
         enter-from-class="opacity-0"
@@ -381,9 +435,9 @@ onMounted(() => {
         leave-to-class="opacity-0"
       >
         <div
-          v-if="showUpload"
+          v-if="editResumeId"
           class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-          @click="showCreate = false"
+          @click="editResumeId = ''"
         >
           <div
             @click.stop
@@ -393,12 +447,9 @@ onMounted(() => {
               class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-cyan-500/20 rounded-full blur-[50px] pointer-events-none"
             ></div>
 
-            <form
-              @submit.prevent="uploadResume"
-              class="relative z-10 p-6 sm:p-8"
-            >
+            <form @submit.prevent="editTitle" class="relative z-10 p-6 sm:p-8">
               <div class="mb-6">
-                <h2 class="text-2xl font-bold text-white">Upload Resume</h2>
+                <h2 class="text-2xl font-bold text-white">Edit Resume</h2>
                 <p class="text-slate-400 text-sm mt-1">
                   Give your resume a name to get started.
                 </p>
@@ -444,6 +495,213 @@ onMounted(() => {
               <div class="flex items-center justify-end gap-3 mt-8">
                 <button
                   type="button"
+                  @click="editResumeId = false"
+                  class="px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition font-medium text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 text-sm"
+                >
+                  Update
+                </button>
+              </div>
+
+              <button
+                type="button"
+                @click="
+                  () => {
+                    editResumeId = '';
+                    title = '';
+                  }
+                "
+                class="absolute top-4 right-4 text-slate-400 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </Transition>
+
+      <!-- modal cho phần tải CV lên  -->
+      <Transition
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="showUpload"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          @click="showUpload = false"
+        >
+          <div
+            @click.stop
+            class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-slate-900 border border-white/10 shadow-2xl transition-all"
+          >
+            <div
+              class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-cyan-500/20 rounded-full blur-[50px] pointer-events-none"
+            ></div>
+
+            <form
+              @submit.prevent="uploadResume"
+              class="relative z-10 p-6 sm:p-8"
+            >
+              <div class="mb-6">
+                <h2 class="text-2xl font-bold text-white">Upload Resume</h2>
+                <p class="text-slate-400 text-sm mt-1">
+                  Import your existing CV (PDF) to get started.
+                </p>
+              </div>
+
+              <div class="mb-5 group">
+                <label
+                  for="upload-title"
+                  class="block text-sm font-medium text-slate-300 mb-2"
+                  >Resume Title</label
+                >
+                <div class="relative">
+                  <div
+                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    id="upload-title"
+                    placeholder="e.g. Java Backend Developer"
+                    required
+                    v-model="title"
+                    class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition shadow-inner"
+                    autofocus
+                  />
+                </div>
+              </div>
+
+              <div class="mb-6">
+                <label class="block text-sm font-medium text-slate-300 mb-2"
+                  >Select Resume File</label
+                >
+
+                <div class="relative group">
+                  <input
+                    type="file"
+                    id="file-upload"
+                    class="hidden"
+                    accept=".pdf"
+                    @change="
+                      ($event) => {
+                        resume = $event.target.files[0];
+                      }
+                    "
+                  />
+
+                  <label
+                    for="file-upload"
+                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer bg-slate-950/30 hover:bg-slate-950/50 hover:border-cyan-500/50 transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+                  >
+                    <div
+                      v-if="resume"
+                      class="flex flex-col items-center animate-pulse"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="32"
+                        height="32"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="text-green-400 mb-2"
+                      >
+                        <path
+                          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+                        />
+                        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                        <path d="M10 9H8" />
+                        <path d="M16 13H8" />
+                        <path d="M16 17H8" />
+                      </svg>
+                      <p
+                        class="text-sm font-medium text-white truncate max-w-[200px]"
+                      >
+                        {{ resume.name || resume }}
+                      </p>
+                      <p class="text-xs text-cyan-400 mt-1">
+                        Click to change file
+                      </p>
+                    </div>
+
+                    <div
+                      v-else
+                      class="flex flex-col items-center text-center p-4"
+                    >
+                      <div
+                        class="p-2 rounded-full bg-slate-800 text-slate-400 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition mb-3"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="17 8 12 3 7 8" />
+                          <line x1="12" x2="12" y1="3" y2="15" />
+                        </svg>
+                      </div>
+                      <p class="text-sm text-slate-300">
+                        <span class="font-bold text-cyan-400"
+                          >Click to upload</span
+                        >
+                        or drag and drop
+                      </p>
+                      <p class="text-xs text-slate-500 mt-1">PDF (Max 5MB)</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-end gap-3 mt-8">
+                <button
+                  type="button"
                   @click="showUpload = false"
                   class="px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition font-medium text-sm"
                 >
@@ -453,18 +711,13 @@ onMounted(() => {
                   type="submit"
                   class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 text-sm"
                 >
-                  Upload resume
+                  Upload Resume
                 </button>
               </div>
 
               <button
                 type="button"
-                @click="
-                  () => {
-                    showUpload = false;
-                    title = '';
-                  }
-                "
+                @click="showUpload = false"
                 class="absolute top-4 right-4 text-slate-400 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition"
               >
                 <svg
