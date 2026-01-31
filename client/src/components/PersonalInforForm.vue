@@ -65,8 +65,10 @@ const fields = [
       </p>
     </div>
 
-    <div class="flex items-center gap-6 mb-8 relative z-10">
-      <label class="group relative cursor-pointer">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-10 relative z-10"
+    >
+      <label class="group relative cursor-pointer flex-shrink-0">
         <div
           class="w-24 h-24 rounded-full border-2 border-dashed border-slate-600 bg-slate-950 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-cyan-500 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]"
         >
@@ -76,7 +78,6 @@ const fields = [
             alt="Avatar"
             class="w-full h-full object-cover"
           />
-
           <div
             v-else
             class="flex flex-col items-center justify-center text-slate-500 group-hover:text-cyan-400 transition-colors"
@@ -100,7 +101,6 @@ const fields = [
               >Upload</span
             >
           </div>
-
           <div
             class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           >
@@ -133,8 +133,8 @@ const fields = [
 
       <div class="flex flex-col gap-2">
         <p class="text-sm font-medium text-white">Profile Picture</p>
-        <p class="text-xs text-slate-500 max-w-[200px]">
-          Supports JPG, PNG. Max size 5MB.
+        <p class="text-xs text-slate-500 max-w-[250px]">
+          Upload a professional photo (JPG, PNG). Max size 5MB.
         </p>
 
         <div
@@ -156,29 +156,29 @@ const fields = [
             >
           </label>
           <span
-            class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+            class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20"
             >AI</span
           >
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
-      <div v-for="field in fields" :key="field.key" class="group">
+    <div class="flex flex-col gap-6 relative z-10">
+      <div v-for="field in fields" :key="field.key" class="group w-full">
         <label
           class="block text-sm font-medium text-slate-300 mb-2 transition-colors group-focus-within:text-cyan-400"
         >
           {{ field.label }}
-          <span v-if="field.required" class="text-red-400">*</span>
+          <span v-if="field.required" class="text-red-400 ml-0.5">*</span>
         </label>
 
         <div class="relative">
           <div
-            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none"
           >
             <svg
               v-if="field.icon === 'user'"
-              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition"
+              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-300"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -192,7 +192,7 @@ const fields = [
             </svg>
             <svg
               v-if="field.icon === 'mail'"
-              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition"
+              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-300"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -206,7 +206,7 @@ const fields = [
             </svg>
             <svg
               v-if="field.icon === 'map-pin'"
-              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition"
+              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-300"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -226,7 +226,7 @@ const fields = [
             </svg>
             <svg
               v-if="field.icon === 'briefcase'"
-              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition"
+              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-300"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -240,7 +240,7 @@ const fields = [
             </svg>
             <svg
               v-if="field.icon === 'linkedin'"
-              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition"
+              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-300"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -255,7 +255,7 @@ const fields = [
             </svg>
             <svg
               v-if="field.icon === 'globe'"
-              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition"
+              class="h-5 w-5 text-slate-500 group-focus-within:text-cyan-400 transition-colors duration-300"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -274,7 +274,7 @@ const fields = [
             v-model="data.personal_info[field.key]"
             :placeholder="`Enter your ${field.label.toLowerCase()}`"
             :required="field.required"
-            class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all shadow-inner"
+            class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all shadow-inner text-sm sm:text-base"
           />
         </div>
       </div>
