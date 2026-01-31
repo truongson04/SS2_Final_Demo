@@ -6,11 +6,11 @@ import MinimalImageTemplate from "./templates/MinimalImageTemplate.vue";
 import MinimalTemplate from "./templates/MinimalTemplate.vue";
 
 const data = defineModel("data");
-console.log(data.value);
+
 const template = defineModel("template");
-console.log(template.value);
+
 const accentColor = defineModel("accentColor");
-console.log(accentColor.value);
+
 const renderTemplate = computed(() => {
   const templates = {
     classic: ClassicTemplate,
