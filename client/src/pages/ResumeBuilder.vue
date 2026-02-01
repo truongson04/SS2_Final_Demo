@@ -8,6 +8,9 @@ import TemplateSelector from "../components/TemplateSelector.vue";
 import ColorPicker from "../components/ColorPicker.vue";
 import ProfessionSumaryForm from "../components/ProfessionSumaryForm.vue";
 import ExperienceForm from "../components/ExperienceForm.vue";
+import EducationForm from "../components/EducationForm.vue";
+import ProjectForm from "../components/ProjectForm.vue";
+import SkillForm from "../components/SkillForm.vue";
 
 const route = useRoute();
 const { resumeId } = route.params;
@@ -19,7 +22,7 @@ const resumeData = ref({
   professional_summary: "",
   experience: [],
   education: [],
-  projects: [],
+  project: [],
   skills: [],
   template: "classic",
   accent_color: "#3B82F6",
@@ -31,7 +34,6 @@ const loadExistingResume = async () => {
   });
   if (resume) {
     resumeData.value = resume;
-    console.log(resumeData.value);
     document.title = resume.title;
   }
 };
@@ -57,6 +59,21 @@ const prevSection = () => {
   if (activeSectionIndex.value > 0) {
     activeSectionIndex.value--;
   }
+};
+const changeResumeVisibility = () => {
+  resumeData.value.public = !resumeData.value.public;
+};
+const handleShare = () => {
+  const frontendUrl = window.location.href.split("/app")[0];
+  const resumeUrl = frontendUrl + "/view/" + resumeId;
+  if (navigator.share) {
+    navigator.share({ url: resumeUrl, text: "My resume" });
+  } else {
+    window.alert("Share is not supported");
+  }
+};
+const downloadResume = () => {
+  window.print();
 };
 onMounted(async () => {
   await loadExistingResume();
@@ -103,6 +120,99 @@ onMounted(async () => {
 
         <span class="font-medium">Back to Dashboard</span>
       </router-link>
+      <div class="absolute top-4 right-4 z-20 flex gap-2">
+        <button
+          v-if="resumeData.public"
+          @click="handleShare"
+          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-share2-icon lucide-share-2"
+          >
+            <circle cx="18" cy="5" r="3" />
+            <circle cx="6" cy="12" r="3" />
+            <circle cx="18" cy="19" r="3" />
+            <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
+            <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
+          </svg>
+        </button>
+
+        <button
+          @click="changeResumeVisibility"
+          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+        >
+          <svg
+            v-if="resumeData.public"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-eye-icon lucide-eye"
+          >
+            <path
+              d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+            />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-eye-off-icon lucide-eye-off"
+          >
+            <path
+              d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"
+            />
+            <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+            <path
+              d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"
+            />
+            <path d="m2 2 20 20" />
+          </svg>
+        </button>
+        <button
+          @click="downloadResume"
+          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-arrow-down-from-line-icon lucide-arrow-down-from-line"
+          >
+            <path d="M19 3H5" />
+            <path d="M12 21V7" />
+            <path d="m6 15 6 6 6-6" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div class="max-w-7xl mx-auto px-4 pb-12 relative z-10">
@@ -224,60 +334,26 @@ onMounted(async () => {
                 <div v-if="activeSection.id === 'experience'">
                   <experience-form v-model:data="resumeData.experience" />
                 </div>
+                <div v-if="activeSection.id === 'education'">
+                  <education-form v-model:data="resumeData.education" />
+                </div>
+                <div v-if="activeSection.id === 'projects'">
+                  <project-form v-model:data="resumeData.project" />
+                </div>
+                <div v-if="activeSection.id === 'skills'">
+                  <skill-form v-model:data="resumeData.skills" />
+                </div>
+                <button
+                  class="bg-gradient-to-br from-cyan-100 to-cyan-200 ring-cyan-300 text-cyan-600 ring hover:ring-cyan-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
+                >
+                  Save changes
+                </button>
               </div>
             </div>
           </div>
         </div>
 
         <div class="lg:col-span-7 flex flex-col h-full relative">
-          <div class="absolute top-4 right-4 z-20 flex gap-2">
-            <button
-              class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-
-                <polyline points="17 8 12 3 7 8" />
-
-                <line x1="12" x2="12" y1="3" y2="15" />
-              </svg>
-            </button>
-
-            <button
-              class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-
-                <line x1="21" x2="16.65" y1="21" y2="16.65" />
-
-                <line x1="11" x2="11" y1="8" y2="14" />
-
-                <line x1="8" x2="14" y1="11" y2="11" />
-              </svg>
-            </button>
-          </div>
-
           <div
             class="flex-1 bg-slate-900/40 border border-white/5 rounded-xl relative overflow-hidden flex flex-col"
           >
@@ -291,6 +367,7 @@ onMounted(async () => {
                   class="relative w-full max-w-[21cm] min-h-[29.7cm] bg-white text-black shadow-2xl rounded-sm overflow-hidden ring-1 ring-white/10"
                 >
                   <resume-preview
+                    id="printable"
                     v-model:data="resumeData"
                     v-model:template="resumeData.template"
                     v-model:accent-color="resumeData.accent_color"
@@ -305,7 +382,7 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
+<style>
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
@@ -322,5 +399,14 @@ onMounted(async () => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #475569;
+}
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #resume-preview,
+  #resume-preview * {
+    visibility: visible !important;
+  }
 }
 </style>
