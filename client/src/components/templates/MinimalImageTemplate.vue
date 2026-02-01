@@ -13,8 +13,6 @@ const props = defineProps({
   },
 });
 
-// Hàm format ngày tháng
-console.log(props.data);
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const parts = dateStr.split("-");
@@ -29,7 +27,6 @@ const formatDate = (dateStr) => {
   });
 };
 
-// Hàm xử lý URL cho ảnh (để template gọn hơn)
 const getImageUrl = (image) => {
   if (typeof image === "string") {
     return image;
