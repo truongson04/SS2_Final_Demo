@@ -72,9 +72,10 @@ const handleShare = () => {
     window.alert("Share is not supported");
   }
 };
-const downloadResume = () => {
-  window.print();
+const printCV = () => {
+  // xử lý ở backend sau
 };
+
 onMounted(async () => {
   await loadExistingResume();
 });
@@ -192,7 +193,7 @@ onMounted(async () => {
           </svg>
         </button>
         <button
-          @click="downloadResume"
+          @click="printCV"
           class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
         >
           <svg
@@ -225,7 +226,9 @@ onMounted(async () => {
               <div
                 class="h-full bg-gradient-to-r from-cyan-400 to-blue-600 shadow-[0_0_10px_rgba(34,211,238,0.5)] transition-all duration-500 ease-out"
                 :style="{
-                  width: `${(activeSectionIndex * 100) / (sections.length - 1)}%`,
+                  width: `${
+                    (activeSectionIndex * 100) / (sections.length - 1)
+                  }%`,
                 }"
               ></div>
             </div>
@@ -399,14 +402,5 @@ onMounted(async () => {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #475569;
-}
-@media print {
-  body * {
-    visibility: hidden !important;
-  }
-  #resume-preview,
-  #resume-preview * {
-    visibility: visible !important;
-  }
 }
 </style>

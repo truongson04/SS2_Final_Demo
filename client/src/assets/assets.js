@@ -3,8 +3,8 @@ export const dummyData = [
   {
     // ----------------------------------------------------- Resume 1 ------------------------------------------------------
     personal_info: {
-      full_name: "Alex Smith",
-      email: "alex@example.com",
+      full_name: "Ngô Gia Bảo",
+      email: "baongo123@gmail.com",
       phone: "0 123456789",
       location: "NY, USA",
       linkedin: "https://www.linkedin.com",
@@ -14,7 +14,7 @@ export const dummyData = [
     },
     _id: "68d2a31a1c4dd38875bb037e",
     userId: "68c180acdf1775dfd02c6d87",
-    title: "Alex's Resume",
+    title: "Gia Bao's Resume",
     public: true,
     professional_summary:
       "Highly analytical Data Analyst with 6 years of experience transforming complex datasets into actionable insights using SQL, Python, and advanced visualization tools. ",
