@@ -246,6 +246,7 @@ onMounted(() => {
         </div>
 
         <button
+          @click="showCreate = true"
           class="group w-full h-64 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700 hover:border-cyan-500/50 hover:bg-slate-900/30 transition-all duration-300"
         >
           <div
@@ -310,7 +311,7 @@ onMounted(() => {
           Create First Resume
         </button>
       </div>
-      <!-- modal cho phần tạo CV  -->
+
       <Transition
         enter-active-class="transition duration-300 ease-out"
         enter-from-class="opacity-0"

@@ -2,7 +2,6 @@
 import { computed } from "vue";
 
 const data = defineModel("data");
-console.log(data.value);
 
 const removeBackground = defineModel("removeBackground");
 
