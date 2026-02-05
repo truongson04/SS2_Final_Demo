@@ -1,103 +1,88 @@
 import dummy_profile from "./dummy_profile.png";
 export const dummyData = [
   {
-    // ----------------------------------------------------- Resume 1 ------------------------------------------------------
-    personal_info: {
-      full_name: "Ngô Gia Bảo",
-      email: "baongo123@gmail.com",
-      phone: "0 123456789",
-      location: "NY, USA",
-      linkedin: "https://www.linkedin.com",
-      website: "https://www.example.com",
-      profession: "Full Stack Developer",
-      image: dummy_profile,
-    },
-    _id: "68d2a31a1c4dd38875bb037e",
-    userId: "68c180acdf1775dfd02c6d87",
-    title: "Gia Bao's Resume",
-    public: true,
-    professional_summary:
-      "Highly analytical Data Analyst with 6 years of experience transforming complex datasets into actionable insights using SQL, Python, and advanced visualization tools. ",
-    skills: [
-      "JavaScript",
-      "React JS",
-      "Full Stack Development",
-      "Git",
-      "GitHub",
-      "NextJS",
-      "Express",
-      "NodeJS",
-      "TypeScript",
-    ],
-    experience: [
-      {
-        company: "Example Technologies.",
-        position: "Senior Full Stack Developer",
-        start_date: "2023-06",
-        end_date: "Present",
-        description:
-          "Architected, developed, and deployed innovative full-stack applications at Example Technologies.\ncreating robust back-end systems and intuitive front- end interfaces to deliver meaningful digital experiences ",
-        is_current: true,
-        _id: "68d2a31a1c4dd38875bb037f",
-      },
-      {
-        company: "Example Technologies.",
-        position: "Full Stack Developer",
-        start_date: "2019-08",
-        end_date: "2023-05",
-        description:
-          "Engineered and deployed scalable full-stack web applications for Example Technologies, translating complex requirements into robust front-end interfaces and efficient back-end services.",
-        is_current: false,
-        _id: "68d4f7abc8f0d46dc8a8b114",
-      },
-    ],
-    education: [
-      {
-        institution: "Example Institute of Technology",
-        degree: "B.TECH",
-        field: "CSE",
-        graduation_date: "2023-05",
-        gpa: "8.7",
-        _id: "68d2a31a1c4dd38875bb0380",
-      },
-      {
-        institution: "Example Public School",
-        degree: "HIGHER SECONDARY",
-        field: "PCM",
-        graduation_date: "2019-03",
-        gpa: "",
-        _id: "68d2a31a1c4dd38875bb0381",
-      },
-      {
-        institution: "Example Academy",
-        degree: "SECONDARY SCHOOL",
-        field: "",
-        graduation_date: "2017-03",
-        gpa: "",
-        _id: "68d2a31a1c4dd38875bb0382",
-      },
-    ],
-    template: "minimal-image",
-    accent_color: "#14B8A6",
-    project: [
-      {
-        name: "Team Task Management System",
-        type: "Web Application (Productivity Tool)",
-        description:
-          "TaskTrackr is a collaborative task management system designed for teams to create, assign, track, and manage tasks in real time. ",
-        _id: "68d4f882c8f0d46dc8a8b139",
-      },
-      {
-        name: "EduHub - Online Learning Platform",
-        type: "Web Application (EdTech Platform)",
-        description:
-          "EduHub is an online learning platform where instructors can create courses with video lessons, quizzes, and downloadable resources.",
-        _id: "68d4f89dc8f0d46dc8a8b147",
-      },
-    ],
-    updatedAt: "2025-09-23T13:39:38.395Z",
-    createdAt: "2025-09-23T13:39:38.395Z",
+  // ----------------------------------------------------- Resume 1 ------------------------------------------------------
+  personal_info: {
+    full_name: "Cristiano Ronaldo",
+    email: "cr7@example.com",
+    phone: "+351 912345678",
+    location: "Riyadh, Saudi Arabia",
+    linkedin: "https://www.linkedin.com/in/cristianoronaldo",
+    website: "https://www.cristianoronaldo.com",
+    profession: "Professional Footballer",
+    image: dummy_profile,
   },
+  _id: "68d2a31a1c4dd38875bb1111",
+  userId: "68c180acdf1775dfd02c9999",
+  title: "Cristiano Ronaldo Resume",
+  public: true,
+  professional_summary:
+    "World-renowned professional footballer with over 20 years of elite-level experience competing in top European leagues and international tournaments. Known for exceptional athleticism, leadership, goal-scoring ability, and a relentless work ethic. Proven track record of success at club and international levels.",
+  skills: [
+    "Goal Scoring",
+    "Leadership",
+    "Physical Conditioning",
+    "Teamwork",
+    "Strategic Play",
+    "Penalty Kicks",
+    "Free Kicks",
+    "Match Analysis",
+    "Professional Discipline",
+  ],
+  experience: [
+    {
+      company: "Al Nassr FC",
+      position: "Forward",
+      start_date: "2023-01",
+      end_date: "Present",
+      description:
+        "Leading the attacking line for Al Nassr FC, contributing goals, assists, and leadership on and off the pitch. Mentoring younger players and representing the club in domestic and international competitions.",
+      is_current: true,
+      _id: "68d2a31a1c4dd38875bb2222",
+    },
+    {
+      company: "Manchester United / Real Madrid / Juventus",
+      position: "Forward",
+      start_date: "2003-08",
+      end_date: "2022-11",
+      description:
+        "Competed at the highest level of professional football across multiple top-tier clubs, winning league titles, domestic cups, and international trophies while setting numerous individual scoring records.",
+      is_current: false,
+      _id: "68d4f7abc8f0d46dc8a8b3333",
+    },
+  ],
+  education: [
+    {
+      institution: "Sporting CP Academy",
+      degree: "Professional Football Training",
+      field: "Elite Athlete Development",
+      graduation_date: "2003-06",
+      gpa: "",
+      _id: "68d2a31a1c4dd38875bb4444",
+    },
+  ],
+  template: "minimal-image",
+  accent_color: "#DAA520",
+  project: [
+    {
+      name: "CR7 Brand Development",
+      type: "Personal Brand & Business",
+      description:
+        "Built and managed the global CR7 brand, including fashion, fitness, fragrance lines, and international endorsements.",
+      _id: "68d4f882c8f0d46dc8a8b5555",
+    },
+    {
+      name: "Professional Football Career",
+      type: "Sports Career",
+      description:
+        "Long-term professional football career competing in top leagues and international tournaments, achieving multiple Ballon d'Or awards and Champions League titles.",
+      _id: "68d4f89dc8f0d46dc8a8b6666",
+    },
+  ],
+  updatedAt: "2025-09-23T13:39:38.395Z",
+  createdAt: "2025-09-23T13:39:38.395Z",
+},
+
   {
     // ----------------------------------------------------- Resume 2 ------------------------------------------------------
     personal_info: {
@@ -280,4 +265,82 @@ export const dummyData = [
     updatedAt: "2025-09-25T15:26:49.652Z",
     createdAt: "2025-09-25T15:26:49.652Z",
   },
+  {
+  // ----------------------------------------------------- Resume 1 ------------------------------------------------------
+  personal_info: {
+    full_name: "Ngo Gia Bao",
+    email: "baongo0912@gmail.com",
+    phone: "0902091204",
+    location: "Hanoi, Vietnam",
+    linkedin: "https://www.linkedin.com/in/ngo-giabao",
+    website: "https://www.example.com",
+    profession: "Web Developer",
+    image: dummy_profile,
+  },
+  _id: "68d2a31a1c4dd38875bb037e",
+  userId: "68c180acdf1775dfd02c6d87",
+  title: "Ngo Gia Bao Resume",
+  public: true,
+  professional_summary:
+    "Aspiring Web Developer aiming to gain practical experience in product development and contribute to team success. Seeking a professional environment to sharpen problem-solving skills and continuously improve. Long-term goal is to evolve into a Software Engineer capable of designing scalable system architectures and delivering tangible business value.",
+  skills: [
+    "Java",
+    "Spring Boot",
+    "Spring Security",
+    "Spring Data JPA",
+    "Hibernate",
+    "Spring MVC",
+    "WebSocket (STOMP / SockJS)",
+    "JavaScript (ES6+)",
+    "Fetch API",
+    "Thymeleaf",
+    "Bootstrap 5",
+    "MySQL",
+    "Git",
+    "Maven",
+  ],
+  experience: [
+    {
+      company: "Academic & Personal Projects",
+      position: "Web Developer",
+      start_date: "2023-01",
+      end_date: "Present",
+      description:
+        "Developed multiple web applications using Spring Boot and Java Web technologies. Implemented authentication, database integration, and real-time features using WebSocket. Focused on clean architecture, maintainability, and scalability.",
+      is_current: true,
+      _id: "68d2a31a1c4dd38875bb037f",
+    },
+  ],
+  education: [
+    {
+      institution: "Hanoi University",
+      degree: "Bachelor",
+      field: "Information Technology",
+      graduation_date: "Present",
+      gpa: "",
+      _id: "68d2a31a1c4dd38875bb0380",
+    },
+  ],
+  template: "minimal-image",
+  accent_color: "#2563EB",
+  project: [
+    {
+      name: "Real-time Messaging System",
+      type: "Web Application",
+      description:
+        "A real-time messaging system built with Spring Boot and WebSocket, supporting user authentication, message persistence, and real-time communication.",
+      _id: "68d4f882c8f0d46dc8a8b139",
+    },
+    {
+      name: "Web-based Management System",
+      type: "Web Application",
+      description:
+        "A management system using Spring MVC, Thymeleaf, and MySQL to handle CRUD operations, role-based access control, and data visualization.",
+      _id: "68d4f89dc8f0d46dc8a8b147",
+    },
+  ],
+  updatedAt: "2025-09-23T13:39:38.395Z",
+  createdAt: "2025-09-23T13:39:38.395Z",
+}
+
 ];

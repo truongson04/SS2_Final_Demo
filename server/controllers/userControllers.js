@@ -1,6 +1,7 @@
 import User from "../models/Users.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Resume from "../models/Resumes.js";
 const generateToken = (userId) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
@@ -51,15 +52,45 @@ export async function loginUser(req, res) {
         message: "Invalid email",
       });
     }
-    if (user.comparePassword(password)) {
+    if (user.comparePassword (password)) {
       return res.json({ message: "Invalid password" });
     }
     const token = generateToken(user._id);
     user.password = undefined;
-    return res.status(200).json({ message: "Login successfully", token, user });
+    return res.status(200).jon({ message: "Login successfully", token, user });
   } catch (err) {
     return res.status(400).json({
       message: err.message,
     });
   }
+}
+export const getUserById = async(req, res)=>{
+try{
+ const userId = req.userId;
+ const user = await User.find({
+  _id:userId
+ })
+ if(!user){
+  return res.status(404).json({message:"User not found"})
+ }
+ user.password = undefined;
+ return res.status(200).json({user})
+}
+catch(err){
+  return res.status(400).json({message:err.message})
+}
+}
+// get CV 
+export const getUserResumes = async(req, res)=>{
+ try{
+    const userId = req.userId;
+    const resumes = await Resume.find({userId});
+    return res.status(200).json({
+      resumes
+    })
+
+ }
+ catch(err){
+  return res.status(400).json({message:err.message})
+ }
 }

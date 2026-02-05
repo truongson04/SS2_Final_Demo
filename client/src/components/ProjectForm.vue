@@ -1,6 +1,6 @@
 <script setup>
 const data = defineModel("data");
-console.log(data.value);
+
 const addProject = () => {
   const newProject = {
     name: "",
@@ -8,7 +8,6 @@ const addProject = () => {
     description: "",
   };
   data.value.push(newProject);
-  console.log(data.value);
 };
 const removeProject = (index) => {
   data.value = data.value.filter((_, i) => {
