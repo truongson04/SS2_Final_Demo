@@ -9,4 +9,9 @@ const useAuth = defineStore("auth", () => {
     token.value = token;
     user.value = user;
   };
+  const logout = () => {
+    token.value = "";
+    user.value = null;
+    localStorage.removeItem("token");
+  };
 });
