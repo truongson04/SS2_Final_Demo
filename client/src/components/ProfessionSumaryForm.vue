@@ -1,5 +1,18 @@
 <script setup>
 const data = defineModel("data");
+const testAi = async () => {
+  const response = await fetch("http://localhost:3600/ai/gen", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userContent: data.value,
+    }),
+  });
+  const res = await response.json();
+  console.log(res);
+};
 </script>
 <template>
   <div
@@ -25,6 +38,7 @@ const data = defineModel("data");
 
         <button
           type="button"
+          @click="testAi"
           class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 hover:border-purple-500/50 hover:from-purple-500/20 hover:to-blue-500/20 transition-all text-xs font-bold text-purple-300 hover:text-purple-200 group/btn"
         >
           <svg
