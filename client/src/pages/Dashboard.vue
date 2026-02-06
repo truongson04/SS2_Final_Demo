@@ -3,10 +3,25 @@ import { onMounted, ref } from "vue";
 import { Transition } from "vue";
 import { dummyData } from "../assets/assets";
 import { useRouter } from "vue-router";
+import clientApi from "../configs/api/clientApi";
+import Loading from "../components/Loading.vue";
+import { toast } from "vue3-toastify";
+
+import extractTextFromPDF from "../composables/useTextFromPdf";
+
 const allResumes = ref([]);
 const loadAllResumes = async () => {
-  allResumes.value = dummyData;
+  isLoading.value = true;
+  try {
+    const { data } = await clientApi.get("/api/users/resumes");
+    allResumes.value = data.resumes;
+  } catch (err) {
+    toast.error(error?.response?.data?.message || error.message);
+  } finally {
+    isLoading.value = false;
+  }
 };
+const isLoading = ref(false);
 const router = useRouter();
 const showCreate = ref(false);
 const showUpload = ref(false);
@@ -15,25 +30,82 @@ const resume = ref(null);
 const editResumeId = ref("");
 // hàm tạo CV
 const createResume = async () => {
-  showCreate.value = false;
-  router.push("/app/builder/res123");
-  title.value = "";
+  try {
+    const { data } = await clientApi.post("/api/resumes/create", {
+      title: title.value,
+    });
+
+    allResumes.value.push(data.resume);
+    showCreate.value = false;
+    title.value = "";
+    toast.success(data.message);
+    router.push({
+      name: "ResumeBuilder",
+      params: {
+        resumeId: data.resume._id,
+      },
+    });
+  } catch (error) {
+    toast.error(error?.response?.data?.message || error.message);
+  }
 };
+
 // hàm tải CV
 const uploadResume = async () => {
-  showUpload.value = false;
-  router.push("/app/builder/res123");
-  title.value = "";
-};
-const editTitle = async () => {};
-// hàm xóa CV khi biết id
-const deleteResume = (resumeId) => {
-  const confirm = window.confirm("Are you sure want to delete this resume ?");
-  if (confirm) {
-    const filteredResumes = allResumes.value.filter((items) => {
-      return items._id !== resumeId;
+  isLoading.value = true;
+  try {
+    const resumeText = await extractTextFromPDF(resume.value);
+    const { data } = await clientApi.post("/api/ai/upload-resume", {
+      title: title.value,
+      resumeText,
     });
-    allResumes.value = filteredResumes;
+
+    resume.value = null;
+    showUpload.value = false;
+
+    title.value = "";
+    router.push({
+      name: "ResumeBuilder",
+      params: {
+        resumeId: data.resumeId,
+      },
+    });
+    isLoading.value = false;
+  } catch (error) {
+    isLoading.value = false;
+
+    toast.error(error?.response?.data?.message || error.message);
+  }
+};
+const editTitle = async () => {
+  try {
+    const { data } = await clientApi.put("/api/resumes/update", {
+      resumeId: editResumeId.value,
+      resumeData: { title: title.value },
+    });
+    await loadAllResumes();
+    title.value = "";
+    editResumeId.value = "";
+    toast.success(data.message);
+  } catch (error) {
+    isLoading.value = false;
+    toast.error(error?.response?.data?.message || error.message);
+  }
+};
+// hàm xóa CV khi biết id
+const deleteResume = async (resumeId) => {
+  const confirm = window.confirm("Are you sure want to delete this resume ?");
+  try {
+    if (confirm) {
+      const { data } = await clientApi.delete(
+        `/api/resumes/delete/${resumeId}`,
+      );
+      await loadAllResumes();
+      toast.success(data.message);
+    }
+  } catch (error) {
+    isLoading.value = false;
+    toast.error(error?.response?.data?.message || error.message);
   }
 };
 onMounted(() => {
@@ -41,7 +113,9 @@ onMounted(() => {
 });
 </script>
 <template>
+  <Loading v-if="isLoading" />
   <div
+    v-else
     class="min-h-screen bg-slate-950 relative overflow-hidden font-sans text-slate-300 selection:bg-cyan-500/30"
   >
     <div

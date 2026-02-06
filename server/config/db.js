@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL, {
+      dbName:"SS2-cv"
+    });
     console.log("You can use the database now ");
   } catch (err) {
     console.log(err);

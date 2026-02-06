@@ -8,8 +8,8 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-UserSchema.methods.comparePassword = function (password) {
-  return bcrypt.compareSync(password, this.password);
+UserSchema.methods.comparePassword = async function (password) {
+  return bcrypt.compare(password, this.password);
 };
 const User = mongoose.model("User", UserSchema, "users");
 export default User;

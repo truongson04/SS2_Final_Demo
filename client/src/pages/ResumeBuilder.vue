@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, ref, computed, toRaw } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { dummyData } from "../assets/assets";
 import PersonalInforForm from "../components/PersonalInforForm.vue";
 import ResumePreview from "../components/ResumePreview.vue";
@@ -11,9 +11,14 @@ import ExperienceForm from "../components/ExperienceForm.vue";
 import EducationForm from "../components/EducationForm.vue";
 import ProjectForm from "../components/ProjectForm.vue";
 import SkillForm from "../components/SkillForm.vue";
+import clientApi from "../configs/api/clientApi";
+import { toast } from "vue3-toastify";
 
 const route = useRoute();
+const router = useRouter();
 const { resumeId } = route.params;
+const activeSectionIndex = ref(0);
+const removeBackground = ref(false);
 
 const resumeData = ref({
   _id: "",
@@ -29,16 +34,18 @@ const resumeData = ref({
   public: false,
 });
 const loadExistingResume = async () => {
-  const resume = dummyData.find((items) => {
-    return items._id === resumeId;
-  });
-  if (resume) {
-    resumeData.value = resume;
-    document.title = resume.title;
+  try {
+    const { data } = await clientApi.get(`/api/resumes/get/${resumeId}`);
+    if (data.resume) {
+      resumeData.value = data.resume;
+      document.title = data.resume.title;
+    }
+  } catch (error) {
+    router.push("/app");
+    toast.error(error?.response?.data?.message || error.message);
   }
 };
-const activeSectionIndex = ref(0);
-const removeBackground = ref(false);
+
 const sections = [
   { id: "personal", name: "Personal Info", title: "Personal Details" },
   { id: "summary", name: "Summary", title: "Professional Summary" },
@@ -49,19 +56,20 @@ const sections = [
 ];
 const activeSection = computed(() => sections[activeSectionIndex.value]);
 
-const nextSection = () => {
-  if (activeSectionIndex.value < sections.length - 1) {
-    activeSectionIndex.value++;
+const changeResumeVisibility = async () => {
+  try {
+    const { data } = await clientApi.put("/api/resumes/update", {
+      resumeId,
+      resumeData: {
+        ...resumeData.value,
+        public: !resumeData.value.public,
+      },
+    });
+    resumeData.value.public = !resumeData.value.public;
+  } catch (error) {
+    router.push("/app");
+    toast.error(error?.response?.data?.message || error.message);
   }
-};
-
-const prevSection = () => {
-  if (activeSectionIndex.value > 0) {
-    activeSectionIndex.value--;
-  }
-};
-const changeResumeVisibility = () => {
-  resumeData.value.public = !resumeData.value.public;
 };
 const handleShare = () => {
   const frontendUrl = window.location.href.split("/app")[0];
@@ -73,9 +81,31 @@ const handleShare = () => {
   }
 };
 const printCV = () => {
-  // xử lý ở backend sau
+  // xử lý ở backend sau, hứa
 };
+const saveResume = async () => {
+  try {
+    let updatedResume = structuredClone(toRaw(resumeData.value));
+    console.log(updatedResume);
+    if (typeof resumeData.value.personal_info.image === "object") {
+      delete updatedResume.personal_info.image;
+    }
 
+    const { data } = await clientApi.put("/api/resumes/update", {
+      resumeId,
+      resumeData: updatedResume,
+      removeBackground: removeBackground.value ? "yes" : "",
+      image:
+        typeof resumeData.value.personal_info.image === "object"
+          ? resumeData.value.personal_info.image
+          : "",
+    });
+    resumeData.value = data.resume;
+    toast.success(data.message);
+  } catch (error) {
+    console.log(error);
+  }
+};
 onMounted(async () => {
   await loadExistingResume();
 });
@@ -347,6 +377,15 @@ onMounted(async () => {
                   <skill-form v-model:data="resumeData.skills" />
                 </div>
                 <button
+                  @click="
+                    () => {
+                      toast.promise(saveResume, {
+                        pending: 'Saving, please hang on :))',
+                        success: 'Successful save your resume :))',
+                        false: 'Oops, something went wrong, fail to save',
+                      });
+                    }
+                  "
                   class="bg-gradient-to-br from-cyan-100 to-cyan-200 ring-cyan-300 text-cyan-600 ring hover:ring-cyan-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
                 >
                   Save changes

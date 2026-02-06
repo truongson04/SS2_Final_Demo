@@ -40,6 +40,7 @@ export const enhanceJobDescription = async (req, res) => {
   }
 };
 export const uploadResume = async (req, res) => {
+ 
   try {
     const { resumeText, title } = req.body;
     const userId = req.userId;
@@ -104,16 +105,18 @@ professional_summary:{
               text: userPrompt,
             },
           ],
-          generationConfig: {
-            responseMimeType: "application/json",
-          },
+          
         },
       ],
+      generationConfig: {
+            responseMimeType: "application/json",
+          },
     });
     const response = JSON.parse(result.response.text());
     const newResume = await Resume.create({ userId, title, ...response });
     res.json({ resumeId: newResume._id });
   } catch (error) {
+    console.log(error)
     return res.status(400).json({ message: error.message });
   }
 };

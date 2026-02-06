@@ -20,14 +20,15 @@ await Resume.deleteOne({_id:resumeId, userId});
 return res.status(200).json({message:'Resume has been deleted'})
 }
 catch(err){
-
+return res.status(400).json({message:err.message})
 }
 }
 export const getResumeById = async(req, res)=>{
     try{
         const userId =req.userId;
         const{resumeId}= req.params;
-        const resume = Resume.findOne({_id:resumeId, userId});
+        const resume = await Resume.findOne({_id:resumeId, userId});
+        console.log(resume)
         if(!resume){
             return res.status(404).json({message:"Cannot found resume"})
         }
@@ -37,6 +38,7 @@ export const getResumeById = async(req, res)=>{
           return res.status(200).json({resume})
     }   
     catch(err){
+        console.log(err)
         return res.status(400).json({message:err.message})
     }
 }
@@ -57,10 +59,14 @@ return res.status(400).json({message:err.message})
 
 export const updateResume = async(req, res)=>{
     try{
+   
   const{resumeId, resumeData, removeBackground}= req.body;
   const userId = req.userId;
   const image = req.file;
-  const resumeDataClone =   JSON.parse(resumeData)
+  console.log(req.body)
+  const resumeDataClone =  resumeData
+  console.log(resumeDataClone)
+  
   // handle AI image
   if(image){
     const response = await imagekit.files.upload({
@@ -75,9 +81,12 @@ resumeDataClone.personal_info.image= response.url
 
   }
   await Resume.updateOne({userId, _id:resumeId},resumeDataClone)
-  return res.status(200).json({message:'Saved successfully'})
+  const newResume = await Resume.findOne({userId, _id:resumeId});
+
+  return res.status(200).json({message:'Saved successfully', resume:newResume})
     }
     catch(err){
+        console.log(err)
 return res.status(400).json({message:err.message})
     }
 }

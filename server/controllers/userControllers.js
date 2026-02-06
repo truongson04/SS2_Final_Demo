@@ -37,6 +37,7 @@ export async function registerUser(req, res) {
       user: newUser,
     });
   } catch (err) {
+    console.log(err)
     return res.status(400).json({
       message: err.message,
     });
@@ -46,21 +47,24 @@ export async function registerUser(req, res) {
 export async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
+    
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
         message: "Invalid email",
       });
     }
-    if (user.comparePassword (password)) {
-      return res.json({ message: "Invalid password" });
+    const checkPassword = await user.comparePassword(password)
+    if (!checkPassword) {
+      return res.status(400).json({ message: "Invalid password" });
     }
     const token = generateToken(user._id);
     user.password = undefined;
-    return res.status(200).jon({ message: "Login successfully", token, user });
+    return res.status(200).json({ message: "Login successfully", token, user });
   } catch (err) {
+    console.log(err)
     return res.status(400).json({
-      message: err.message,
+      message: "Invalid email or password",
     });
   }
 }
