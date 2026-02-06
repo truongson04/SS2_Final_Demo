@@ -15,8 +15,11 @@ export const enhanceProfessionalSummary = async (req, res) => {
     const result = await model.generateContent(userContent);
     const response = await result.response;
     const enhanceContent = response.text();
-    return res.status(200).json({ enhanceContent });
+    return res
+      .status(200)
+      .json({ enhanceContent, message: "Done, hope you enjoy it :)" });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 };
@@ -34,13 +37,14 @@ export const enhanceJobDescription = async (req, res) => {
     const result = await model.generateContent(userContent);
     const response = await result.response;
     const enhanceContent = response.text();
-    return res.status(200).json({ enhanceContent });
+    return res
+      .status(200)
+      .json({ enhanceContent, message: "Done, enjoy your job description :)" });
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }
 };
 export const uploadResume = async (req, res) => {
- 
   try {
     const { resumeText, title } = req.body;
     const userId = req.userId;
@@ -94,10 +98,10 @@ professional_summary:{
     const userPrompt = "extract data from this resume";
     const model = genAI.getGenerativeModel({
       model: process.env.GEMINI_MODEL,
-      systemInstruction: systemPrompt,
     });
     const result = await model.generateContent({
       contents: [
+        {},
         {
           role: "user",
           parts: [
@@ -105,18 +109,16 @@ professional_summary:{
               text: userPrompt,
             },
           ],
-          
-        },
-      ],
-      generationConfig: {
+          generationConfig: {
             responseMimeType: "application/json",
           },
+        },
+      ],
     });
     const response = JSON.parse(result.response.text());
     const newResume = await Resume.create({ userId, title, ...response });
     res.json({ resumeId: newResume._id });
   } catch (error) {
-    console.log(error)
     return res.status(400).json({ message: error.message });
   }
 };
