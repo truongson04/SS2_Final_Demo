@@ -91,14 +91,22 @@ const saveResume = async () => {
       delete updatedResume.personal_info.image;
     }
 
-    const { data } = await clientApi.put("/api/resumes/update", {
-      resumeId,
-      resumeData: updatedResume,
-      removeBackground: removeBackground.value ? "yes" : "",
-      image:
-        typeof resumeData.value.personal_info.image === "object"
-          ? resumeData.value.personal_info.image
-          : "",
+    const formData = new FormData();
+
+    formData.append("resumeId", resumeId);
+    formData.append("removeBackground", removeBackground.value ? "yes" : "");
+
+    formData.append("resumeData", JSON.stringify(updatedResume));
+
+    const imageFile = resumeData.value.personal_info.image;
+    if (imageFile && typeof imageFile === "object") {
+      formData.append("image", imageFile);
+    }
+
+    const { data } = await clientApi.put("/api/resumes/update", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     resumeData.value = data.resume;
     toast.success(data.message);

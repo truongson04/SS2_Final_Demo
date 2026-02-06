@@ -63,10 +63,16 @@ export const updateResume = async(req, res)=>{
   const{resumeId, resumeData, removeBackground}= req.body;
   const userId = req.userId;
   const image = req.file;
-  console.log(req.body)
-  const resumeDataClone =  resumeData
-  console.log(resumeDataClone)
   
+  let resumeDataClone;
+  if(typeof resumeData==='string'){
+    resumeDataClone = await JSON.parse(resumeData)
+  }
+  else{
+    resumeDataClone= structuredClone(resumeData)
+  }
+  console.log(resumeDataClone)
+  console.log(req)
   // handle AI image
   if(image){
     const response = await imagekit.files.upload({
