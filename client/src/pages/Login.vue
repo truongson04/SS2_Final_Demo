@@ -19,10 +19,12 @@ const handleSubmit = async () => {
     localStorage.setItem("token", data.token);
 
     toast.success(data.message);
-    authStore.loading = false;
+
     router.push("/app");
   } catch (error) {
     toast.error(error?.response?.data?.message || error.message);
+  } finally {
+    authStore.loading = false;
   }
 };
 </script>

@@ -1,4 +1,8 @@
 <script setup>
+import { ref } from "vue";
+import clientApi from "../configs/api/clientApi";
+import { toast } from "vue3-toastify";
+
 const data = defineModel("data");
 
 const addExperience = () => {
@@ -20,6 +24,25 @@ const removeExperience = (index) => {
 };
 const updateExperience = (index, field, value) => {
   data.value[index][field] = value;
+};
+//AI things
+const generatingIndex = ref(-1);
+const generateDescription = async (index) => {
+  generatingIndex.value = index;
+  try {
+    const experience = data.value[index];
+    const prompt = `enhance this job description ${experience.description} for the position of${experience.position} at ${experience.company}`;
+    const response = await clientApi.post("/api/ai/enhance-job-desc", {
+      userContent: prompt,
+    });
+    data.value[index].description = response.data.enhanceContent;
+    toast.success(response.data.message);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message);
+  } finally {
+    generatingIndex.value = -1;
+  }
 };
 </script>
 <template>
@@ -228,11 +251,39 @@ const updateExperience = (index, field, value) => {
           <div class="space-y-2">
             <div class="flex justify-between items-end">
               <label class="text-xs text-slate-400 ml-1">Description</label>
+
               <button
+                @click="generateDescription(index)"
+                :disabled="
+                  generatingIndex === index ||
+                  !experience.position ||
+                  !experience.company
+                "
                 type="button"
-                class="flex items-center gap-1 px-2 py-1 rounded bg-purple-500/10 border border-purple-500/20 hover:border-purple-500/40 text-[10px] font-bold text-purple-300 hover:text-purple-200 transition-all"
+                class="flex items-center gap-1 px-2 py-1 rounded border transition-all text-[10px] font-bold"
+                :class="
+                  generatingIndex === index
+                    ? 'bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed'
+                    : 'bg-purple-500/10 border border-purple-500/20 hover:border-purple-500/40 text-purple-300 hover:text-purple-200'
+                "
               >
                 <svg
+                  v-if="generatingIndex === index"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="10"
+                  height="10"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="animate-spin"
+                >
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </svg>
+                <svg
+                  v-else
                   xmlns="http://www.w3.org/2000/svg"
                   width="10"
                   height="10"
@@ -251,15 +302,61 @@ const updateExperience = (index, field, value) => {
                   <path d="M22 4h-4" />
                   <circle cx="4" cy="20" r="2" />
                 </svg>
-                AI Writer
+
+                {{ generatingIndex === index ? "Generating..." : "AI Writer" }}
               </button>
             </div>
-            <textarea
-              v-model="experience.description"
-              rows="4"
-              class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y"
-              placeholder="• Led a team of 5 developers...&#10;• Increased system performance by 20%..."
-            ></textarea>
+
+            <div class="relative group">
+              <textarea
+                v-model="experience.description"
+                rows="4"
+                :disabled="generatingIndex === index"
+                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y disabled:opacity-50"
+                placeholder="• Led a team of 5 developers...&#10;• Increased system performance by 20%..."
+              ></textarea>
+
+              <Transition
+                enter-active-class="transition duration-300 ease-out"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition duration-200 ease-in"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+              >
+                <div
+                  v-if="generatingIndex === index"
+                  class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-900/40 backdrop-blur-[2px] rounded-lg border border-cyan-500/20"
+                >
+                  <div class="relative flex items-center justify-center">
+                    <div
+                      class="w-6 h-6 border-2 border-slate-600 rounded-full"
+                    ></div>
+                    <div
+                      class="absolute w-6 h-6 border-2 border-t-cyan-400 rounded-full animate-spin"
+                    ></div>
+                    <div
+                      class="absolute w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_8px_rgba(34,211,238,1)] animate-pulse"
+                    ></div>
+                  </div>
+
+                  <p
+                    class="mt-2 text-[10px] font-bold text-cyan-400 tracking-wider animate-pulse"
+                  >
+                    WRITING...
+                  </p>
+                </div>
+              </Transition>
+
+              <div
+                v-if="generatingIndex !== index"
+                class="absolute bottom-2 right-2 pointer-events-none opacity-30"
+              >
+                <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+                  <path d="M10 10H0L10 0V10Z" fill="#94a3b8" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>

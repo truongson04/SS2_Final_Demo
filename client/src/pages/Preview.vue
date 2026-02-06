@@ -1,26 +1,35 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { dummyData } from "../assets/assets";
+
 import { onMounted, ref } from "vue";
 import ResumePreview from "../components/ResumePreview.vue";
 import Loading from "../components/Loading.vue";
+import clientApi from "../configs/api/clientApi";
 
 const route = useRoute();
 const resumeId = route.params.resumeId;
 const isLoading = ref(false);
 const resumeData = ref({});
 const loadResume = async () => {
-  resumeData.value =
-    dummyData.find((resume) => {
-      return resume._id === resumeId;
-    }) || null;
+  isLoading.value = true;
+  try {
+    const { data } = await clientApi.get(`/api/resumes/public/${resumeId}`);
+    resumeData.value = data.resume;
+  } catch (error) {
+    console.log(error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 onMounted(async () => {
   await loadResume();
 });
 </script>
 <template>
+  <Loading v-if="isLoading" />
+
   <div
+    v-else
     class="min-h-screen bg-slate-950 relative font-sans text-slate-300 flex flex-col"
   >
     <div

@@ -2,15 +2,18 @@
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import useAuth from "../../store/auth";
+import getUserData from "../composables/useGetData";
 const authStore = useAuth();
-console.log(authStore.user);
+
 const router = useRouter();
+
 const logoutUser = () => {
   authStore.logout();
   router.push({
     path: "/",
   });
 };
+getUserData();
 </script>
 <template>
   <div
@@ -36,10 +39,10 @@ const logoutUser = () => {
           <div
             class="h-8 w-8 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-white/10 flex items-center justify-center text-xs font-bold text-cyan-400"
           >
-            {{ authStore.user[0].name.charAt(0).toUpperCase() }}
+            {{ authStore.user?.[0]?.name?.charAt(0).toUpperCase() }}
           </div>
           <p class="text-sm font-medium text-slate-300 max-sm:hidden">
-            Hi, <span class="text-white">{{ authStore.user[0].name }}</span>
+            Hi, <span class="text-white">{{ authStore.user?.[0]?.name }}</span>
           </p>
         </div>
 
