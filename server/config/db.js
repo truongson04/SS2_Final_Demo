@@ -9,9 +9,9 @@ const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL, {
       dbName: "SS2-cv",
-      maxPoolSize: 10, // Giới hạn số lượng kết nối tối đa (tránh quá tải)
-      serverSelectionTimeoutMS: 5000, // Nếu mất mạng, báo lỗi sau 5s thay vì treo 30s
-      socketTimeoutMS: 45000, // Đóng kết nối nếu không hoạt động sau 45s
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
       family: 4,
     });
 
