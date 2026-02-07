@@ -3,12 +3,14 @@ import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
 import useAuth from "../../store/auth";
 import getUserData from "../composables/useGetData";
+import LogoutModal from "./LogoutModal.vue";
 const authStore = useAuth();
 
 const router = useRouter();
-
+const isOpen = ref(false);
 const logoutUser = () => {
   authStore.logout();
+  isOpen.value = false;
   router.push({
     path: "/",
   });
@@ -49,7 +51,7 @@ getUserData();
         <div class="h-5 w-px bg-white/10 hidden sm:block"></div>
 
         <button
-          @click="logoutUser"
+          @click="isOpen = true"
           class="flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-700 bg-slate-900/50 text-slate-400 text-sm font-medium transition-all hover:text-white hover:border-cyan-500/50 hover:bg-slate-800 active:scale-95"
         >
           <span>Logout</span>
@@ -70,6 +72,11 @@ getUserData();
           </svg>
         </button>
       </div>
+      <logout-modal
+        :is-open="isOpen"
+        @close="isOpen = false"
+        @confirm="logoutUser"
+      />
     </nav>
   </div>
 </template>

@@ -27,6 +27,9 @@ const handleSubmit = async () => {
     authStore.loading = false;
   }
 };
+const handleGoogleSignIn = async () => {
+  window.location.href = "http://localhost:3600/api/users/auth/google";
+};
 </script>
 <template>
   <div
@@ -186,6 +189,7 @@ const handleSubmit = async () => {
         </button>
 
         <button
+          @click="handleGoogleSignIn"
           type="button"
           class="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 rounded-lg text-slate-300 hover:text-white transition duration-300"
         >
