@@ -48,6 +48,7 @@ export const uploadResume = async (req, res) => {
   try {
     const { resumeText, title } = req.body;
     const userId = req.userId;
+    console.log(resumeText);
     if (!resumeText) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -98,6 +99,7 @@ professional_summary:{
     const userPrompt = "extract data from this resume";
     const model = genAI.getGenerativeModel({
       model: process.env.GEMINI_MODEL,
+      systemInstruction: systemPrompt,
     });
     const result = await model.generateContent({
       contents: [
@@ -109,16 +111,17 @@ professional_summary:{
               text: userPrompt,
             },
           ],
-          generationConfig: {
-            responseMimeType: "application/json",
-          },
         },
       ],
+      generationConfig: {
+        responseMimeType: "application/json",
+      },
     });
     const response = JSON.parse(result.response.text());
     const newResume = await Resume.create({ userId, title, ...response });
     res.json({ resumeId: newResume._id });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 };

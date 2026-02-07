@@ -13,12 +13,14 @@ import ProjectForm from "../components/ProjectForm.vue";
 import SkillForm from "../components/SkillForm.vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
+import Loading from "../components/Loading.vue";
 
 const route = useRoute();
 const router = useRouter();
 const { resumeId } = route.params;
 const activeSectionIndex = ref(0);
 const removeBackground = ref(false);
+const isLoading = ref(false);
 
 const resumeData = ref({
   _id: "",
@@ -34,6 +36,7 @@ const resumeData = ref({
   public: false,
 });
 const loadExistingResume = async () => {
+  isLoading.value = true;
   try {
     const { data } = await clientApi.get(`/api/resumes/get/${resumeId}`);
     if (data.resume) {
@@ -43,6 +46,8 @@ const loadExistingResume = async () => {
   } catch (error) {
     router.push("/app");
     toast.error(error?.response?.data?.message || error.message);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -119,7 +124,11 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <div class="min-h-screen bg-slate-950 relative font-sans text-slate-300">
+  <loading v-if="isLoading" />
+  <div
+    v-else
+    class="min-h-screen bg-slate-950 relative font-sans text-slate-300"
+  >
     <div
       class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
     ></div>
