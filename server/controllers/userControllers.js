@@ -135,7 +135,7 @@ export const googleLogin = (req, res, next) => {
     }
     const token = generateToken(user._id);
     user.password = undefined;
-    res.redirect(`http://localhost:5173/app?token=${token}`);
+    res.redirect(`${process.env.CLIENT_URL}/app?token=${token}`);
     // return res.status(200).json({
     //   message: "Login successfully",
     //   token: token,
