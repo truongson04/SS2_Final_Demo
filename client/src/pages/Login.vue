@@ -28,7 +28,7 @@ const handleSubmit = async () => {
   }
 };
 const handleGoogleSignIn = async () => {
-  window.location.href = "http://localhost:3600/api/users/auth/google";
+  window.location.href = `${import.meta.env.VITE_BASE_URL}/api/users/auth/google`;
 };
 </script>
 <template>
