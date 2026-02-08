@@ -5,6 +5,7 @@ import {
   deleteResume,
   getPublicResumeById,
   getResumeById,
+  saveResume,
   updateResume,
 } from "../controllers/resumeControllers.js";
 import upload from "../config/multer.js";
@@ -14,4 +15,5 @@ resumeRouter.put("/update", upload.single("image"), protect, updateResume);
 resumeRouter.delete("/delete/:resumeId", protect, deleteResume);
 resumeRouter.get("/get/:resumeId", protect, getResumeById);
 resumeRouter.get("/public/:resumeId", getPublicResumeById);
+resumeRouter.post("/pdf", saveResume);
 export default resumeRouter;

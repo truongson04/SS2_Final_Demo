@@ -35,9 +35,9 @@ const getShortLink = (url, removeStr) => {
 
 const imageUrl = computed(() => {
   const img = props.data.personal_info?.image;
-  if (img && typeof img === "object") {
-    return URL.createObjectURL(img);
-  }
+  // if (img && typeof img === "object") {
+  //   return URL.createObjectURL(img);
+  // }
   return img;
 });
 </script>

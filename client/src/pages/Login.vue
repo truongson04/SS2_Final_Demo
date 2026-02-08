@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import clientApi from "../configs/api/clientApi";
 import useAuth from "../../store/auth";

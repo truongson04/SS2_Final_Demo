@@ -14,15 +14,6 @@ const closeMenu = () => {
   menuClass.value =
     "fixed inset-0 z-[100] bg-white/60 text-slate-800 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-300 -translate-x-full";
 };
-const toApp = (state) => {
-  if (!state) {
-    router.push("/app");
-  }
-  router.push({
-    path: "/app",
-    query: { state: state },
-  });
-};
 </script>
 <template>
   <section
@@ -80,13 +71,13 @@ const toApp = (state) => {
       <div class="hidden md:flex items-center gap-4">
         <button
           class="hover:text-cyan-400 transition text-slate-300 font-medium px-4"
-          @click="toApp('login')"
+          @click="router.push('/login')"
         >
           Login
         </button>
         <button
           class="hover:text-cyan-400 transition text-slate-300 font-medium px-4"
-          @click="toApp('register')"
+          @click="router.push('/signup')"
         >
           Register
         </button>
@@ -219,11 +210,6 @@ const toApp = (state) => {
                   stroke-linejoin="round"
                 />
               </svg>
-            </button>
-            <button
-              class="w-full sm:w-auto border border-slate-600 text-slate-300 hover:text-white hover:border-white transition rounded-full px-8 h-12 font-medium"
-            >
-              View Examples
             </button>
           </div>
 

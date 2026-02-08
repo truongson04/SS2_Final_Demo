@@ -245,7 +245,7 @@ onMounted(() => {
                   }
                 "
                 class="p-3 rounded-full bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-white border border-cyan-500/50 transition-all transform hover:scale-110"
-                title="Edit Resume"
+                title="Edit Title"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
