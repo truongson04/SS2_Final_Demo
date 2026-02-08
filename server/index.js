@@ -4,7 +4,7 @@ import "dotenv/config";
 import connectDB from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
 import resumeRouter from "./routes/resumeRoute.js";
-import session from "express-session";
+
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
@@ -25,7 +25,7 @@ app.use(
   }),
 );
 app.get("/", (req, res) => {
-  res.send("ok");
+  res.send("The server is running");
 });
 app.use("/api/users", userRouter);
 app.use("/api/resumes", resumeRouter);
@@ -42,7 +42,7 @@ passport.use(
   ),
 );
 
-// app.listen(port, () => {
-//   console.log(`The server is running at http://localhost:${port}`);
-// });
-export default app;
+app.listen(port, () => {
+  console.log(`The server is running at http://localhost:${port}`);
+});
+// export default app;

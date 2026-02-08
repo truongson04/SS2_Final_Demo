@@ -6,16 +6,24 @@ const data = defineModel("data");
 const removeBackground = defineModel("removeBackground");
 
 const handleChange = (field, value) => {
-  data.value.personal_info[field] = value;
+  if (value) {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      data.value.personal_info[field] = e.target.result;
+    };
+
+    reader.readAsDataURL(value);
+  }
 };
-const imageUrl = computed(() => {
-  const img = data.value.personal_info.image;
-  if (!img) return null;
+// const imageUrl = computed(() => {
+//   const img = data.value.personal_info.image;
+//   if (!img) return null;
 
-  if (typeof img === "string") return img;
+//   if (typeof img === "string") return img;
 
-  return URL.createObjectURL(img);
-});
+//   return URL.createObjectURL(img);
+// });
 const fields = [
   {
     key: "full_name",
@@ -73,7 +81,7 @@ const fields = [
         >
           <img
             v-if="data.personal_info.image"
-            :src="imageUrl"
+            :src="data.personal_info.image"
             alt="Avatar"
             class="w-full h-full object-cover"
           />

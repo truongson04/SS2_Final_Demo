@@ -14,6 +14,7 @@ import SkillForm from "../components/SkillForm.vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import Loading from "../components/Loading.vue";
+import SaveModal from "../components/SaveModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -21,6 +22,7 @@ const { resumeId } = route.params;
 const activeSectionIndex = ref(0);
 const removeBackground = ref(false);
 const isLoading = ref(false);
+const showSaveModal = ref(false);
 
 const resumeData = ref({
   _id: "",
@@ -85,9 +87,7 @@ const handleShare = () => {
     window.alert("Share is not supported");
   }
 };
-const printCV = () => {
-  // xử lý ở backend sau, hứa
-};
+
 const saveResume = async () => {
   try {
     let updatedResume = structuredClone(toRaw(resumeData.value));
@@ -114,9 +114,47 @@ const saveResume = async () => {
       },
     });
     resumeData.value = data.resume;
-    toast.success(data.message);
   } catch (error) {
     console.log(error);
+  }
+};
+// PDF CV
+const cvTemplate = ref(null);
+const printCV = async () => {
+  const htmlContent = `
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
+  </head>
+  <body>
+    ${cvTemplate.value.innerHTML}
+  </body>
+</html>
+`;
+  isLoading.value = true;
+  try {
+    const response = await clientApi.post(
+      "/api/resumes/pdf",
+      {
+        htmlContent,
+      },
+      {
+        responseType: "blob",
+      },
+    );
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${resumeData.value.title}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message);
+  } finally {
+    isLoading.value = false;
   }
 };
 onMounted(async () => {
@@ -129,6 +167,20 @@ onMounted(async () => {
     v-else
     class="min-h-screen bg-slate-950 relative font-sans text-slate-300"
   >
+    <save-modal
+      :is-open="showSaveModal"
+      @back="showSaveModal = false"
+      @continue="
+        () => {
+          router.push({
+            name: 'Interview',
+            params: {
+              resumeId: resumeId,
+            },
+          });
+        }
+      "
+    />
     <div
       class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
     ></div>
@@ -171,7 +223,7 @@ onMounted(async () => {
       <div class="absolute top-4 right-4 z-20 flex gap-2">
         <button
           v-if="resumeData.public"
-          @click="handleShare"
+          @click="() => {}"
           class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
         >
           <svg
@@ -259,6 +311,12 @@ onMounted(async () => {
             <path d="M12 21V7" />
             <path d="m6 15 6 6 6-6" />
           </svg>
+        </button>
+        <button
+          @click="showSaveModal = true"
+          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+        >
+          Interview prepare
         </button>
       </div>
     </div>
@@ -393,22 +451,22 @@ onMounted(async () => {
                 <div v-if="activeSection.id === 'skills'">
                   <skill-form v-model:data="resumeData.skills" />
                 </div>
-                <button
-                  @click="
-                    () => {
-                      toast.promise(saveResume, {
-                        pending: 'Saving, please hang on :))',
-                        success: 'Successful save your resume :))',
-                        false: 'Oops, something went wrong, fail to save',
-                      });
-                    }
-                  "
-                  class="bg-gradient-to-br from-cyan-100 to-cyan-200 ring-cyan-300 text-cyan-600 ring hover:ring-cyan-400 transition-all rounded-md px-6 py-2 mt-6 text-sm"
-                >
-                  Save changes
-                </button>
               </div>
             </div>
+            <button
+              @click="
+                () => {
+                  toast.promise(saveResume, {
+                    pending: 'Saving, please hang on :))',
+                    success: 'Successful save your resume :))',
+                    false: 'Oops, something went wrong, fail to save',
+                  });
+                }
+              "
+              class="bg-gradient-to-br from-cyan-100 to-cyan-200 ring-cyan-300 text-cyan-600 ring hover:ring-cyan-400 transition-all rounded-md px-6 py-2 mt-6 text-sm w-50"
+            >
+              Save changes
+            </button>
           </div>
         </div>
 
@@ -425,12 +483,13 @@ onMounted(async () => {
                 <div
                   class="relative w-full max-w-[21cm] min-h-[29.7cm] bg-white text-black shadow-2xl rounded-sm overflow-hidden ring-1 ring-white/10"
                 >
-                  <resume-preview
-                    id="printable"
-                    v-model:data="resumeData"
-                    v-model:template="resumeData.template"
-                    v-model:accent-color="resumeData.accent_color"
-                  />
+                  <div ref="cvTemplate">
+                    <resume-preview
+                      v-model:data="resumeData"
+                      v-model:template="resumeData.template"
+                      v-model:accent-color="resumeData.accent_color"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
