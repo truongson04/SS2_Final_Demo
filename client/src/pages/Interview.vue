@@ -57,10 +57,13 @@ const handleStart = async () => {
 };
 onMounted(async () => {
   try {
+    isInterview.value = true;
     const { data } = await clientApi.get(`/api/resumes/get/${resumeId}`);
     resumeData.value = data.resume;
   } catch (error) {
     toast.error("Failed to load your resume " + error.message);
+  } finally {
+    isInterview.value = false;
   }
 });
 </script>

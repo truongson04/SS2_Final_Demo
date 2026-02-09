@@ -62,10 +62,13 @@ const handleStart = async () => {
 };
 onMounted(async () => {
   try {
+    isGenerating.value = true;
     const { data } = await clientApi.get(`/api/resumes/get/${resumeId}`);
     resumeData.value = data.resume;
   } catch (error) {
     toast.error("Failed to load your resume " + error.message);
+  } finally {
+    isGenerating.value = false;
   }
 });
 </script>
