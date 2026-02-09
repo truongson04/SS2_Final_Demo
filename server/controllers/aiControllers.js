@@ -50,7 +50,7 @@ export const interviewGenerate = async (req, res) => {
   if (!userContent) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  console.log(userContent);
+ 
   const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
   try {
     const model = genAI.getGenerativeModel({
@@ -88,7 +88,54 @@ export const interviewGenerate = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+export const analysisResume = async (req, res)=>{
+ const { userContent } = req.body;
+  if (!userContent) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+  
+  const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
+  try {
+    const model = genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL,
+      generationConfig: {
+        responseMimeType: "application/json",
+      },
+      systemInstruction: `
+      You are a Senior Technical Recruiter with expertise in evaluating software engineering candidates.
+Your task is to analyze the provided CV text and generate detailed, constructive feedback.
 
+### INPUT PROCESSING:
+- Evaluate the candidate based on structure, technical skills depth, project descriptions, and impact (quantifiable results).
+- If no specific Job Description is provided, evaluate based on general industry standards for the role implied in the CV.
+
+### OUTPUT FORMAT REQUIREMENTS (STRICT):
+1.  Return ONLY a valid JSON object.
+2.  DO NOT include markdown formatting .
+3.  DO NOT output any introductory or concluding text.
+4.  The output must follow this strict schema:
+
+{
+  "score": "Integer (0-100), representing the overall quality of the CV",
+  "summary": "A concise professional summary of the candidate's profile (2-3 sentences)",
+  "strengths": ["List of string", "Specific strong points found in the CV"],
+  "weaknesses": ["List of string", "Specific weak points or red flags"],
+  "improvements": ["List of string", "Actionable advice to improve the CV"]
+}   
+    
+      `,
+    });
+    const result = await model.generateContent(userPrompt);
+    const response = await result.response;
+    const analysis = response.text();
+    return res
+      .status(200)
+      .json({ message: "Generated successfully, this is our analysis for your resume", analysis });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ message: error.message });
+  }
+}
 export const enhanceJobDescription = async (req, res) => {
   try {
     const { userContent } = req.body;
@@ -115,7 +162,7 @@ export const uploadResume = async (req, res) => {
   try {
     const { resumeText, title } = req.body;
     const userId = req.userId;
-    console.log(resumeText);
+   
     if (!resumeText) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -229,7 +276,7 @@ professional_summary:{
     });
     const response = JSON.parse(result.response.text());
     const newResume = await Resume.create({ userId, title, ...response });
-    res.json({ resumeId: newResume._id });
+    res.json({ resumeId: newResume._id , message :'Uploaded successfully but there could be some mistakes when extracting content, feel free to modify it :))'});
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });

@@ -71,6 +71,9 @@ const uploadResume = async () => {
         resumeId: data.resumeId,
       },
     });
+    toast.info(data.message, {
+      autoClose: 5000,
+    });
     isLoading.value = false;
   } catch (error) {
     console.log(error);

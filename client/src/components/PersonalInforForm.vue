@@ -143,30 +143,6 @@ const fields = [
         <p class="text-xs text-slate-500 max-w-[250px]">
           Upload a professional photo (JPG, PNG). Max size 5MB.
         </p>
-
-        <div
-          v-if="data.personal_info.image"
-          class="mt-2 flex items-center gap-3"
-        >
-          <label class="relative inline-flex items-center cursor-pointer group">
-            <input
-              type="checkbox"
-              v-model="removeBackground"
-              class="sr-only peer"
-            />
-            <div
-              class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cyan-600 transition-colors"
-            ></div>
-            <span
-              class="ml-2 text-xs font-medium text-slate-400 group-hover:text-cyan-400 transition-colors"
-              >Remove Background</span
-            >
-          </label>
-          <span
-            class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20"
-            >AI</span
-          >
-        </div>
       </div>
     </div>
 

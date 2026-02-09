@@ -67,7 +67,7 @@ const emit = defineEmits(["back", "continue"]);
           <div class="flex flex-col gap-3">
             <button
               @click="$emit('back')"
-              class="w-full py-3 rounded-xl border hover:bg-red-500/10 hover:border-red-500/50 font-medium transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              class="w-full py-3 rounded-xl border hover:bg-red-500/10 hover:border-red-500/50 font-medium transition-all active:scale-[0.98] flex items-center justify-center gap-2 bg-blue-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -88,12 +88,11 @@ const emit = defineEmits(["back", "continue"]);
               </svg>
               Comeback to save changes
             </button>
-
             <button
               @click="$emit('continue')"
-              class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+              class="w-full py-3 rounded-xl border hover:bg-red-500/10 hover:border-red-500/50 font-medium transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              Continue
+              Continue without saving
             </button>
           </div>
         </div>

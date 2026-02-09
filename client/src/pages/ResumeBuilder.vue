@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, computed, toRaw } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { dummyData } from "../assets/assets";
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
+
 import PersonalInforForm from "../components/PersonalInforForm.vue";
 import ResumePreview from "../components/ResumePreview.vue";
 import TemplateSelector from "../components/TemplateSelector.vue";
@@ -15,6 +15,7 @@ import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import Loading from "../components/Loading.vue";
 import SaveModal from "../components/SaveModal.vue";
+import _ from "lodash";
 
 const route = useRoute();
 const router = useRouter();
@@ -23,6 +24,7 @@ const activeSectionIndex = ref(0);
 const removeBackground = ref(false);
 const isLoading = ref(false);
 const showSaveModal = ref(false);
+const continuing = ref(null);
 
 const resumeData = ref({
   _id: "",
@@ -37,12 +39,14 @@ const resumeData = ref({
   accent_color: "#3B82F6",
   public: false,
 });
+let initialResume = null;
 const loadExistingResume = async () => {
   isLoading.value = true;
   try {
     const { data } = await clientApi.get(`/api/resumes/get/${resumeId}`);
     if (data.resume) {
       resumeData.value = data.resume;
+      initialResume = ref(_.cloneDeep(data.resume));
       document.title = data.resume.title;
     }
   } catch (error) {
@@ -91,7 +95,7 @@ const handleShare = () => {
 const saveResume = async () => {
   try {
     let updatedResume = structuredClone(toRaw(resumeData.value));
-    console.log(updatedResume);
+
     if (typeof resumeData.value.personal_info.image === "object") {
       delete updatedResume.personal_info.image;
     }
@@ -114,6 +118,7 @@ const saveResume = async () => {
       },
     });
     resumeData.value = data.resume;
+    initialResume = ref(_.cloneDeep(resumeData.value));
   } catch (error) {
     console.log(error);
   }
@@ -157,8 +162,23 @@ const printCV = async () => {
     isLoading.value = false;
   }
 };
+// prevent user forget to save
+onBeforeRouteLeave((to, from, next) => {
+  if (!_.isEqual(resumeData.value, initialResume.value)) {
+    continuing.value = to; // save the route temporary
+    showSaveModal.value = true;
+    next(false);
+  } else {
+    next();
+  }
+});
 onMounted(async () => {
   await loadExistingResume();
+  window.addEventListener("beforeunload", (event) => {
+    if (!_.isEqual(resumeData.value, initialResume.value))
+      event.preventDefault();
+    event.returnValue = "";
+  });
 });
 </script>
 <template>
@@ -169,15 +189,19 @@ onMounted(async () => {
   >
     <save-modal
       :is-open="showSaveModal"
-      @back="showSaveModal = false"
+      @back="
+        () => {
+          showSaveModal = false;
+          continuing = null;
+        }
+      "
       @continue="
         () => {
-          router.push({
-            name: 'Interview',
-            params: {
-              resumeId: resumeId,
-            },
-          });
+          //  trick the route
+          initialResume = _.cloneDeep(resumeData);
+          if (continuing) {
+            router.push(continuing);
+          }
         }
       "
     />
@@ -223,7 +247,7 @@ onMounted(async () => {
       <div class="absolute top-4 right-4 z-20 flex gap-2">
         <button
           v-if="resumeData.public"
-          @click="() => {}"
+          @click="handleShare"
           class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
         >
           <svg
@@ -313,7 +337,27 @@ onMounted(async () => {
           </svg>
         </button>
         <button
-          @click="showSaveModal = true"
+          @click="
+            router.push({
+              name: 'Analysis',
+              params: {
+                resumeId,
+              },
+            })
+          "
+          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+        >
+          Analysis
+        </button>
+        <button
+          @click="
+            router.push({
+              name: 'Interview',
+              params: {
+                resumeId,
+              },
+            })
+          "
           class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
         >
           Interview prepare
@@ -454,6 +498,7 @@ onMounted(async () => {
               </div>
             </div>
             <button
+              v-if="!_.isEqual(resumeData, initialResume)"
               @click="
                 () => {
                   toast.promise(saveResume, {
@@ -478,10 +523,12 @@ onMounted(async () => {
               class="absolute inset-0 opacity-20 bg-[size:20px_20px] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] pointer-events-none"
             ></div>
 
-            <div class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8">
+            <div
+              class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 max-w-[40cm]"
+            >
               <div class="flex flex-col items-center min-h-full justify-start">
                 <div
-                  class="relative w-full max-w-[21cm] min-h-[29.7cm] bg-white text-black shadow-2xl rounded-sm overflow-hidden ring-1 ring-white/10"
+                  class="relative w-full max-w-[40cm] min-h-[30cm] bg-white text-black shadow-2xl rounded-sm overflow-hidden ring-1 ring-white/10"
                 >
                   <div ref="cvTemplate">
                     <resume-preview

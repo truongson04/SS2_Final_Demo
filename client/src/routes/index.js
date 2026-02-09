@@ -9,6 +9,7 @@ import SignUp from "../pages/SignUp.vue";
 import useAuth from "../../store/auth";
 import getUserData from "../composables/useGetData";
 import Interview from "../pages/Interview.vue";
+import Analysis from "../pages/Analysis.vue";
 const routes = [
   {
     path: "/",
@@ -36,6 +37,11 @@ const routes = [
         name: "Interview",
         component: Interview,
       },
+      {
+        path:"analysis/:resumeId",
+        name:'Analysis',
+        component:Analysis
+      }
     ],
   },
   {
