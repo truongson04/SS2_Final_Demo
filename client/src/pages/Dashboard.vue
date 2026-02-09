@@ -10,6 +10,13 @@ import { toast } from "vue3-toastify";
 import extractTextFromPDF from "../composables/useTextFromPdf";
 
 const allResumes = ref([]);
+const isLoading = ref(false);
+const router = useRouter();
+const showCreate = ref(false);
+const showUpload = ref(false);
+const title = ref("");
+const resume = ref(null);
+const editResumeId = ref("");
 const loadAllResumes = async () => {
   isLoading.value = true;
   try {
@@ -21,13 +28,7 @@ const loadAllResumes = async () => {
     isLoading.value = false;
   }
 };
-const isLoading = ref(false);
-const router = useRouter();
-const showCreate = ref(false);
-const showUpload = ref(false);
-const title = ref("");
-const resume = ref(null);
-const editResumeId = ref("");
+
 // hàm tạo CV
 const createResume = async () => {
   try {
@@ -72,6 +73,7 @@ const uploadResume = async () => {
     });
     isLoading.value = false;
   } catch (error) {
+    console.log(error);
     isLoading.value = false;
 
     toast.error(error?.response?.data?.message || error.message);
@@ -243,7 +245,7 @@ onMounted(() => {
                   }
                 "
                 class="p-3 rounded-full bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-white border border-cyan-500/50 transition-all transform hover:scale-110"
-                title="Edit Resume"
+                title="Edit Title"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -380,6 +382,11 @@ onMounted(() => {
           uploading an existing file.
         </p>
         <button
+          @click="
+            () => {
+              showCreate = true;
+            }
+          "
           class="px-6 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-full transition shadow-lg shadow-cyan-500/20"
         >
           Create First Resume

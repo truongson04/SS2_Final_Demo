@@ -30,10 +30,11 @@ const formatDate = (dateStr) => {
 const getImageUrl = (image) => {
   if (typeof image === "string") {
     return image;
-  } else if (image && typeof image === "object") {
-    return URL.createObjectURL(image);
   }
-  return null;
+  //  else if (image && typeof image === "object") {
+  //   return URL.createObjectURL(image);
+  // }
+  // return null;
 };
 </script>
 

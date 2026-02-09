@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import clientApi from "../configs/api/clientApi";
 import useAuth from "../../store/auth";
@@ -19,11 +19,16 @@ const handleSubmit = async () => {
     localStorage.setItem("token", data.token);
 
     toast.success(data.message);
-    authStore.loading = false;
+
     router.push("/app");
   } catch (error) {
     toast.error(error?.response?.data?.message || error.message);
+  } finally {
+    authStore.loading = false;
   }
+};
+const handleGoogleSignIn = async () => {
+  window.location.href = `${import.meta.env.VITE_BASE_URL}/api/users/auth/google`;
 };
 </script>
 <template>
@@ -184,6 +189,7 @@ const handleSubmit = async () => {
         </button>
 
         <button
+          @click="handleGoogleSignIn"
           type="button"
           class="flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 rounded-lg text-slate-300 hover:text-white transition duration-300"
         >

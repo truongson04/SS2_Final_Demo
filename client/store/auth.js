@@ -8,12 +8,13 @@ const useAuth = defineStore("auth", () => {
   const login = (newToken, newUser) => {
     token.value = newToken;
     user.value = newUser;
+    localStorage.setItem("token", newToken);
   };
   const logout = () => {
     token.value = "";
     user.value = null;
     localStorage.removeItem("token");
   };
-  return{token, user, login, logout,loading}
+  return { token, user, login, logout, loading };
 });
-export default useAuth
+export default useAuth;
