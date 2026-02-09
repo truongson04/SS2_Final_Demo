@@ -134,14 +134,16 @@ export const saveResume = async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox",
-    "--disable-setuid-sandbox",
-    "--disable-dev-shm-usage",
-    "--disable-accelerated-2d-canvas",
-    "--no-first-run",
-    "--no-zygote",
-    "--single-process", 
-    "--disable-gpu",],
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+
+        "--disable-gpu",
+      ],
     });
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
@@ -155,12 +157,13 @@ export const saveResume = async (req, res) => {
         right: "10mm",
       },
     });
-    await browser.close();
+
     res.set({
       "Content-Type": "application/pdf",
       "Content-Length": pdfBuffer.length,
     });
     res.send(pdfBuffer);
+    await browser.close();
   } catch (error) {
     console.log(error);
     return res.status(500).json({

@@ -16,4 +16,5 @@ resumeRouter.delete("/delete/:resumeId", protect, deleteResume);
 resumeRouter.get("/get/:resumeId", protect, getResumeById);
 resumeRouter.get("/public/:resumeId", getPublicResumeById);
 resumeRouter.post("/pdf", saveResume);
+
 export default resumeRouter;
