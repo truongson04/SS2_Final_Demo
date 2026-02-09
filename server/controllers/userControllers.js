@@ -107,7 +107,7 @@ export const googleResister = async (
 ) => {
   try {
     const user = await User.findOne({ googleId: profile.id });
-    console.log(user);
+    
     if (user) {
       return done(null, user);
     } else {
@@ -125,7 +125,7 @@ export const googleResister = async (
 };
 export const googleLogin = (req, res, next) => {
   passport.authenticate("google", { session: false }, (err, user, info) => {
-    console.log(user);
+    
     if (err) {
       console.log(err);
       return res.status(500).json({ message: "Authentication error" });
@@ -136,10 +136,6 @@ export const googleLogin = (req, res, next) => {
     const token = generateToken(user._id);
     user.password = undefined;
     res.redirect(`${process.env.CLIENT_URL}/app?token=${token}`);
-    // return res.status(200).json({
-    //   message: "Login successfully",
-    //   token: token,
-    //   user,
-    // });
+ 
   })(req, res, next);
 };
