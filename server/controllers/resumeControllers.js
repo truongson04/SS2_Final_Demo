@@ -72,7 +72,7 @@ export const updateResume = async(req, res)=>{
     resumeDataClone= structuredClone(resumeData)
   }
   console.log(resumeDataClone)
-  console.log(req)
+
   // handle AI image
   if(image){
     const response = await imagekit.files.upload({
