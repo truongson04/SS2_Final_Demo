@@ -2,6 +2,7 @@ import express, { Router } from "express";
 import protect from "../middlewares/authMiddleware.js";
 import {
   analysisResume,
+  chatWithAi,
   enhanceJobDescription,
   enhanceProfessionalSummary,
   enhanceProjectDescription,
@@ -15,4 +16,5 @@ aiRouter.post("/upload-resume", protect, uploadResume);
 aiRouter.post("/enhance-pro-desc", protect, enhanceProjectDescription);
 aiRouter.post("/interview", protect, interviewGenerate);
 aiRouter.post("/analysis",protect, analysisResume)
+aiRouter.post("/chat", protect, chatWithAi)
 export default aiRouter;

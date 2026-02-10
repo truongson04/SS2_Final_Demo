@@ -1,16 +1,31 @@
 <script setup>
-import { onMounted, ref, toRaw } from "vue";
+import { nextTick, onMounted, ref, toRaw } from "vue";
 import clientApi from "../configs/api/clientApi";
 import { useRoute } from "vue-router";
 import ResumePreview from "../components/ResumePreview.vue";
 import Loading from "../components/Loading.vue";
 import { toast } from "vue3-toastify";
+import { computed } from "vue";
 const route = useRoute();
 const resumeData = ref({});
 
 const { resumeId } = route.params;
 const isInterview = ref(false);
 
+const questions = ref([]);
+const mode = ref("");
+
+const cloneResume = computed(() => {
+  let newResume = structuredClone(toRaw(resumeData.value));
+
+  delete newResume.accent_color;
+  delete newResume.public;
+  delete newResume.template;
+  delete newResume.title;
+  delete newResume.personal_info;
+  return newResume;
+});
+// gen tag questions
 const setActive = (index) => {
   questions.value.forEach((q, i) => {
     if (i < index) q.status = "completed";
@@ -18,8 +33,6 @@ const setActive = (index) => {
     else q.status = "pending";
   });
 };
-const questions = ref([]);
-
 const getDifficultyColor = (difficulty) => {
   switch (difficulty.toLowerCase()) {
     case "easy":
@@ -32,20 +45,13 @@ const getDifficultyColor = (difficulty) => {
       return "text-slate-400 bg-slate-400/10 border-slate-400/20";
   }
 };
-
-const handleStart = async () => {
+const generateQuestions = async () => {
   isInterview.value = true;
+  mode.value = "question";
 
-  let cloneResume = structuredClone(toRaw(resumeData.value));
-
-  delete cloneResume.accentColor;
-  delete cloneResume.public;
-  delete cloneResume.template;
-  delete cloneResume.title;
-  delete cloneResume.personal_info;
   try {
     const { data } = await clientApi.post("/api/ai/interview", {
-      userContent: cloneResume,
+      userContent: cloneResume.value,
     });
     questions.value = JSON.parse(data.questions);
     toast.success(data.message);
@@ -56,7 +62,69 @@ const handleStart = async () => {
     isInterview.value = false;
   }
 };
+// chat
+const userInput = ref("READY");
+const chatContainer = ref(null);
+const messages = ref([
+  {
+    role: "model",
+    text: "Hi, my name is Ngo Gia Bao, I am your AI assistance",
+  },
+  {
+    role: "model",
+    text: "Today, I will be your interviewee, click READY to start",
+  },
+]);
+const isTexting = ref(false);
+const isReady = ref(false);
+const sessionId = ref("");
+const sendMessage = async () => {
+  messages.value.push({
+    role: "user",
+    text: userInput.value,
+  });
+  const message = userInput.value;
+  userInput.value = "";
+  isTexting.value = true;
+  if (chatContainer.value) {
+    nextTick(() => {
+      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+    });
+  }
+  try {
+    const { data } = await clientApi.post(`/api/ai/chat`, {
+      userContent: cloneResume.value,
+      role: "user",
+      text: message,
+      sessionId: sessionId.value,
+    });
 
+    console.log(data);
+    if (data.sessionId) {
+      sessionId.value = data.sessionId;
+    }
+    messages.value.push({
+      role: "ai",
+      text: data.response,
+    });
+  } catch (error) {
+    messages.value.push({
+      role: "ai",
+      text: "Something went wrong, please try next time :((",
+    });
+  } finally {
+    isTexting.value = false;
+    if (chatContainer.value) {
+      nextTick(() => {
+        chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+      });
+    }
+  }
+};
+const handleChat = async () => {
+  // isInterview.value = true;
+  mode.value = "chat";
+};
 onMounted(async () => {
   try {
     isInterview.value = true;
@@ -165,15 +233,15 @@ onMounted(async () => {
         class="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur z-20"
       >
         <h2 class="text-lg font-bold text-white tracking-tight">
-          Generated Questions
+          Interview room
         </h2>
         <span class="text-xs text-slate-500 font-mono"
           >{{ questions.length }} items</span
         >
       </div>
-      <!-- question part  -->
+      <!-- interview part  -->
       <div
-        v-if="questions.length === 0"
+        v-if="!mode"
         class="h-full flex flex-col items-center justify-center p-8 text-center relative z-10"
       >
         <div class="relative group mb-8"></div>
@@ -188,19 +256,32 @@ onMounted(async () => {
           Our AI Interviewer will analyze your resume and generate technical
           questions tailored to your profile.
         </p>
+        <div class="flex gap-10">
+          <button
+            @click="generateQuestions"
+            class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-lg tracking-wide shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 overflow-hidden"
+          >
+            <div
+              class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
+            ></div>
 
-        <button
-          @click="handleStart"
-          class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-lg tracking-wide shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
-          ></div>
+            <span class="relative flex items-center gap-3">
+              Generate question cards
+            </span>
+          </button>
+          <button
+            @click="handleChat"
+            class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-lg tracking-wide shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 overflow-hidden"
+          >
+            <div
+              class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
+            ></div>
 
-          <span class="relative flex items-center gap-3">
-            Start Interview
-          </span>
-        </button>
+            <span class="relative flex items-center gap-3">
+              Start chat Interview
+            </span>
+          </button>
+        </div>
 
         <div
           class="mt-8 flex items-center gap-4 text-xs text-slate-500 font-mono"
@@ -229,7 +310,14 @@ onMounted(async () => {
       </div>
 
       <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6" v-else>
+        <button
+          @click="mode = ''"
+          class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border"
+        >
+          < Back
+        </button>
         <div
+          v-if="mode === 'question'"
           v-for="(q, index) in questions"
           :key="q.id"
           class="transition-all duration-300 group"
@@ -329,6 +417,206 @@ onMounted(async () => {
             </div>
             <p class="text-sm text-slate-400 line-clamp-2">{{ q.question }}</p>
           </div>
+        </div>
+      </div>
+      <div
+        v-if="mode === 'chat'"
+        class="flex flex-col h-full bg-slate-950 relative overflow-hidden font-sans border border-white/5 rounded-2xl shadow-2xl"
+      >
+        <div
+          class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
+        ></div>
+
+        <div
+          class="px-6 py-4 border-b border-white/5 bg-slate-900/80 backdrop-blur z-10 flex items-center justify-between"
+        >
+          <div class="flex items-center gap-3">
+            <div class="relative w-2 h-2">
+              <span
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"
+              ></span>
+              <span
+                class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"
+              ></span>
+            </div>
+            <h3 class="font-bold text-white text-sm tracking-wide">
+              AI Assistant
+            </h3>
+          </div>
+        </div>
+
+        <div
+          ref="chatContainer"
+          class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 scroll-smooth"
+        >
+          <div
+            v-for="msg in messages"
+            :key="msg.id"
+            class="flex w-full"
+            :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
+          >
+            <div
+              class="flex max-w-[80%] md:max-w-[70%] gap-3"
+              :class="msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'"
+            >
+              <div
+                class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border shadow-lg"
+                :class="
+                  msg.role === 'user'
+                    ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400'
+                    : 'bg-cyan-500/20 border-cyan-500/30 text-cyan-400'
+                "
+              >
+                <svg
+                  v-if="msg.role === 'ai'"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"
+                  />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+
+              <div
+                class="p-4 rounded-2xl text-sm leading-relaxed shadow-md"
+                :class="
+                  msg.role === 'user'
+                    ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-tr-none'
+                    : 'bg-slate-800 border border-white/5 text-slate-300 rounded-tl-none'
+                "
+              >
+                {{ msg.text }}
+              </div>
+            </div>
+          </div>
+
+          <div v-if="isTexting" class="flex justify-start w-full">
+            <div class="flex max-w-[80%] gap-3">
+              <div
+                class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 flex items-center justify-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"
+                  />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
+              </div>
+              <div
+                class="p-4 rounded-2xl bg-slate-800 border border-white/5 rounded-tl-none flex items-center gap-1"
+              >
+                <span
+                  class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
+                ></span>
+                <span
+                  class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
+                  style="animation-delay: 0.1s"
+                ></span>
+                <span
+                  class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
+                  style="animation-delay: 0.2s"
+                ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          v-if="isReady"
+          class="p-4 bg-slate-900/90 backdrop-blur border-t border-white/10 z-10"
+        >
+          <div class="relative group">
+            <div
+              class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur"
+            ></div>
+
+            <div
+              class="relative flex items-center bg-slate-950 rounded-xl border border-slate-700 group-focus-within:border-cyan-500/50 transition-colors"
+            >
+              <input
+                type="text"
+                v-model="userInput"
+                @keyup.enter="sendMessage"
+                placeholder="Type your answer in here..."
+                class="flex-1 bg-transparent border-none text-slate-200 placeholder-slate-500 px-4 py-3 focus:outline-none focus:ring-0 text-sm"
+              />
+
+              <button
+                @click="sendMessage"
+                :disabled="!userInput.trim() || isTexting"
+                class="mr-2 p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13" />
+                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p class="text-[10px] text-center text-slate-600 mt-2">
+            AI generated content may be inaccurate. Double check important
+            information.
+          </p>
+        </div>
+        <div v-else class="flex justify-end">
+          <button
+            @click="
+              () => {
+                isReady = true;
+                userInput = 'READY';
+                sendMessage();
+              }
+            "
+            class="p-4 bg-cyan-500 mb-25 ml-30 rounded-xl animate-bounce text-slate-800"
+          >
+            READY
+          </button>
         </div>
       </div>
     </div>

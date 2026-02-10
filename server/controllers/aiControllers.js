@@ -1,5 +1,8 @@
+
+import Sessions from "../models/sessions.js";
 import genAI from "../config/ai.js";
 import Resume from "../models/Resumes.js";
+
 
 export const enhanceProfessionalSummary = async (req, res) => {
   try {
@@ -84,10 +87,10 @@ export const interviewGenerate = async (req, res) => {
       .status(200)
       .json({ message: "Generated successfully", questions });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: "Two many request, please comeback later :))" });
   }
 };
+// analysis resume
 export const analysisResume = async (req, res)=>{
  const { userContent } = req.body;
   if (!userContent) {
@@ -280,5 +283,120 @@ professional_summary:{
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });
+  }
+};
+const getSystemInstruction = (jobDescription, resumeContent) => {
+  return `
+    You are an expert Hiring Manager conducting a professional job interview.
+    CONTEXT:
+    - JOB DESCRIPTION: ${jobDescription}
+    - CANDIDATE'S RESUME: ${resumeContent}
+    
+    RULES:
+    1. Start immediately with the first question.
+    2. One question at a time.
+    3. Be professional and probing.
+    4. Do not repeat "I am ready".
+    
+    ACTION: Analyze the data and ask the first question now.
+  `;
+};
+// interview with AI
+export const chatWithAi = async (req, res) => {
+  try {
+    const { text, userContent, sessionId } = req.body;
+    const userId = req.userId;
+
+       if(text==='READY' && !sessionId){
+
+  return res.status(200).json({response:"Please paste your job description in the input chat to start"})
+
+ }
+    if (!sessionId) {
+      
+
+    
+      const model = genAI.getGenerativeModel({
+        model: process.env.GEMINI_MODEL,
+        systemInstruction: getSystemInstruction(text, userContent),
+      });
+
+      
+      const chat = model.startChat({
+        history: [],
+        generationConfig: { maxOutputTokens: 500 },
+      });
+
+   
+      const result = await chat.sendMessage("Please start the interview. Ask the first question based on my Resume");
+      const firstQuestion = await result.response.text();
+
+   
+      const newSession = new Sessions({
+        userId,
+        contextData: {
+          jobDescription: text,
+          resumeContent: userContent,
+        },
+        history: [
+          {
+           role:'user',
+           parts:[{text: 'Please start the interview. Ask the first question based on my Resume'}]
+          },
+          {
+            role: "model",
+            parts: [{ text: firstQuestion }],
+          },
+        ],
+      });
+
+      await newSession.save();
+      return res.status(200).json({ response: firstQuestion, sessionId: newSession._id });
+    }
+
+ 
+    
+    const currentSession = await Sessions.findOne({ _id: sessionId });
+    if (!currentSession) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+  
+    const model = genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL, 
+      systemInstruction: getSystemInstruction(
+        currentSession.contextData.jobDescription,
+        currentSession.contextData.resumeContent
+      ),
+    });
+
+    
+    const geminiHistory = currentSession.history.map((msg) => ({
+      role: msg.role,
+      parts: [{ text: msg.parts[0].text }],
+    }));
+
+    const chat = model.startChat({
+      history: geminiHistory,
+      generationConfig: { maxOutputTokens: 500 },
+    });
+
+    
+    const result = await chat.sendMessage(text);
+    const aiResponse = await result.response.text();
+
+   
+    currentSession.history.push(
+      { role: "user", parts: [{ text: text }] },
+      { role: "model", parts: [{ text: aiResponse }] }
+    );
+
+    await currentSession.save();
+
+    return res.status(200).json({ response: aiResponse, sessionId: currentSession._id });
+
+  } catch (err) {
+    console.error("Chat API Error:", err);
+    return res.status(400).json({ message: "Something wrong", error: err.message });
   }
 };
