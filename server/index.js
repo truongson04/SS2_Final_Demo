@@ -19,7 +19,7 @@ connectDB();
 const port = process.env.PORT;
 app.use(
   cors({
-    origin: ["https://ss-2-final-demo.vercel.app/", "http://localhost:5173"], // Chỉ cho phép domain Vue của bạn và localhost
+    origin: ["https://ss-2-final-demo.vercel.app/", "http://localhost:5173"], 
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),

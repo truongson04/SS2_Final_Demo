@@ -9,26 +9,7 @@ const route = useRoute();
 const { resumeId } = route.params;
 const resumeData = ref({});
 const isGenerating = ref(false);
-// fake data
-// const analysisResult = ref({
-//   score: 78,
-//   summary: "Good foundation, but lacks quantifiable metrics.",
-//   strengths: [
-//     "Strong technical skills section with relevant keywords.",
-//     "Clean and readable formatting (ATS friendly).",
-//     "Education section is concise and clear.",
-//   ],
-//   weaknesses: [
-//     "Work experience descriptions are too generic.",
-//     "Lack of numerical results (e.g., 'Increased sales by 20%').",
-//     "Profile summary does not target a specific role.",
-//   ],
-//   improvements: [
-//     "Use the 'X-Y-Z' formula: 'Accomplished [X] as measured by [Y], by doing [Z]'.",
-//     "Add a link to your GitHub or Portfolio.",
-//     "Incorporate more action verbs (Architected, Spearheaded, Optimized).",
-//   ],
-// });
+
 const analysisResult = ref(null);
 
 const getScoreColor = (score) => {
