@@ -32,6 +32,7 @@ const getDifficultyColor = (difficulty) => {
       return "text-slate-400 bg-slate-400/10 border-slate-400/20";
   }
 };
+
 const handleStart = async () => {
   isInterview.value = true;
 
@@ -55,6 +56,7 @@ const handleStart = async () => {
     isInterview.value = false;
   }
 };
+
 onMounted(async () => {
   try {
     isInterview.value = true;
@@ -263,7 +265,7 @@ onMounted(async () => {
               </div>
 
               <h3
-                class="text-lg md:text-xl font-medium text-white leading-relaxed"
+                class="text-md md:text-xl font-medium text-white leading-relaxed"
               >
                 {{ q.question }}
               </h3>
