@@ -290,7 +290,7 @@ const getSystemInstruction = (jobDescription, resumeContent) => {
     You are an expert Hiring Manager conducting a professional job interview.
     CONTEXT:
     - JOB DESCRIPTION: ${jobDescription}
-    - CANDIDATE'S RESUME: ${resumeContent}
+    - CANDIDATE'S RESUME: ${ JSON.stringify(resumeContent)}
     
     RULES:
     1. Start immediately with the first question.
@@ -324,7 +324,7 @@ export const chatWithAi = async (req, res) => {
       
       const chat = model.startChat({
         history: [],
-        generationConfig: { maxOutputTokens: 500 },
+       
       });
 
    
@@ -341,7 +341,7 @@ export const chatWithAi = async (req, res) => {
         history: [
           {
            role:'user',
-           parts:[{text: 'Please start the interview. Ask the first question based on my Resume'}]
+           parts:[{text:'Ask the first question'}]
           },
           {
             role: "model",
@@ -371,19 +371,19 @@ export const chatWithAi = async (req, res) => {
     });
 
     
-    const geminiHistory = currentSession.history.map((msg) => ({
+    const geminiHistory = currentSession.history.slice(-6).map((msg) => ({
       role: msg.role,
       parts: [{ text: msg.parts[0].text }],
     }));
 
     const chat = model.startChat({
       history: geminiHistory,
-      generationConfig: { maxOutputTokens: 500 },
+     
     });
 
     
-    const result = await chat.sendMessage(text);
-    const aiResponse = await result.response.text();
+   const result = await chat.sendMessage(text);
+   const aiResponse= await result.response.text()
 
    
     currentSession.history.push(
@@ -396,7 +396,9 @@ export const chatWithAi = async (req, res) => {
     return res.status(200).json({ response: aiResponse, sessionId: currentSession._id });
 
   } catch (err) {
-    console.error("Chat API Error:", err);
+    console.error(err);
+  
+
     return res.status(400).json({ message: "Something wrong", error: err.message });
   }
 };

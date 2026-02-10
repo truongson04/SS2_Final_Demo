@@ -110,7 +110,7 @@ const sendMessage = async () => {
   } catch (error) {
     messages.value.push({
       role: "ai",
-      text: "Something went wrong, please try next time :((",
+      text: "Too many requests,  please try next time :((",
     });
   } finally {
     isTexting.value = false;
