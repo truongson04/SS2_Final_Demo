@@ -67,11 +67,11 @@ const userInput = ref("READY");
 const chatContainer = ref(null);
 const messages = ref([
   {
-    role: "model",
-    text: "Hi, my name is Ngo Gia Bao, I am your AI assistance",
+    role: "ai",
+    text: "Hi, I am your AI assistance",
   },
   {
-    role: "model",
+    role: "ai",
     text: "Today, I will be your interviewee, click READY to start",
   },
 ]);
@@ -470,20 +470,22 @@ onMounted(async () => {
                 <svg
                   v-if="msg.role === 'ai'"
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
+                  width="24"
+                  height="24"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  class="lucide lucide-bot-icon lucide-bot"
                 >
-                  <path
-                    d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"
-                  />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" x2="12" y1="19" y2="22" />
+                  <path d="M12 8V4H8" />
+                  <rect width="16" height="12" x="4" y="8" rx="2" />
+                  <path d="M2 14h2" />
+                  <path d="M20 14h2" />
+                  <path d="M15 13v2" />
+                  <path d="M9 13v2" />
                 </svg>
                 <svg
                   v-else
@@ -522,20 +524,22 @@ onMounted(async () => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
+                  width="24"
+                  height="24"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  class="lucide lucide-bot-icon lucide-bot"
                 >
-                  <path
-                    d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"
-                  />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" x2="12" y1="19" y2="22" />
+                  <path d="M12 8V4H8" />
+                  <rect width="16" height="12" x="4" y="8" rx="2" />
+                  <path d="M2 14h2" />
+                  <path d="M20 14h2" />
+                  <path d="M15 13v2" />
+                  <path d="M9 13v2" />
                 </svg>
               </div>
               <div
