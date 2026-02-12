@@ -14,11 +14,11 @@ const formData = ref({
 const handleSubmit = async () => {
   try {
     authStore.loading = true;
+
     const { data } = await clientApi.post(`/api/users/login`, formData.value);
+
     authStore.login(data.token, data.user);
     localStorage.setItem("token", data.token);
-
-    toast.success(data.message);
 
     router.push("/app");
   } catch (error) {
@@ -144,11 +144,11 @@ const handleGoogleSignIn = async () => {
               >Remember me</label
             >
           </div>
-          <a
-            href="#"
+          <router-link
+            to="/forgot"
             class="text-sm font-medium text-cyan-400 hover:text-cyan-300 transition"
-            >Forgot Password?</a
-          >
+            >Forgot Password?
+          </router-link>
         </div>
 
         <button

@@ -10,6 +10,8 @@ import useAuth from "../../store/auth";
 import getUserData from "../composables/useGetData";
 import Interview from "../pages/Interview.vue";
 import Analysis from "../pages/Analysis.vue";
+import ForgotPassword from "../pages/ForgotPassword.vue";
+import Otp from "../pages/Otp.vue";
 
 const routes = [
   {
@@ -74,6 +76,16 @@ const routes = [
       }
     },
   },
+  {
+    path:'/forgot',
+    name:'Forgot',
+    component:ForgotPassword
+  }, 
+  {
+    path:'/otp',
+    name:'OTP',
+    component:Otp
+  }
 ];
 const router = createRouter({
   history: createWebHistory(),

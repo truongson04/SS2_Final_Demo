@@ -167,11 +167,11 @@
             <h3
               class="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition"
             >
-              Diverse Templates
+              Professional Template
             </h3>
             <p class="text-slate-400 leading-relaxed">
-              Over 50+ professionally designed templates ranging from minimalist
-              to creative, suitable for every industry.
+              Professionally designed templates ranging from minimalist to
+              creative, suitable for every industry.
             </p>
           </div>
         </div>

@@ -299,6 +299,7 @@ const getSystemInstruction = (jobDescription, resumeContent) => {
     4. Do not repeat "I am ready".
     
     ACTION: Analyze the data and ask the first question now.
+    You can response in  Vietnamese or English based on the language in the JOB DESCRIPTION
   `;
 };
 // interview with AI
