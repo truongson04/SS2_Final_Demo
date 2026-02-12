@@ -48,9 +48,9 @@ const handleGoogleSignIn = async () => {
       <div class="text-center mb-8">
         <a href="/" class="inline-flex items-center gap-2 mb-4 group">
           <div
-            class="h-10 w-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl shadow-lg group-hover:scale-105 transition"
+            class="h-10 w-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl"
           >
-            CV
+            <img src="../assets/dummy_profile.png" class="object-cover" />
           </div>
         </a>
         <h1 class="text-2xl font-bold text-white">Welcome Back</h1>

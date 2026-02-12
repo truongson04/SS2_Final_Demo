@@ -34,7 +34,7 @@ const closeMenu = () => {
         <div
           class="h-10 w-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl"
         >
-          CV
+          <img src="../../assets/dummy_profile.png" class="object-cover" />
         </div>
         <span class="font-bold text-xl tracking-tight text-white"
           >CVBuilder</span
@@ -48,22 +48,11 @@ const closeMenu = () => {
         >
           Home
         </router-link>
-        <router-link
-          to="/products"
-          class="text-slate-300 hover:text-cyan-400 transition duration-300"
-        >
-          Templates
-        </router-link>
-        <a
-          href="/stories"
-          class="text-slate-300 hover:text-cyan-400 transition duration-300"
-        >
+
+        <a class="text-slate-300 hover:text-cyan-400 transition duration-300">
           Testimonials
         </a>
-        <a
-          href="/pricing"
-          class="text-slate-300 hover:text-cyan-400 transition duration-300"
-        >
+        <a class="text-slate-300 hover:text-cyan-400 transition duration-300">
           Contact
         </a>
       </div>
@@ -191,7 +180,7 @@ const closeMenu = () => {
             class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
           >
             <button
-              @click="toApp"
+              @click="router.push('/app')"
               class="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-slate-950 hover:bg-cyan-500 font-bold rounded-full px-8 h-12 transition active:scale-95"
             >
               Get started for free
