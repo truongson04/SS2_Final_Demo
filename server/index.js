@@ -13,9 +13,17 @@ import { googleResister } from "./controllers/userControllers.js";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
 // connect to db
-connectDB();
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.log("DB connection error", err);
+    res.status(500).json({ message: "Failed to connect" });
+  }
+});
 const port = process.env.PORT;
 app.use(
   cors({
