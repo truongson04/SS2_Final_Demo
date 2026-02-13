@@ -46,5 +46,4 @@ if (process.env.NODE_ENV === "develop") {
   app.listen(port, () => {
     console.log(`The server is running at http://localhost:${port}`);
   });
-} else {
-}
+} 
