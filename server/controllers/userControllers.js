@@ -112,6 +112,7 @@ export const googleResister = async (
   profile,
   done,
 ) => {
+  console.log("Iam here")
   try {
     const user = await User.findOne({ googleId: profile.id });
     
@@ -142,7 +143,8 @@ export const googleLogin = (req, res, next) => {
     }
     const token = generateToken(user._id);
     user.password = undefined;
-    res.redirect(`${process.env.CLIENT_URL}/app?token=${token}`);
+    console.log("Check URL:", process.env.CLIENT_URL);
+   res.redirect(`${process.env.CLIENT_URL}/app?token=${token}`);
  
   })(req, res, next);
 };

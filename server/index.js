@@ -19,7 +19,7 @@ connectDB();
 const port = process.env.PORT;
 app.use(
   cors({
-    origin: ["https://ss-2-final-demo.vercel.app/", "http://localhost:5173"], 
+    origin: ["https://ss-2-final-demo.vercel.app", "http://localhost:5173"], 
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   }),
@@ -42,7 +42,7 @@ passport.use(
   ),
 );
 
-// app.listen(port, () => {
-//   console.log(`The server is running at http://localhost:${port}`);
-// });
-export default app;
+app.listen(port, () => {
+  console.log(`The server is running at http://localhost:${port}`);
+});
+// export default app;
