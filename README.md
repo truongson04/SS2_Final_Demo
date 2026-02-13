@@ -171,13 +171,13 @@ The backend runs by default on [http://localhost:3000](http://localhost:3000).
   - Vue.js 3
   - Vite
   - Tailwind CSS
-  - Pinia / Vuex (state)
+  - Pinia 
   - Axios
 
 - **Backend**  
   - Node.js
   - Express
-  - (Optional integrations: OpenAI or similar for AI, MongoDB or other DB)
+  - Gemini API
 
 ---
 
