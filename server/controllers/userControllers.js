@@ -147,6 +147,7 @@ export const googleLogin = (req, res, next) => {
 };
 // forgot password (send OTP)
 export const sendOTP = async (req, res) => {
+  console.log("Iam here");
   const { email } = req.body;
   const userCheck = await User.findOne({
     email,
@@ -174,12 +175,10 @@ export const sendOTP = async (req, res) => {
     const messageContent = `Your otp is ${otp}. You have 3 minutes to use it`;
     console.log(otp);
     sendEmail(email, `Verification + ${Date.now()}`, messageContent);
-    return res
-      .status(200)
-      .json({
-        message:
-          "An OTP code has been sent to your email. Please check it, even with your spam letter",
-      });
+    return res.status(200).json({
+      message:
+        "An OTP code has been sent to your email. Please check it, even with your spam letter",
+    });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });
