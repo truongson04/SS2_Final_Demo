@@ -1,5 +1,5 @@
 
-import Sessions from "../models/sessions.js";
+import Sessions from "../models/Sessions.js";
 import genAI from "../config/ai.js";
 import Resume from "../models/Resumes.js";
 
