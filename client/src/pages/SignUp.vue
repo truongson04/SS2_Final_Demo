@@ -14,10 +14,10 @@ const formData = ref({
   password: "",
 });
 const getOtp = async () => {
-  console.log("Iam here");
   try {
     const { data } = await clientApi.post("/api/users/forgot", {
       email: email.value,
+      newCheck: true,
     });
 
     showOtp.value = true;
@@ -38,6 +38,7 @@ const handleSubmit = async () => {
     router.push("/app");
     toast.success(data.message);
   } catch (error) {
+    console.log(error);
     toast.error(error?.response?.data?.message || error.message, {
       position: "top-center",
     });
