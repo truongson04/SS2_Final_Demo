@@ -14,6 +14,7 @@ const formData = ref({
   password: "",
 });
 const getOtp = async () => {
+  console.log("Iam here");
   try {
     const { data } = await clientApi.post("/api/users/forgot", {
       email: email.value,
