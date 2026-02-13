@@ -42,7 +42,7 @@ passport.use(
   ),
 );
 
-app.listen(port, () => {
-  console.log(`The server is running at http://localhost:${port}`);
-});
-// export default app;
+// app.listen(port, () => {
+//   console.log(`The server is running at http://localhost:${port}`);
+// });
+export default app;
