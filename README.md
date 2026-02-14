@@ -1,4 +1,4 @@
-# SS2_Final_Demo
+# AI-Powered Resume Builder Website 
 
 A simple, full-stack website that allows users to create CVs with AI enhancement.  
 This project contains both a Vue.js frontend and a Node.js backend API, organized in separate folders for clear structure and ease of development.
@@ -21,7 +21,8 @@ This project contains both a Vue.js frontend and a Node.js backend API, organize
 
 ## Overview
 
-**SS2_Final_Demo** is a full-stack web application designed to help users quickly and easily generate professional-looking CVs. AI features assist with content suggestions and polishing, while the live-preview editor and custom theming allow for a modern and personal CV creation experience.
+ A website that allows users to create, manage, and enhance professional resumes/CVs with the assistance of AI technologies. The website provides user authentication, PDF upload, advanced AI-based content improvement, multiple template selection, and personalized dashboard features. Its main goal is to help users generate modern, compelling resumes quickly while leveraging AI for optimal wording and design.
+
 
 ---
 
@@ -33,7 +34,7 @@ This project contains both a Vue.js frontend and a Node.js backend API, organize
 - **PDF Download:** Export your completed CV to PDF.
 - **User Authentication:** (if implemented) Register/login to save and manage your CVs.
 - **Cloud Storage:** (if implemented) Save your CVs to the cloud for future editing.
-- **Responsive Design:** Works seamlessly across devices.
+
 
 ---
 
