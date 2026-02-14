@@ -147,7 +147,6 @@ export const googleLogin = (req, res, next) => {
 };
 // forgot password (send OTP)
 export const sendOTP = async (req, res) => {
-  console.log("Iam here");
   const { email } = req.body;
   const userCheck = await User.findOne({
     email,
@@ -172,9 +171,101 @@ export const sendOTP = async (req, res) => {
     };
     const forgot = new Forgot(forgotObj);
     await forgot.save();
-    const messageContent = `Your otp is ${otp}. You have 3 minutes to use it`;
+    const messageContent = `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+    <title>Verification Code</title>
+    <style>
+        /* CSS Reset cơ bản cho Email */
+        body { margin: 0; padding: 0; min-width: 100%; background-color: #020617; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        table { border-spacing: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        td { padding: 0; }
+        img { border: 0; }
+        .wrapper { width: 100%; table-layout: fixed; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; background-color: #020617; }
+        .webkit { max-width: 600px; margin: 0 auto; }
+        
+        /* Dark Mode support */
+        @media (prefers-color-scheme: dark) {
+            body { background-color: #020617 !important; }
+            .content-block { background-color: #0f172a !important; }
+        }
+    </style>
+</head>
+<body style="background-color: #020617; margin: 0; padding: 0;">
+    
+    <center class="wrapper" style="width: 100%; table-layout: fixed; background-color: #020617; padding-top: 40px; padding-bottom: 40px;">
+        <div class="webkit" style="max-width: 600px; margin: 0 auto;">
+            
+            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; border: 1px solid #1e293b; background-color: #0f172a; box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);">
+                
+                <tr>
+                    <td height="4" style="background-color: #06b6d4; font-size: 0; line-height: 0;">&nbsp;</td>
+                </tr>
+
+             
+
+                <tr>
+                    <td align="center" style="padding: 0 40px;">
+                        <h1 style="color: #ffffff; font-size: 24px; font-weight: bold; margin: 0 0 10px 0; letter-spacing: 1px;">
+                            SYSTEM ALERT
+                        </h1>
+                        <p style="color: #94a3b8; font-size: 14px; margin: 0 0 30px 0; line-height: 1.5;">
+                            Authentication request detected. <br>Use the code below to verify your identity.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="center" style="padding: 0 40px 40px 40px;">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td align="center" style="background-color: #020617; border: 2px dashed #334155; border-radius: 12px; padding: 30px;">
+                                    
+                                    <span style="display: block; color: #06b6d4; font-family: 'Courier New', monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">
+                                        Security Code
+                                    </span>
+                                    
+                                    <span style="display: block; color: #ffffff; font-family: 'Courier New', monospace; font-size: 42px; font-weight: bold; letter-spacing: 10px; text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);">
+                                        ${otp}
+                                    </span>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="center" style="padding: 0 40px 40px 40px;">
+                        <p style="color: #ef4444; font-size: 13px; margin: 0; font-family: 'Courier New', monospace;">
+                            [!] This code will expire in 3 minutes.
+                        </p>
+                        <p style="color: #64748b; font-size: 13px; margin: 10px 0 0 0;">
+                            If you did not request this, please ignore this email or contact support.
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    
+                </tr>
+
+            </table>
+            
+          
+
+        </div>
+    </center>
+</body>
+</html>
+    `;
     console.log(otp);
-    sendEmail(email, `Verification + ${Date.now()}`, messageContent);
+    sendEmail(email, `CV Builder Verification + ${Date.now()}`, messageContent);
     return res.status(200).json({
       message:
         "An OTP code has been sent to your email. Please check it, even with your spam letter",

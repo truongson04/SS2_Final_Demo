@@ -24,14 +24,13 @@ getUserData();
     <nav
       class="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 transition-all"
     >
-      <router-link to="/" class="flex items-center gap-2 group">
+      <router-link to="https://prebuiltui.com" class="flex items-center gap-2">
         <div
-          class="h-8 w-8 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-sm shadow-lg group-hover:shadow-cyan-500/25 transition"
+          class="h-10 w-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl"
         >
-          CV
+          <img src="../assets/dummy_profile.png" class="object-cover" />
         </div>
-        <span
-          class="font-bold text-lg tracking-tight text-white hidden sm:block"
+        <span class="font-bold text-xl tracking-tight text-white"
           >CVBuilder</span
         >
       </router-link>
