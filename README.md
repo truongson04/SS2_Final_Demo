@@ -1,198 +1,201 @@
-# AI-Powered Resume Builder Website 
+# AI-Powered Resume Builder
 
-A simple, full-stack website that allows users to create CVs with AI enhancement.  
-This project contains both a Vue.js frontend and a Node.js backend API, organized in separate folders for clear structure and ease of development.
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Frontend (Client)](#frontend-client)
-- [Backend (Server)](#backend-server)
-- [Getting Started](#getting-started)
-- [Tech Stack](#tech-stack)
-- [License](#license)
-- [Contact](#contact)
-
----
+A full-stack web application for creating, editing, and exporting professional resumes with AI-assisted content generation.
 
 ## Overview
 
- A website that allows users to create, manage, and enhance professional resumes/CVs with the assistance of AI technologies. The website provides user authentication, PDF upload, advanced AI-based content improvement, multiple template selection, and personalized dashboard features. Its main goal is to help users generate modern, compelling resumes quickly while leveraging AI for optimal wording and design.
+This project provides an end-to-end resume building workflow, including:
 
+- account authentication and session handling
+- resume editing with structured sections
+- AI assistance for resume content
+- template-based visual rendering
+- PDF export and related utilities
 
----
+The repository is organized into two main apps:
 
-## Features
+- `client`: Vue 3 frontend built with Vite
+- `server`: Node.js + Express API with MongoDB integration
 
-- **AI-Powered Suggestions:** Enhance your CV content with intelligent recommendations.
-- **Section Editing:** Modify personal info, education, experience, skills, projects, and more.
-- **Real-time Preview:** Instantly see your CV as you build it.
-- **PDF Download:** Export your completed CV to PDF.
-- **User Authentication:** (if implemented) Register/login to save and manage your CVs.
-- **Cloud Storage:** (if implemented) Save your CVs to the cloud for future editing.
+## Key Features
 
+- User authentication (email/password and OAuth flow support in backend dependencies)
+- Resume CRUD management
+- AI resume enhancement endpoints
+- Multiple resume templates and live preview
+- PDF-related processing and export flow
+- Cloud/media integration via ImageKit
 
----
+## Tech Stack
+
+### Frontend
+
+- Vue 3
+- Vite
+- Vue Router
+- Pinia
+- Tailwind CSS
+- Axios
+
+### Backend
+
+- Node.js (ES Modules)
+- Express
+- MongoDB + Mongoose
+- JWT + express-session
+- Passport (Google OAuth strategy)
+- Gemini API SDK (`@google/generative-ai`)
+- Puppeteer
+- Multer
+- Nodemailer
 
 ## Project Structure
 
-```
+```text
 SS2_Final_Demo/
-│
-├── client/              # Frontend (Vue.js, Vite, TailwindCSS)
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/
-│   │   ├── composables/
-│   │   ├── configs/
-│   │   ├── pages/
-│   │   ├── routes/
-│   │   ├── App.vue
-│   │   ├── main.js
-│   │   └── style.css
-│   ├── store/
-│   ├── index.html
-│   ├── package.json
-│   ├── tailwind.config.js
-│   ├── vite.config.js
-│   └── ...
-│
-├── server/              # Backend (Node.js/Express)
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   └── index.js       # Entry point
-│   ├── package.json
-│   └── ...
-│
-├── README.md
-└── package-lock.json
+|-- client/
+|   |-- src/
+|   |   |-- assets/
+|   |   |-- components/
+|   |   |-- composables/
+|   |   |-- configs/
+|   |   |-- pages/
+|   |   |-- routes/
+|   |   |-- App.vue
+|   |   `-- main.js
+|   |-- store/
+|   |-- package.json
+|   `-- vite.config.js
+|-- server/
+|   |-- config/
+|   |-- controllers/
+|   |-- middlewares/
+|   |-- models/
+|   |-- routes/
+|   |-- index.js
+|   `-- package.json
+`-- README.md
 ```
 
----
+## Getting Started
 
-## Frontend (Client)
+### Prerequisites
 
-The frontend is built with [Vue.js 3](https://vuejs.org/) and [Vite](https://vitejs.dev/), styled with [Tailwind CSS](https://tailwindcss.com/).
+- Node.js 18+ (recommended)
+- npm
+- MongoDB instance (local or cloud)
 
-### Main folders:
+### 1. Clone the repository
 
-- **`src/components/`**: Reusable UI components (forms, previews, inputs, dialogs, etc.)
-- **`src/pages/`**: Page-level Vue components (Home, CV Editor, Login, etc.)
-- **`src/routes/`**: Routing and navigation setup.
-- **`src/composables/`**: Vue composition logic and custom hooks.
-- **`store/`**: Pinia/Vuex (state management) modules.
+```bash
+git clone https://github.com/truongson04/SS2_Final_Demo.git
+cd SS2_Final_Demo
+```
 
-### Key configuration:
+### 2. Install dependencies
 
-- **Development server:** Vite (`npm run dev`)
-- **Styling:** Tailwind CSS
-- **API Communication:** Axios (calls to backend server)
-
-### Usage
+Install client dependencies:
 
 ```bash
 cd client
 npm install
-npm run dev
 ```
-Visit [http://localhost:5173](http://localhost:5173).
 
----
-
-## Backend (Server)
-
-The backend is structured with [Node.js](https://nodejs.org/) and [Express](https://expressjs.com/).
-
-### Main folders:
-
-- **`src/controllers/`**: Business logic and request handlers.
-- **`src/models/`**: Data models and database schemas (if any, e.g. MongoDB).
-- **`src/routes/`**: Express route definitions (e.g., `/api/cv`, `/api/auth`).
-- **`src/services/`**: Service modules (AI integration, PDF generation, etc.).
-- **`src/middlewares/`**: Authentication, logging, error handling.
-- **`src/utils/`**: Utility/helper functions.
-- **`src/index.js`**: Main entry, sets up Express server.
-- **`package.json`**: Backend dependencies.
-
-### Usage
+Install server dependencies:
 
 ```bash
-cd server
+cd ../server
 npm install
+```
+
+## Environment Variables
+
+Create a `.env` file inside `server/` and define values based on your setup.
+
+Typical variables used by this stack include:
+
+```env
+PORT=3000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+SESSION_SECRET=your_session_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=your_google_callback_url
+GEMINI_API_KEY=your_gemini_api_key
+IMAGEKIT_PUBLIC_KEY=your_imagekit_public_key
+IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
+IMAGEKIT_URL_ENDPOINT=your_imagekit_url_endpoint
+EMAIL_USER=your_smtp_user
+EMAIL_PASS=your_smtp_password
+CLIENT_URL=http://localhost:5173
+```
+
+Note: exact variable names may differ slightly depending on implementation in `server/config` and controllers.
+
+## Run the Application
+
+Start backend (from `server/`):
+
+```bash
 npm start
 ```
-The backend runs by default on [http://localhost:3000](http://localhost:3000).
 
----
+Start frontend (from `client/` in another terminal):
 
-## Getting Started
+```bash
+npm run dev
+```
 
-1. **Clone the repo**
-    ```bash
-    git clone https://github.com/truongson04/SS2_Final_Demo.git
-    cd SS2_Final_Demo
-    ```
+Default local URLs:
 
-2. **Setup the Backend**
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:3000`
 
-    ```bash
-    cd server
-    npm install
-    npm start
-    ```
+## Available Scripts
 
-3. **Setup the Frontend**
+### Client (`client/package.json`)
 
-    In another terminal window:
-    ```bash
-    cd client
-    npm install
-    npm run dev
-    ```
+- `npm run dev`: start Vite development server
+- `npm run build`: build for production
+- `npm run preview`: preview production build
 
-4. **Open the app**
+### Server (`server/package.json`)
 
-    - Frontend: [http://localhost:5173](http://localhost:5173)
-    - Backend API: [http://localhost:3000](http://localhost:3000)
+- `npm start`: run server with Nodemon (`nodemon --inspect ./index.js`)
 
----
+## API Modules
 
-## Tech Stack
+Main backend route groups:
 
-- **Frontend**  
-  - Vue.js 3
-  - Vite
-  - Tailwind CSS
-  - Pinia 
-  - Axios
+- `routes/userRoute.js`
+- `routes/resumeRoute.js`
+- `routes/aiRoute.js`
 
-- **Backend**  
-  - Node.js
-  - Express
-  - Gemini API
+Refer to route/controller files for endpoint-level details.
 
----
+## Deployment Notes
+
+Both `client/` and `server/` include `vercel.json`, indicating Vercel-based deployment configuration.
+
+Before deploying, ensure:
+
+- all required environment variables are configured on your hosting provider
+- CORS and callback URLs match your production domain
+- MongoDB/network access is correctly configured
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes with clear messages.
+4. Open a pull request.
 
 ## License
 
-MIT License
-
----
+This project is licensed under the ISC License (per `server/package.json`).
 
 ## Contact
 
-- Author: [truongson04](https://github.com/truongson04)
-- Issues: [Open an Issue](https://github.com/truongson04/SS2_Final_Demo/issues)
-
----
-
-> *Note: Some features (e.g. authentication, cloud storage, or AI) depend on backend implementation details. Please check the `server/` directory and route docs for actual capabilities and endpoints.*
+- Repository: <https://github.com/truongson04/SS2_Final_Demo>
+- Issues: <https://github.com/truongson04/SS2_Final_Demo/issues>
