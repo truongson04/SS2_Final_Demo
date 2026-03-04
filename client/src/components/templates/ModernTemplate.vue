@@ -12,7 +12,7 @@ const props = defineProps({
     default: "#333",
   },
 });
-console.log(props);
+
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const parts = dateStr.split("-");

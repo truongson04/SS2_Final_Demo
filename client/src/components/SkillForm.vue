@@ -10,7 +10,7 @@ const addSkill = () => {
 };
 const removeSkill = (index) => {
   data.value = data.value.filter((_, i) => {
-    data.value[i] !== data.value[index];
+    return data.value[i] !== data.value[index];
   });
 };
 </script>

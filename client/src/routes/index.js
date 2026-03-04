@@ -12,12 +12,18 @@ import Interview from "../pages/Interview.vue";
 import Analysis from "../pages/Analysis.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Otp from "../pages/Otp.vue";
+import AdminPage from "../pages/AdminPage.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: AdminPage,
   },
   {
     path: "/app",
@@ -77,15 +83,15 @@ const routes = [
     },
   },
   {
-    path:'/forgot',
-    name:'Forgot',
-    component:ForgotPassword
-  }, 
+    path: "/forgot",
+    name: "Forgot",
+    component: ForgotPassword,
+  },
   {
-    path:'/otp',
-    name:'OTP',
-    component:Otp
-  }
+    path: "/otp",
+    name: "OTP",
+    component: Otp,
+  },
 ];
 const router = createRouter({
   history: createWebHistory(),

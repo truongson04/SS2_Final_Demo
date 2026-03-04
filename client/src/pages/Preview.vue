@@ -5,6 +5,7 @@ import { onMounted, ref } from "vue";
 import ResumePreview from "../components/ResumePreview.vue";
 import Loading from "../components/Loading.vue";
 import clientApi from "../configs/api/clientApi";
+import { toast } from "vue3-toastify";
 
 const route = useRoute();
 const resumeId = route.params.resumeId;
@@ -16,6 +17,7 @@ const loadResume = async () => {
     const { data } = await clientApi.get(`/api/resumes/public/${resumeId}`);
     resumeData.value = data.resume;
   } catch (error) {
+    toast.error("Something went wrong when loading your resume");
     console.log(error);
   } finally {
     isLoading.value = false;

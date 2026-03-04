@@ -122,7 +122,6 @@ const sendMessage = async () => {
   }
 };
 const handleChat = async () => {
-  // isInterview.value = true;
   mode.value = "chat";
 };
 onMounted(async () => {

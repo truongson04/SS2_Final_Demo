@@ -16,14 +16,7 @@ const handleChange = (field, value) => {
     reader.readAsDataURL(value);
   }
 };
-// const imageUrl = computed(() => {
-//   const img = data.value.personal_info.image;
-//   if (!img) return null;
 
-//   if (typeof img === "string") return img;
-
-//   return URL.createObjectURL(img);
-// });
 const fields = [
   {
     key: "full_name",

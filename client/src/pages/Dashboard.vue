@@ -79,7 +79,7 @@ const uploadResume = async () => {
     console.log(error);
     isLoading.value = false;
 
-    toast.error(error?.response?.data?.message || error.message);
+    toast.error("Please check your uploaded file and try again");
   }
 };
 const editTitle = async () => {
