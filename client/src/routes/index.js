@@ -12,12 +12,18 @@ import Interview from "../pages/Interview.vue";
 import Analysis from "../pages/Analysis.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Otp from "../pages/Otp.vue";
+import AdminPage from "../pages/AdminPage.vue";
 
 const routes = [
   {
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+  path:"/admin",
+  name:"AdminPage",
+  component:AdminPage
   },
   {
     path: "/app",
