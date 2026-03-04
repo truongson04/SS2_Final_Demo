@@ -20,10 +20,11 @@ const routes = [
     name: "Home",
     component: Home,
   },
+
   {
-  path:"/admin",
-  name:"AdminPage",
-  component:AdminPage
+    path: "/admin",
+    name: "AdminPage",
+    component: AdminPage,
   },
   {
     path: "/app",
@@ -83,15 +84,15 @@ const routes = [
     },
   },
   {
-    path:'/forgot',
-    name:'Forgot',
-    component:ForgotPassword
-  }, 
+    path: "/forgot",
+    name: "Forgot",
+    component: ForgotPassword,
+  },
   {
-    path:'/otp',
-    name:'OTP',
-    component:Otp
-  }
+    path: "/otp",
+    name: "OTP",
+    component: Otp,
+  },
 ];
 const router = createRouter({
   history: createWebHistory(),

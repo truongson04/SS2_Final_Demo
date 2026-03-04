@@ -36,6 +36,7 @@
               type="search"
               class="w-full pl-10 pr-4 py-2 rounded-lg shadow focus:outline-none focus:shadow-outline text-gray-600 font-medium"
               placeholder="Search..."
+              v-model="nameSearch"
             />
             <div class="absolute top-0 left-0 inline-flex items-center p-2">
               <svg
@@ -187,7 +188,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in users" :key="user._id">
+            <tr v-for="user in filteredUsers" :key="user._id">
               <td class="border-dashed border-t border-gray-200 px-3">
                 <label
                   class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer"
@@ -291,6 +292,12 @@ const toggleColumn = (key) => {
     hiddenColumns.value.push(key);
   }
 };
+const nameSearch = ref("");
+const filteredUsers = computed(() => {
+  return users.value.filter((user) => {
+    return user.name.includes(nameSearch.value.trim());
+  });
+});
 
 const handleChangeStatus = async (name, id, event) => {
   const isChange = window.confirm(

@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRouter);
 app.use("/api/resumes", resumeRouter);
 app.use("/api/ai", aiRouter);
-app.use("/api/admin", adminRoutes); 
+app.use("/api/admin", adminRoutes);
 app.use(passport.initialize());
 passport.use(
   new GoogleStrategy(
@@ -55,6 +55,6 @@ passport.use(
 export default app;
 if (process.env.NODE_ENV === "develop") {
   app.listen(port, () => {
-    console.log(`The server is running at http://localhost:${port} and nodemon has restarted successfully!`);
+    console.log(`The server is running at http://localhost:${port} `);
   });
 }
