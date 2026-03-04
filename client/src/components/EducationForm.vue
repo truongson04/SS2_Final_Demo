@@ -89,105 +89,137 @@ const removeEducation = (index) => {
         </p>
       </div>
 
-      <div v-else class="flex flex-col gap-6">
-        <div
-          v-for="(education, index) in data"
-          :key="index"
-          class="group relative bg-slate-950 border border-slate-800 rounded-xl p-5 transition-all hover:border-slate-600"
-        >
+      <draggable
+        v-else
+        v-model="data"
+        item-key="degree"
+        handle=".drag-handle"
+        animation="200"
+        class="flex flex-col gap-6"
+      >
+        <template #item="{ element: education, index }">
           <div
-            class="flex justify-between items-start mb-4 border-b border-slate-800 pb-3"
+            class="group relative bg-slate-950 border border-slate-800 rounded-xl p-5 transition-all hover:border-slate-600"
           >
-            <h4 class="text-sm font-bold text-white flex items-center gap-2">
-              <span
-                class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-[10px] text-slate-400 border border-slate-700"
-              >
-                {{ index + 1 }}
-              </span>
-              Education Details
-            </h4>
-            <button
-              @click="removeEducation(index)"
-              class="text-slate-500 hover:text-red-400 transition-colors p-1 rounded hover:bg-red-400/10"
-              title="Remove this item"
+            <div
+              class="flex justify-between items-start mb-4 border-b border-slate-800 pb-3"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+              <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                <button
+                  class="drag-handle cursor-grab text-slate-500 hover:text-white transition active:cursor-grabbing"
+                  title="Drag to reorder"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                </button>
+                <span
+                  class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-[10px] text-slate-400 border border-slate-700"
+                >
+                  {{ index + 1 }}
+                </span>
+                Education Details
+              </h4>
+              <button
+                @click="removeEducation(index)"
+                class="text-slate-500 hover:text-red-400 transition-colors p-1 rounded hover:bg-red-400/10"
+                title="Remove this item"
               >
-                <path d="M3 6h18" />
-                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-              </svg>
-            </button>
-          </div>
-
-          <div>
-            <div class="space-y-1.5">
-              <label class="text-xs text-slate-400 ml-1">Degree</label>
-              <input
-                type="text"
-                placeholder="e.g. Bachelor of Science"
-                v-model="education.degree"
-                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
-              />
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs text-slate-400 ml-1"
-                >Institution / University</label
-              >
-              <input
-                type="text"
-                placeholder="e.g. Hanoi University"
-                v-model="education.institution"
-                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
-              />
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs text-slate-400 ml-1">Field of Study</label>
-              <input
-                type="text"
-                placeholder="e.g. Computer Science"
-                v-model="education.field"
-                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
-              />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 6h18" />
+                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                </svg>
+              </button>
             </div>
 
             <div>
               <div class="space-y-1.5">
-                <label class="text-xs text-slate-400 ml-1"
-                  >Graduation Date</label
-                >
-                <input
-                  type="month"
-                  v-model="education.graduation_date"
-                  class="w-full px-3 py-2 bg-white border border-slate-700 rounded-lg text-black placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
-                />
-              </div>
-              <div class="space-y-1.5">
-                <label class="text-xs text-slate-400 ml-1"
-                  >GPA (Optional)</label
-                >
+                <label class="text-xs text-slate-400 ml-1">Degree</label>
                 <input
                   type="text"
-                  placeholder="e.g. 3.8/4.0"
-                  v-model="education.gpa"
+                  placeholder="e.g. Bachelor of Science"
+                  v-model="education.degree"
                   class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
                 />
               </div>
+
+              <div class="space-y-1.5">
+                <label class="text-xs text-slate-400 ml-1"
+                  >Institution / University</label
+                >
+                <input
+                  type="text"
+                  placeholder="e.g. Hanoi University"
+                  v-model="education.institution"
+                  class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                />
+              </div>
+
+              <div class="space-y-1.5">
+                <label class="text-xs text-slate-400 ml-1"
+                  >Field of Study</label
+                >
+                <input
+                  type="text"
+                  placeholder="e.g. Computer Science"
+                  v-model="education.field"
+                  class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                />
+              </div>
+
+              <div>
+                <div class="space-y-1.5">
+                  <label class="text-xs text-slate-400 ml-1"
+                    >Graduation Date</label
+                  >
+                  <input
+                    type="month"
+                    v-model="education.graduation_date"
+                    class="w-full px-3 py-2 bg-white border border-slate-700 rounded-lg text-black placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                  />
+                </div>
+                <div class="space-y-1.5">
+                  <label class="text-xs text-slate-400 ml-1"
+                    >GPA (Optional)</label
+                  >
+                  <input
+                    type="text"
+                    placeholder="e.g. 3.8/4.0"
+                    v-model="education.gpa"
+                    class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+      </draggable>
     </div>
   </div>
 </template>

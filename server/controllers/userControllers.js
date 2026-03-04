@@ -264,7 +264,7 @@ export const sendOTP = async (req, res) => {
 </body>
 </html>
     `;
-    console.log(otp);
+    
     sendEmail(email, `CV Builder Verification + ${Date.now()}`, messageContent);
     return res.status(200).json({
       message:

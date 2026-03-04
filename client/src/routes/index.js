@@ -20,9 +20,10 @@ const routes = [
     name: "Home",
     component: Home,
   },
+
   {
     path: "/admin",
-    name: "Admin",
+    name: "AdminPage",
     component: AdminPage,
   },
   {
