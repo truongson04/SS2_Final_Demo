@@ -6,6 +6,23 @@ const UserSchema = new mongoose.Schema(
     email: String,
     password: String,
     googleId: String,
+    cvNumbers: {
+      type:Number,
+      default:0
+    }, 
+    isActive: {
+      type:Boolean,
+      default:true
+    },
+    role:{
+      type:String, 
+      default:"user",
+    
+    },
+    isDeleted:{
+      type:Boolean,
+      default:false
+    }
   },
   { timestamps: true },
 );
