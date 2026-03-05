@@ -1,251 +1,340 @@
 <template>
-  <div class="antialiased sans-serif bg-gray-200 h-screen">
-    <div class="container mx-auto py-6 px-4">
-      <h1 class="text-3xl py-4 border-b mb-10">User Management</h1>
+  <div class="min-h-screen bg-gray-50 pb-12">
+    <!-- Header -->
+    <header
+      class="bg-white shadow-sm sticky top-0 z-10 transition-shadow duration-300"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <h1
+            class="text-xl font-bold text-gray-900 tracking-tight flex items-center"
+          >
+            User Management
+          </h1>
+        </div>
+      </div>
+    </header>
 
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <!-- Top Action Bar -->
       <div
-        v-show="selectedRows.length"
-        class="bg-teal-200 fixed top-0 left-0 right-0 z-40 w-full shadow"
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6"
       >
-        <div class="container mx-auto px-4 py-4">
-          <div class="flex md:items-center">
-            <div class="mr-4 flex-shrink-0">
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <!-- Search -->
+          <div class="relative w-full md:w-1/3">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
               <svg
-                class="h-8 w-8 text-teal-600"
+                class="h-5 w-5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
+                aria-hidden="true"
               >
                 <path
                   fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                   clip-rule="evenodd"
                 />
               </svg>
             </div>
-            <div class="text-teal-800 text-lg">
-              {{ selectedRows.length }} users are selected
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mb-4 flex justify-between items-center">
-        <div class="flex-1 pr-4">
-          <div class="relative md:w-1/3">
             <input
               type="search"
-              class="w-full pl-10 pr-4 py-2 rounded-lg shadow focus:outline-none focus:shadow-outline text-gray-600 font-medium"
-              placeholder="Search..."
               v-model="nameSearch"
+              class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 transition-colors sm:text-sm"
+              placeholder="Search users by name..."
             />
-            <div class="absolute top-0 left-0 inline-flex items-center p-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6 text-gray-400"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-                <circle cx="10" cy="10" r="7" />
-                <line x1="21" y1="21" x2="15" y2="15" />
-              </svg>
-            </div>
           </div>
-        </div>
 
-        <div class="flex gap-2">
-          <div class="shadow rounded-lg flex relative" ref="dropdownContainer">
-            <button
-              @click.prevent="open = !open"
-              class="rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6 md:hidden"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+          <!-- Actions -->
+          <div class="flex flex-wrap items-center gap-3">
+            <!-- Columns Dropdown -->
+            <div class="relative" ref="dropdownContainer">
+              <button
+                @click.prevent="open = !open"
+                class="inline-flex items-center px-4 py-2.5 border border-gray-200 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
               >
-                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-                <path
-                  d="M5.5 5h13a1 1 0 0 1 0.5 1.5L14 12L14 19L10 16L10 12L5 6.5a1 1 0 0 1 0.5 -1.5"
-                />
-              </svg>
-              <span class="hidden md:block">Display</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 ml-1"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                stroke-width="2"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="0" y="0" width="24" height="24" stroke="none"></rect>
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-
-            <div
-              v-show="open"
-              class="z-40 absolute top-0 right-0 w-40 bg-white rounded-lg shadow-lg mt-12 block py-1 overflow-hidden"
-            >
-              <label
-                v-for="heading in headings"
-                :key="heading.key"
-                class="flex justify-start items-center text-truncate hover:bg-gray-100 px-4 py-2 cursor-pointer"
-              >
-                <div class="text-teal-600 mr-3">
-                  <input
-                    type="checkbox"
-                    class="form-checkbox focus:outline-none focus:shadow-outline"
-                    :checked="!hiddenColumns.includes(heading.key)"
-                    @change="toggleColumn(heading.key)"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 mr-2 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
                   />
+                </svg>
+                Columns
+              </button>
+
+              <transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
+              >
+                <div
+                  v-show="open"
+                  class="origin-top-right absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20 overflow-hidden"
+                >
+                  <div class="py-1 p-2" role="menu" aria-orientation="vertical">
+                    <label
+                      v-for="heading in headings"
+                      :key="heading.key"
+                      class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-md cursor-pointer transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 transition duration-150 ease-in-out mr-3 cursor-pointer"
+                        :checked="!hiddenColumns.includes(heading.key)"
+                        @change="toggleColumn(heading.key)"
+                      />
+                      {{ heading.value }}
+                    </label>
+                  </div>
                 </div>
-                <div class="select-none text-gray-700">{{ heading.value }}</div>
-              </label>
+              </transition>
             </div>
-          </div>
-          <div class="shadow rounded-lg flex relative w-50">
-            <select
-              v-model="multiStatus"
-              :disabled="selectedRows.length === 0"
-              placeholder="Select status"
-              :class="
-                selectedRows.length === 0
-                  ? 'rounded-lg inline-flex items-center bg-gray-100 text-gray-400 cursor-not-allowed focus:outline-none py-2 px-2 md:px-4 w-[100%]'
-                  : 'rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4 w-[100%]'
-              "
+
+            <transition
+              enter-active-class="transition ease-out duration-200"
+              enter-from-class="opacity-0 translate-x-4"
+              enter-to-class="opacity-100 translate-x-0"
+              leave-active-class="transition ease-in duration-150"
+              leave-from-class="opacity-100 translate-x-0"
+              leave-to-class="opacity-0 translate-x-4"
             >
-              <option value="" disabled hidden>Select status</option>
-              <option :value="true" class="bg-green-500">Active</option>
-              <option :value="false" class="bg-red-500">Inactive</option>
-            </select>
+              <div
+                v-if="selectedRows.length > 0"
+                class="flex items-center gap-2 bg-indigo-50 px-3 py-1.5 rounded-xl border border-indigo-100"
+              >
+                <span class="text-xs font-semibold text-indigo-700 mr-1"
+                  >{{ selectedRows.length }} selected</span
+                >
+
+                <select
+                  v-model="multiStatus"
+                  class="block w-32 pl-3 pr-10 py-1.5 text-sm border-indigo-200 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-lg text-gray-700 bg-white"
+                >
+                  <option value="" disabled hidden>Set status</option>
+                  <option :value="true">Active</option>
+                  <option :value="false">Inactive</option>
+                </select>
+
+                <button
+                  v-if="multiStatus !== ''"
+                  @click="handleChangeStatusMulti"
+                  class="inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                >
+                  Apply
+                </button>
+
+                <div class="h-6 border-l border-indigo-200 mx-1"></div>
+
+                <button
+                  @click="handleDeleteMany"
+                  class="inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 mr-1.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  Delete
+                </button>
+              </div>
+            </transition>
           </div>
         </div>
-        <div class="shadow rounded-lg w-50">
-          <button
-            v-if="selectedRows.length > 0 && multiStatus !== ''"
-            @click="handleChangeStatusMulti"
-            class="rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4 w-[100%]"
-          >
-            Apply
-          </button>
-        </div>
-
-        <div class="shadow rounded-lg w-50">
-          <button
-            v-if="selectedRows.length > 0"
-            @click="handleDeleteMany"
-            class="rounded-lg inline-flex items-center bg-red-500 hover:text-blue-500 focus:outline-none focus:shadow-outline text-white font-semibold py-2 px-2 md:px-4 w-[100%]"
-          >
-            Delete
-          </button>
-        </div>
       </div>
 
+      <!-- Table Section -->
       <div
-        class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative"
-        style="height: 405px"
+        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
       >
-        <table
-          class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative"
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th
+                  scope="col"
+                  class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-12 sticky top-0 bg-gray-50 z-10 hidden sm:table-cell"
+                >
+                  <div class="flex items-center">
+                    <input
+                      type="checkbox"
+                      class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 transition duration-150 ease-in-out cursor-pointer"
+                      v-model="selectAll"
+                    />
+                  </div>
+                </th>
+                <th
+                  v-for="heading in headings"
+                  :key="heading.key"
+                  v-show="!hiddenColumns.includes(heading.key)"
+                  scope="col"
+                  class="px-6 py-4 text-left text-xs font-bold uppercase sticky top-0 bg-gray-50 z-10"
+                >
+                  {{ heading.value }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr
+                v-for="user in filteredUsers"
+                :key="user._id"
+                class="hover:bg-indigo-50/30 transition-colors duration-150"
+                :class="{ 'bg-indigo-50/50': selectedRows.includes(user._id) }"
+              >
+                <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                  <div class="flex items-center">
+                    <input
+                      type="checkbox"
+                      class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 transition duration-150 ease-in-out cursor-pointer"
+                      :value="user._id"
+                      v-model="selectedRows"
+                    />
+                  </div>
+                </td>
+                <td
+                  v-for="heading in headings"
+                  :key="heading.key"
+                  v-show="!hiddenColumns.includes(heading.key)"
+                  class="px-6 py-4 whitespace-nowrap text-sm"
+                >
+                  <div
+                    v-if="heading.key === 'createdAt'"
+                    class="text-gray-600 font-medium"
+                  >
+                    {{ formatDate(user.createdAt) }}
+                  </div>
+
+                  <a
+                    v-else-if="heading.key === 'email'"
+                    :href="`mailto:${user.email}`"
+                    class="text-indigo-600 hover:text-indigo-900 font-medium transition-colors flex items-center"
+                  >
+                    {{ user.email }}
+                  </a>
+
+                  <div v-else-if="heading.key === 'isActive'">
+                    <select
+                      v-model="user.isActive"
+                      :class="[
+                        'block w-full pl-3 pr-8 py-1.5 text-xs font-semibold rounded-full border-0 focus:ring-2 focus:ring-offset-1 focus:outline-none transition-colors cursor-pointer appearance-none shadow-sm',
+                        user.isActive
+                          ? 'bg-green-100 text-green-800 focus:ring-green-500'
+                          : 'bg-red-100 text-red-800 focus:ring-red-500',
+                      ]"
+                      @change="handleChangeStatus(user.name, user._id)"
+                    >
+                      <option :value="true" class="bg-white text-gray-900">
+                        Active
+                      </option>
+                      <option :value="false" class="bg-white text-gray-900">
+                        Inactive
+                      </option>
+                    </select>
+                  </div>
+
+                  <div
+                    v-else-if="heading.value === 'Action'"
+                    class="flex items-center space-x-3"
+                  >
+                    <button
+                      @click="
+                        router.push({
+                          name: 'PersonDetails',
+                          params: { userId: user._id },
+                        })
+                      "
+                      class="text-black bg-cyan-500 p-2 rounded-xl hover:bg-cyan-900 text-xs"
+                    >
+                      View details
+                    </button>
+                    <button
+                      @click="handleDeleteUser(user._id)"
+                      class="bg-red-500 p-2 rounded-xl hover:bg-pink-500 text-xs"
+                    >
+                      Delete
+                    </button>
+                  </div>
+
+                  <!-- Default Text -->
+                  <div v-else class="text-gray-900 font-medium">
+                    {{ user[heading.key] }}
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="filteredUsers.length === 0">
+                <td
+                  :colspan="
+                    hiddenColumns.length > 0
+                      ? headings.length - hiddenColumns.length + 1
+                      : headings.length + 1
+                  "
+                  class="px-6 py-12 text-center"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="mx-auto h-12 w-12 text-gray-300 mb-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                  <h3 class="text-lg font-medium text-gray-900">
+                    No users found
+                  </h3>
+                  <p class="mt-1 text-sm text-gray-500">
+                    We couldn't find any users matching your search.
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- phân trang  -->
+        <div
+          class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
-          <thead>
-            <tr class="text-left">
-              <th
-                class="py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-100"
-              >
-                <label
-                  class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    class="form-checkbox focus:outline-none focus:shadow-outline"
-                    v-model="selectAll"
-                  />
-                </label>
-              </th>
-              <th
-                v-for="heading in headings"
-                :key="heading.key"
-                v-show="!hiddenColumns.includes(heading.key)"
-                class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs"
-              >
-                {{ heading.value }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in filteredUsers" :key="user._id">
-              <td class="border-dashed border-t border-gray-200 px-3">
-                <label
-                  class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    class="form-checkbox focus:outline-none focus:shadow-outline"
-                    :value="user._id"
-                    v-model="selectedRows"
-                  />
-                </label>
-              </td>
-              <td
-                v-for="heading in headings"
-                :key="heading.key"
-                v-show="!hiddenColumns.includes(heading.key)"
-                class="border-dashed border-t border-gray-200"
-              >
-                <select
-                  v-model="user.isActive"
-                  :class="`rounded-lg inline-flex items-center bg-${user.isActive ? 'green' : 'red'}-500 focus:outline-none focus:shadow-outline text-white  py-2 px-2 md:px-4`"
-                  v-if="heading.key === 'isActive'"
-                  @change="handleChangeStatus(user.name, user._id, $event)"
-                >
-                  <option
-                    :value="true"
-                    class="rounded-lg inline-flex items-center bg-green-500 hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4"
-                  >
-                    Active
-                  </option>
-                  <option
-                    :value="false"
-                    class="bg-red-500 font-bold text-white"
-                  >
-                    Inactive
-                  </option>
-                </select>
-                <span v-else-if="heading.value === 'Action'">
-                  <span class="bg-yellow-500 p-3 mr-3 cursor-pointer"
-                    >View details</span
-                  >
-                  <span
-                    class="bg-pink-500 p-3 cursor-pointer rounded-lg p-3"
-                    @click="handleDeleteUser(user._id)"
-                  >
-                    Delete</span
-                  >
-                </span>
-                <span class="text-gray-700 px-6 py-3 flex items-center" v-else
-                  >{{ user[heading.key] }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <div class="text-sm text-gray-500">
+            Showing
+            <span class="font-medium text-gray-900">{{
+              filteredUsers.length
+            }}</span>
+            of <span class="font-medium text-gray-900">{{ users.length }}</span>
+            {{ users.length === 1 ? "user" : "users" }}
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
@@ -253,31 +342,34 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
+import { useRouter } from "vue-router";
 
+// Added createdAt heading
 const headings = ref([
-  { key: "_id", value: "User ID" },
   { key: "name", value: "Name" },
   { key: "email", value: "Email" },
+  { key: "createdAt", value: "Join Date" },
   { key: "cvNumbers", value: "Resume Number" },
   { key: "isActive", value: "Status" },
   { value: "Action" },
 ]);
 
 const users = ref([]);
-
+const router = useRouter();
 const selectedRows = ref([]);
 const hiddenColumns = ref([]);
 const open = ref(false);
 const dropdownContainer = ref(undefined);
 const multiStatus = ref("");
+
 const selectAll = computed({
   get: () =>
-    users.value.length
-      ? selectedRows.value.length === users.value.length
+    users.value.length && filteredUsers.value.length
+      ? selectedRows.value.length === filteredUsers.value.length
       : false,
   set: (value) => {
     if (value) {
-      selectedRows.value = users.value.map((user) => user._id);
+      selectedRows.value = filteredUsers.value.map((user) => user._id);
     } else {
       selectedRows.value = [];
     }
@@ -292,53 +384,80 @@ const toggleColumn = (key) => {
     hiddenColumns.value.push(key);
   }
 };
+
 const nameSearch = ref("");
+
 const filteredUsers = computed(() => {
   return users.value.filter((user) => {
-    return user.name.includes(nameSearch.value.trim());
+    return user.name
+      ?.toLowerCase()
+      .includes(nameSearch.value.trim().toLowerCase());
   });
 });
+// hàm để format ngày tháng
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
-const handleChangeStatus = async (name, id, event) => {
+const handleChangeStatus = async (name, id) => {
   const isChange = window.confirm(
-    "Are you sure want to change the active status of " + name,
+    "Are you sure you want to change the active status of " + name + "?",
   );
   if (!isChange) {
+    const user = users.value.find((u, i) => u._id === id);
+    if (user) {
+      user.isActive = !user.isActive;
+    }
+
     return;
   }
-  const { data } = await clientApi.post("/api/admin/status", {
-    userId: id,
-    isActive: event.target.value,
-  });
-  toast.success(data.message);
+  try {
+    const { data } = await clientApi.post("/api/admin/status", {
+      userId: id,
+      isActive: event.target.value === "true" || event.target.value === true,
+    });
+    toast.success(data.message);
+  } catch (error) {
+    toast.error(error?.response?.data?.message || "Something went wrong!");
+  }
 };
+
 const handleChangeStatusMulti = async () => {
   const isChange = window.confirm(
-    "Are you want to change status of multiple users ? ",
+    "Are you sure you want to change the status of multiple users?",
   );
   if (!isChange) {
     return;
   }
 
   try {
+    const statusVal =
+      multiStatus.value === "true" || multiStatus.value === true;
     const { data } = await clientApi.post("/api/admin/multiStatus", {
       userIds: selectedRows.value,
-      isActive: multiStatus.value,
+      isActive: statusVal,
     });
     toast.success(data.message);
     users.value.forEach((user, index) => {
       if (selectedRows.value.includes(user._id)) {
-        users.value[index] = { ...user, isActive: multiStatus.value };
+        users.value[index] = { ...user, isActive: statusVal };
       }
     });
     selectedRows.value = [];
     multiStatus.value = "";
   } catch (error) {
-    toast.error(error.message);
+    toast.error(error?.response?.data?.message || error.message);
   }
 };
+
 const handleDeleteUser = async (userId) => {
-  const isDelete = window.confirm("Are you sure want to remove this users? ");
+  const isDelete = window.confirm("Are you sure you want to remove this user?");
   if (!isDelete) {
     return;
   }
@@ -348,21 +467,34 @@ const handleDeleteUser = async (userId) => {
     users.value = users.value.filter((user) => {
       return user._id !== userId;
     });
+
+    selectedRows.value = selectedRows.value.filter((id) => id !== userId);
   } catch (error) {
     toast.error(error?.response?.data?.message || error.message);
   }
 };
+
 const handleDeleteMany = async () => {
+  const isDelete = window.confirm(
+    "Are you sure you want to remove the selected users?",
+  );
+  if (!isDelete) {
+    return;
+  }
   try {
     const { data } = await clientApi.delete("/api/admin/delete", {
       data: { userIds: selectedRows.value },
     });
     toast.success(data.message);
+    users.value = users.value.filter(
+      (user) => !selectedRows.value.includes(user._id),
+    );
     selectedRows.value = [];
   } catch (error) {
     toast.error(error?.response?.data?.message || error.message);
   }
 };
+
 const handleClickOutside = (event) => {
   if (
     dropdownContainer.value &&
@@ -374,8 +506,12 @@ const handleClickOutside = (event) => {
 
 onMounted(async () => {
   document.addEventListener("click", handleClickOutside);
-  const { data } = await clientApi.get("/api/admin");
-  users.value = data.users;
+  try {
+    const { data } = await clientApi.get("/api/admin");
+    users.value = data.users;
+  } catch (error) {
+    toast.error("Failed to load users");
+  }
 });
 
 onUnmounted(() => {
@@ -384,40 +520,28 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-[type="checkbox"] {
-  box-sizing: border-box;
-  padding: 0;
+.custom-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #e2e8f0;
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #cbd5e1;
 }
 
-.form-checkbox {
+select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  -webkit-print-color-adjust: exact;
-  color-adjust: exact;
-  display: inline-block;
-  vertical-align: middle;
-  background-origin: border-box;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  flex-shrink: 0;
-  color: currentColor;
-  background-color: #fff;
-  border-color: #e2e8f0;
-  border-width: 1px;
-  border-radius: 0.25rem;
-  height: 1.2em;
-  width: 1.2em;
-}
-
-.form-checkbox:checked {
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
-  border-color: transparent;
-  background-color: currentColor;
-  background-size: 100% 100%;
-  background-position: center;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1em;
 }
 </style>

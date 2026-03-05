@@ -13,6 +13,7 @@ import Analysis from "../pages/Analysis.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Otp from "../pages/Otp.vue";
 import AdminPage from "../pages/AdminPage.vue";
+import PersonDetails from "../pages/PersonDetails.vue";
 
 const routes = [
   {
@@ -25,6 +26,12 @@ const routes = [
     path: "/admin",
     name: "AdminPage",
     component: AdminPage,
+  },
+  {
+    path:"/admin/:userId",
+    name:"PersonDetails",
+    component:PersonDetails
+
   },
   {
     path: "/app",

@@ -9,7 +9,7 @@ export async function getAllUsers(req, res){
         const cvNums =await Resume.countDocuments({userId:user._id});
         user.cvNumbers = cvNums;
         user.password = undefined;
-        console.log(user)
+        
         returnUsers.push(user)
         
     }
@@ -62,4 +62,20 @@ export async function deleteManyUsers(req, res) {
     } catch (error) {
         return res.status(400).json({message:error.message || "Delete failed"})
     }
+}
+export async function getUserById(req, res) {
+    try {
+        
+        const {userId} = req.params
+        
+        const user = await User.findOne({_id: userId});
+        const resumes = await Resume.find({userId});
+      
+        
+        return res.status(200).json({user, resumes})
+    } catch (error) {
+        return res.status(400).json({message:"Failed to load user"})
+        
+    }
+    
 }
