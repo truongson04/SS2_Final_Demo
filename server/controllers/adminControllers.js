@@ -79,3 +79,18 @@ export async function getUserById(req, res) {
     }
     
 }
+export async function upgradeAdmin(req, res) {
+    console.log("Yes")
+    const {userId, role} = req.body;
+    try {
+        await User.updateOne({_id: userId}, {$set:{role: role}});
+        return res.status(200).json({message:"Update successfully !"});
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:"Failed to update"})
+        
+    }
+    
+}

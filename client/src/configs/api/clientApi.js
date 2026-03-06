@@ -6,9 +6,11 @@ const clientApi = axios.create({
 clientApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role"); 
     if (token) {
       config.headers.Authorization = token;
     }
+   
     return config;
   },
   (error) => {

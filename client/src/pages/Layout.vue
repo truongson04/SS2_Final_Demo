@@ -13,6 +13,7 @@ const router = useRouter();
 
 onMounted(async () => {
   const token = route.query.token;
+  console.log(authStore.user);
 
   if (token) {
     authStore.loading = true;
@@ -21,13 +22,10 @@ onMounted(async () => {
       const { data } = await clientApi.get("/api/users/data");
 
       authStore.login(token, data.user);
-
-      router.replace("/app");
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
     } finally {
       authStore.loading = false;
-      router.push("/app");
     }
   } else {
     router.push("/app");

@@ -63,6 +63,11 @@ export async function loginUser(req, res) {
         message: "Invalid email",
       });
     }
+    if(!user.isActive){
+      return res.status(400).json({
+        message:"You have been banned, please contact the admin for details"
+      })
+    }
     const checkPassword = await user.comparePassword(password);
     if (!checkPassword) {
       return res.status(400).json({ message: "Invalid password" });
@@ -81,7 +86,7 @@ export async function loginUser(req, res) {
 export const getUserById = async (req, res) => {
   try {
     const userId = req.userId;
-    const user = await User.find({
+    const user = await User.findOne({
       _id: userId,
     });
     if (!user) {
@@ -181,7 +186,7 @@ export const sendOTP = async (req, res) => {
   </head>
     <title>Verification Code</title>
     <style>
-        /* CSS Reset cơ bản cho Email */
+       
         body { margin: 0; padding: 0; min-width: 100%; background-color: #020617; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         table { border-spacing: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         td { padding: 0; }

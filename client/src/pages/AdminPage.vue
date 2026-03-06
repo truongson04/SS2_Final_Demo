@@ -11,6 +11,12 @@
           >
             User Management
           </h1>
+          <button
+            class="bg-red-500 p-3 rounded-full text-white cursor-pointer hover:bg-red-800"
+            @click="handleLogout"
+          >
+            Log out
+          </button>
         </div>
       </div>
     </header>
@@ -280,7 +286,14 @@
                   </div>
 
                   <!-- Default Text -->
-                  <div v-else class="text-gray-900 font-medium">
+                  <div
+                    v-else
+                    :class="
+                      user.role === 'admin' && heading.key === 'name'
+                        ? 'text-cyan-400 font-medium'
+                        : 'text-gray-900 font-medium'
+                    "
+                  >
                     {{ user[heading.key] }}
                   </div>
                 </td>
@@ -343,6 +356,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
+import useAuth from "../../store/auth";
 
 // Added createdAt heading
 const headings = ref([
@@ -503,7 +517,14 @@ const handleClickOutside = (event) => {
     open.value = false;
   }
 };
-
+const authStore = useAuth();
+const handleLogout = () => {
+  const isLogout = window.confirm("Are you sure want to logout ?");
+  if (!isLogout) {
+    return;
+  }
+  authStore.logout();
+};
 onMounted(async () => {
   document.addEventListener("click", handleClickOutside);
   try {

@@ -15,6 +15,7 @@ import Otp from "../pages/Otp.vue";
 import AdminPage from "../pages/AdminPage.vue";
 import PersonDetails from "../pages/PersonDetails.vue";
 
+
 const routes = [
   {
     path: "/",
@@ -26,11 +27,31 @@ const routes = [
     path: "/admin",
     name: "AdminPage",
     component: AdminPage,
+    beforeEnter: (to, from )=>{
+    if(localStorage.getItem("role")!=='admin'){
+    return{
+      path:"/login"
+    }
+    }
+    }, 
+    meta: {
+      requireLoggedIn: true,
+    },
   },
   {
     path:"/admin/:userId",
     name:"PersonDetails",
-    component:PersonDetails
+    component:PersonDetails,
+     beforeEnter: (to, from )=>{
+    if(localStorage.getItem("role")!=='admin'){
+    return{
+      path:"/login"
+    }
+    }
+    }, 
+     meta: {
+      requireLoggedIn: true,
+    },
 
   },
   {

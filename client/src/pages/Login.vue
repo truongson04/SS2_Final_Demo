@@ -19,8 +19,6 @@ const handleSubmit = async () => {
 
     authStore.login(data.token, data.user);
     localStorage.setItem("token", data.token);
-
-    router.push("/app");
   } catch (error) {
     toast.error(error?.response?.data?.message || error.message);
   } finally {

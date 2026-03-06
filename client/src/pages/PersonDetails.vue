@@ -24,7 +24,25 @@ const closeResume = () => {
   showModal.value = false;
   selectedResume.value = null;
 };
-
+const upgradeAdmin = async () => {
+  const isUpdate = window.confirm(
+    `Are you sure want to update ${user.name} to admin role ?`,
+  );
+  if (!isUpdate) {
+    return;
+  }
+  try {
+    const { data } = await clientApi.patch(`/api/admin/upgrade`, {
+      userId,
+      role: "admin",
+    });
+    toast.success(data.message);
+    user.value.role = "admin";
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message);
+  }
+};
 onMounted(async () => {
   try {
     const { data } = await clientApi.get(`/api/admin/user/${userId}`);
@@ -98,26 +116,37 @@ onMounted(async () => {
         >
           {{ user.name || "Loading details..." }}
         </h2>
-
-        <a
-          v-if="user.email"
-          :href="`https://mail.google.com/mail/?view=cm&fs=1&to=${user.email}`"
-          target="_blank"
-          class="inline-flex items-center text-indigo-700 hover:text-indigo-900 transition-colors font-medium bg-indigo-50 hover:bg-indigo-100 px-6 py-2.5 rounded-full shadow-sm"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 mr-2.5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+        <div class="flex gap-2">
+          <a
+            v-if="user.email"
+            :href="`https://mail.google.com/mail/?view=cm&fs=1&to=${user.email}`"
+            target="_blank"
+            class="inline-flex items-center text-indigo-700 hover:text-indigo-900 transition-colors font-medium bg-indigo-50 hover:bg-indigo-100 px-6 py-2.5 rounded-full shadow-sm"
           >
-            <path
-              d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
-            />
-            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-          </svg>
-          {{ user.email }}
-        </a>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 mr-2.5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+              />
+              <path
+                d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"
+              />
+            </svg>
+            {{ user.email }}
+          </a>
+          <button
+            v-if="user.role !== 'admin'"
+            @click="upgradeAdmin"
+            class="bg-yellow-500 mr-5 p-2 rounded-xl text-sm cursor-pointer hover:bg-amber-200"
+          >
+            Upgrade to admin
+          </button>
+          <p class="bg-orange-500 mr-5 p-2 rounded-xl text-md" v-else>Admin</p>
+        </div>
       </div>
 
       <div class="mb-6 flex items-center justify-between">
@@ -176,9 +205,7 @@ onMounted(async () => {
           <div
             class="h-44 flex flex-col items-center justify-center p-6 relative overflow-hidden border-b border-gray-600"
           >
-            <div
-              class="absolute inset-0 group-hover:opacity-10 transition-opacity duration-300"
-            >
+            <div class="absolute inset-0">
               <ResumeDisplay
                 :data="resume"
                 :template="resume.template"
@@ -186,11 +213,14 @@ onMounted(async () => {
               />
             </div>
             <div
+              class="absolute inset-0 bg-black transition-opacity duration-300 opacity-50 group-hover:opacity-10"
+            ></div>
+            <!-- <div
               class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"
             ></div>
             <div
               class="absolute top-4 right-4 bg-white/20 backdrop-blur-md rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            ></div>
+            ></div> -->
           </div>
           <div
             class="p-6 flex-1 flex flex-col justify-between relative bg-white"
