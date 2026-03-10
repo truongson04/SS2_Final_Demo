@@ -1,4 +1,5 @@
 <template>
+  <admin-loading :is-loading="loading" />
   <div class="min-h-screen bg-gray-50 pb-12">
     <!-- Header -->
     <header
@@ -173,7 +174,6 @@
         </div>
       </div>
 
-      <!-- Table Section -->
       <div
         class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
       >
@@ -295,6 +295,14 @@
                     "
                   >
                     {{ user[heading.key] }}
+                    <span
+                      :class="
+                        heading.key === 'name' && user.role === 'admin'
+                          ? 'text-red-400'
+                          : ''
+                      "
+                      >(Admin)</span
+                    >
                   </div>
                 </td>
               </tr>
@@ -357,6 +365,7 @@ import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 import useAuth from "../../store/auth";
+import AdminLoading from "./AdminLoading.vue";
 
 // Added createdAt heading
 const headings = ref([
@@ -525,13 +534,17 @@ const handleLogout = () => {
   }
   authStore.logout();
 };
+const loading = ref(false);
 onMounted(async () => {
   document.addEventListener("click", handleClickOutside);
   try {
+    loading.value = true;
     const { data } = await clientApi.get("/api/admin");
     users.value = data.users;
   } catch (error) {
     toast.error("Failed to load users");
+  } finally {
+    loading.value = false;
   }
 });
 

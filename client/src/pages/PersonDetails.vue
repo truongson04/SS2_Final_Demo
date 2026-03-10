@@ -4,6 +4,7 @@ import clientApi from "../configs/api/clientApi";
 import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import ResumeDisplay from "../components/ResumeDisplay.vue";
+import AdminLoading from "./AdminLoading.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -12,6 +13,7 @@ const user = ref({});
 const resumeList = ref([]);
 const showModal = ref(false);
 const selectedResume = ref(null);
+const loading = ref(false);
 
 const userId = route.params.userId;
 
@@ -45,6 +47,7 @@ const upgradeAdmin = async () => {
 };
 onMounted(async () => {
   try {
+    loading.value = true;
     const { data } = await clientApi.get(`/api/admin/user/${userId}`);
     user.value = data.user;
     for (const resume of data.resumes) {
@@ -53,11 +56,14 @@ onMounted(async () => {
   } catch (error) {
     toast.error(error.message);
     console.log(error);
+  } finally {
+    loading.value = false;
   }
 });
 </script>
 
 <template>
+  <AdminLoading :is-loading="loading" />
   <div class="min-h-screen bg-gray-50 pb-12">
     <header
       class="bg-white shadow-sm sticky top-0 z-10 transition-shadow duration-300"
