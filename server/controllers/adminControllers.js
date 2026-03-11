@@ -213,3 +213,138 @@ export async function upgradeAdmin(req, res) {
     }
     
 }
+
+export async function getAllResumes(req, res) {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.search || '';
+        
+        // Advanced Filters
+        const startDate = req.query.startDate;
+        const endDate = req.query.endDate;
+        const userName = req.query.userName || '';
+        const template = req.query.template || '';
+
+        const skip = (page - 1) * limit;
+
+        // Base search match logic (by title)
+        const matchStage = {};
+        if (search) {
+            matchStage.title = { $regex: search, $options: 'i' };
+        }
+        if (template) {
+            matchStage.template = template;
+        }
+        if (startDate || endDate) {
+            matchStage.createdAt = {};
+            if (startDate) {
+                matchStage.createdAt.$gte = new Date(startDate);
+            }
+            if (endDate) {
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+                matchStage.createdAt.$lte = end;
+            }
+        }
+
+        // Setup Aggregation Pipeline
+        const pipeline = [
+            { $match: matchStage },
+            // Lookup user data
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "userId",
+                    foreignField: "_id",
+                    as: "ownerInfo"
+                }
+            },
+            // Unwind to parse object (since it's a 1-to-1 mapping via userId)
+            {
+                $unwind: {
+                    path: "$ownerInfo",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            // Post-lookup filter by User Name
+            ...(userName ? [{
+                $match: {
+                    "ownerInfo.name": { $regex: userName, $options: 'i' }
+                }
+            }] : []),
+            {
+                $project: {
+                    title: 1,
+                    template: 1,
+                    public: 1,
+                    isLocked: 1,
+                    createdAt: 1,
+                    ownerName: "$ownerInfo.name",
+                    ownerEmail: "$ownerInfo.email",
+                }
+            },
+            { $sort: { createdAt: -1 } }
+        ];
+
+        // Pagination metadata
+        const countPipeline = [...pipeline, { $count: "total" }];
+        const countResult = await Resume.aggregate(countPipeline);
+        const totalResumesCount = countResult.length > 0 ? countResult[0].total : 0;
+        
+        // Execute sliced paginated data
+        pipeline.push({ $skip: skip }, { $limit: limit });
+        const resumes = await Resume.aggregate(pipeline);
+
+        // Calculate template usage overall (regardless of pagination or search)
+        const templateStats = await Resume.aggregate([
+            {
+                $group: {
+                    _id: "$template",
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { count: -1 } }
+        ]);
+         
+        return res.status(200).json({
+            message: "Get resumes success",
+            resumes,
+            templateStats,
+            pagination: {
+                total: totalResumesCount,
+                page,
+                limit,
+                totalPages: Math.ceil(totalResumesCount / limit)
+            }
+        });
+
+    } catch (error) {
+        console.error("Fetch Resumes Error: ", error);
+        return res.status(500).json({ message: "Failed to load resumes", error: error.message });
+    }
+}
+
+export async function toggleResumeLock(req, res) {
+    try {
+        const { resumeId, isLocked } = req.body;
+        await Resume.updateOne({ _id: resumeId }, { $set: { isLocked } });
+        return res.status(200).json({ message: `Resume has been ${isLocked ? 'locked' : 'unlocked'}.` });
+    } catch (error) {
+        console.error("Lock/Unlock Error: ", error);
+        return res.status(400).json({ message: "Failed to update resume lock status." });
+    }
+}
+
+export async function getResumeByIdAdmin(req, res) {
+    try {
+        const { resumeId } = req.params;
+        const resume = await Resume.findById(resumeId);
+        if (!resume) {
+            return res.status(404).json({ message: "Resume not found in database." });
+        }
+        return res.status(200).json({ resume });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}

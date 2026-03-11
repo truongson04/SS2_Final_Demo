@@ -7,11 +7,27 @@
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-          <h1
-            class="text-xl font-bold text-gray-900 tracking-tight flex items-center"
-          >
-            User Management
-          </h1>
+          <div class="flex items-center space-x-8">
+            <h1
+              class="text-xl font-bold text-gray-900 tracking-tight flex items-center"
+            >
+              Admin Portal
+            </h1>
+            <nav class="hidden md:flex space-x-4">
+              <router-link
+                to="/admin"
+                class="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Users
+              </router-link>
+              <router-link
+                to="/admin/resumes"
+                class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Resumes
+              </router-link>
+            </nav>
+          </div>
           <div class="flex gap-5 items-center">
             <h1 class="text-right">Welcome {{ authStore.user.name }} !</h1>
             <button

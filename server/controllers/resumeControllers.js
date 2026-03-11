@@ -34,6 +34,12 @@ export const getResumeById = async (req, res) => {
     if (!resume) {
       return res.status(404).json({ message: "Cannot found resume" });
     }
+    
+    
+    if (resume.isLocked) {
+      return res.status(403).json({ message: "This resume has been locked by the admin and can no longer be edited." });
+    }
+
     resume._v = undefined;
     resume.created_at = undefined;
     resume.updated_at = undefined;
@@ -47,9 +53,15 @@ export const getPublicResumeById = async (req, res) => {
   try {
     const { resumeId } = req.params;
     const resume = await Resume.findOne({ _id: resumeId, public: true });
+    
     if (!resume) {
       return res.status(404).json({ message: "Resume not found" });
     }
+    
+    if (resume.isLocked) {
+      return res.status(403).json({ message: "This CV has been locked due to community standards violations." });
+    }
+    
     return res.status(200).json({ resume });
   } catch (err) {
     return res.status(400).json({ message: err.message });
@@ -106,12 +118,16 @@ export const updateResume = async (req, res) => {
     }
 
     const updatedResume = await Resume.findOneAndUpdate(
-      { userId, _id: resumeId },
+      { userId, _id: resumeId, isLocked: false },
       { $set: resumeDataClone },
       { new: true },
     );
 
     if (!updatedResume) {
+      const checkLock = await Resume.findOne({ userId, _id: resumeId });
+      if (checkLock && checkLock.isLocked) {
+        return res.status(403).json({ message: "This resume is locked and cannot be updated." });
+      }
       return res.status(404).json({ message: "Resume not found" });
     }
 

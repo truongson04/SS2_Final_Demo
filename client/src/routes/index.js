@@ -13,6 +13,7 @@ import Analysis from "../pages/Analysis.vue";
 import ForgotPassword from "../pages/ForgotPassword.vue";
 import Otp from "../pages/Otp.vue";
 import AdminPage from "../pages/AdminPage.vue";
+import AdminResumes from "../pages/AdminResumes.vue";
 import PersonDetails from "../pages/PersonDetails.vue";
 
 
@@ -34,6 +35,19 @@ const routes = [
     }
     }
     }, 
+    meta: {
+      requireLoggedIn: true,
+    },
+  },
+  {
+    path: "/admin/resumes",
+    name: "AdminResumes",
+    component: AdminResumes,
+    beforeEnter: (to, from)=>{
+      if(localStorage.getItem("role") !== 'admin'){
+        return { path: "/login" };
+      }
+    },
     meta: {
       requireLoggedIn: true,
     },

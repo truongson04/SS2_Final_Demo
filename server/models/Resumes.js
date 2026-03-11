@@ -13,6 +13,10 @@ const resumeSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isLocked: {
+      type: Boolean,
+      default: false,
+    },
     template: {
       type: String,
       default: "classic",
