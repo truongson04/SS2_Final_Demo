@@ -35,9 +35,18 @@ onMounted(async () => {
 
 <template>
   <Loading v-if="authStore.loading" />
-  <div class="min-h-screen bg-gray-500" v-if="authStore.user">
-    <Navbar />
-    <router-view></router-view>
+  <div v-if="authStore.user" class="min-h-screen bg-slate-950 relative overflow-hidden font-sans text-slate-300 selection:bg-cyan-500/30">
+    <!-- Global Background Grid & Orbs for authenticated app -->
+    <div class="fixed inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none z-0"></div>
+    <div class="fixed top-20 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-0 left-20 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    
+    <div class="relative z-10 min-h-screen flex flex-col">
+      <Navbar />
+      <div class="flex-grow">
+        <router-view></router-view>
+      </div>
+    </div>
   </div>
   <Login v-else />
 </template>

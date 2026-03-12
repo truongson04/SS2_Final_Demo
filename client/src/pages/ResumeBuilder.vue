@@ -185,7 +185,7 @@ onMounted(async () => {
   <loading v-if="isLoading" />
   <div
     v-else
-    class="min-h-screen bg-slate-950 relative font-sans text-slate-300"
+    class="w-full relative font-sans text-slate-300"
   >
     <save-modal
       :is-open="showSaveModal"
@@ -205,17 +205,6 @@ onMounted(async () => {
         }
       "
     />
-    <div
-      class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
-    ></div>
-
-    <div
-      class="absolute top-20 left-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"
-    ></div>
-
-    <div
-      class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"
-    ></div>
 
     <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
       <router-link
@@ -517,7 +506,7 @@ onMounted(async () => {
 
         <div class="lg:col-span-7 flex flex-col h-full relative">
           <div
-            class="flex-1 bg-slate-900/40 border border-white/5 rounded-xl relative overflow-hidden flex flex-col"
+            class="flex-1 bg-slate-900/40 backdrop-blur-md border border-white/10 shadow-2xl rounded-xl relative overflow-hidden flex flex-col"
           >
             <div
               class="absolute inset-0 opacity-20 bg-[size:20px_20px] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] pointer-events-none"

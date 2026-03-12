@@ -121,17 +121,8 @@ onMounted(() => {
   <Loading v-if="isLoading" />
   <div
     v-else
-    class="min-h-screen bg-slate-950 relative overflow-hidden font-sans text-slate-300 selection:bg-cyan-500/30"
+    class="w-full relative font-sans text-slate-300"
   >
-    <div
-      class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
-    ></div>
-    <div
-      class="absolute top-20 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"
-    ></div>
-    <div
-      class="absolute bottom-0 left-20 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"
-    ></div>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
       <div
@@ -197,7 +188,7 @@ onMounted(() => {
       >
         <div v-for="(resume, index) in allResumes" :key="index">
           <div
-            class="group relative w-full h-64 flex flex-col rounded-2xl border border-white/5 bg-slate-900/60 backdrop-blur-sm hover:border-cyan-500/50 hover:bg-slate-900/80 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] transition-all duration-300 overflow-hidden"
+            class="group relative w-full h-64 flex flex-col rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md hover:border-cyan-500/50 hover:bg-slate-900/60 hover:shadow-[0_0_40px_rgba(6,182,212,0.2)] hover:-translate-y-1 transition-all duration-300 overflow-hidden"
             :class="{
               'opacity-60 grayscale hover:grayscale-0': resume.isLocked,
             }"
@@ -373,7 +364,7 @@ onMounted(() => {
 
         <button
           @click="showCreate = true"
-          class="group w-full h-64 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700 hover:border-cyan-500/50 hover:bg-slate-900/30 transition-all duration-300"
+          class="group w-full h-64 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700/50 bg-slate-900/20 backdrop-blur-md hover:border-cyan-500/50 hover:bg-slate-900/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300"
         >
           <div
             class="p-4 rounded-full bg-slate-800 text-slate-400 group-hover:bg-cyan-500 group-hover:text-white transition-all duration-300"
