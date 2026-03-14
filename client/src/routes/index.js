@@ -126,15 +126,15 @@ const routes = [
     },
   },
   {
-    path: "/forgot",
-    name: "Forgot",
-    component: ForgotPassword,
+    path: '/forgot',
+    name: 'Forgot',
+    component: ForgotPassword
   },
   {
-    path: "/otp",
-    name: "OTP",
-    component: Otp,
-  },
+    path: '/otp',
+    name: 'OTP',
+    component: Otp
+  }
 ];
 const router = createRouter({
   history: createWebHistory(),

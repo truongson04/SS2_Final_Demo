@@ -130,9 +130,8 @@
             />
           </div>
 
-          <!-- Actions -->
           <div class="flex flex-wrap items-center gap-3">
-            <!-- Advanced Filters Button (NEW) -->
+            >
             <div class="relative" ref="filterContainer">
               <button
                 @click.prevent="openFilters = !openFilters"

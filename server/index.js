@@ -4,13 +4,17 @@ import "dotenv/config";
 import connectDB from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
 import resumeRouter from "./routes/resumeRoute.js";
+import adminRoutes from "./routes/adminRoute.js";
 
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as GitHubStrategy } from "passport-github2";
 
 import aiRouter from "./routes/aiRoute.js";
-import { googleResister } from "./controllers/userControllers.js";
-import adminRoutes from "./routes/adminRoute.js";
+import {
+  googleResister,
+  githubRegister,
+} from "./controllers/userControllers.js";
 
 const app = express();
 app.use(express.json({ limit: "50mb" }));
@@ -42,6 +46,16 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     googleResister,
+  ),
+);
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      callbackURL: process.env.GITHUB_CALLBACK_URL,
+    },
+    githubRegister,
   ),
 );
 export default app;

@@ -3,6 +3,7 @@ import {
   getUserById,
   getUserResumes,
   googleLogin,
+  githubLogin,
   handleOtp,
   loginUser,
   registerUser,
@@ -24,8 +25,15 @@ userRouter.get(
   }),
 );
 userRouter.get("/auth/google/callback", googleLogin);
+userRouter.get(
+  "/auth/github",
+  passport.authenticate("github", {
+    scope: ["user:email"],
+  }),
+);
+userRouter.get("/auth/github/callback", githubLogin);
 userRouter.post('/forgot', sendOTP);
-userRouter. post('/otp', handleOtp)
+userRouter.post('/otp', handleOtp)
 userRouter.post('/reset', resetPassword)
 
 export default userRouter;

@@ -22,10 +22,12 @@ onMounted(async () => {
       const { data } = await clientApi.get("/api/users/data");
 
       authStore.login(token, data.user);
+      router.replace("/");
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
     } finally {
       authStore.loading = false;
+      router.push("/");
     }
   } else {
     router.push("/app");
