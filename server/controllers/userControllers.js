@@ -145,6 +145,48 @@ export const googleLogin = (req, res, next) => {
     res.redirect(`${process.env.CLIENT_URL}/app?token=${token}`);
   })(req, res, next);
 };
+
+// github login
+export const githubRegister = async (
+  accessToken,
+  refreshToken,
+  profile,
+  done,
+) => {
+  try {
+    const user = await User.findOne({ githubId: profile.id });
+
+    if (user) {
+      return done(null, user);
+    } else {
+      const newUser = await User.create({
+        githubId: profile.id,
+        name: profile.displayName || profile.username,
+        email: profile.emails?.[0]?.value || `${profile.username}@github.com`,
+      });
+      return done(null, newUser);
+    }
+  } catch (error) {
+    console.log(error);
+    return done(error, null);
+  }
+};
+
+export const githubLogin = (req, res, next) => {
+  passport.authenticate("github", { session: false }, (err, user, info) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Authentication error" });
+    }
+    if (!user) {
+      return res.status(400).json({ message: "Fail to login" });
+    }
+    const token = generateToken(user._id);
+    user.password = undefined;
+
+    res.redirect(`${process.env.CLIENT_URL}/app?token=${token}`);
+  })(req, res, next);
+};
 // forgot password (send OTP)
 export const sendOTP = async (req, res) => {
   const { email } = req.body;

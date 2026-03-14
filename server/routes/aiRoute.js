@@ -8,6 +8,7 @@ import {
   enhanceProjectDescription,
   interviewGenerate,
   uploadResume,
+  quickChat,
 } from "../controllers/aiControllers.js";
 const aiRouter = express.Router();
 aiRouter.post("/enhance-pro-sum", protect, enhanceProfessionalSummary);
@@ -15,6 +16,7 @@ aiRouter.post("/enhance-job-desc", protect, enhanceJobDescription);
 aiRouter.post("/upload-resume", protect, uploadResume);
 aiRouter.post("/enhance-pro-desc", protect, enhanceProjectDescription);
 aiRouter.post("/interview", protect, interviewGenerate);
-aiRouter.post("/analysis",protect, analysisResume)
+aiRouter.post("/analysis", protect, analysisResume)
 aiRouter.post("/chat", protect, chatWithAi)
+aiRouter.post("/quick-chat", protect, quickChat)
 export default aiRouter;

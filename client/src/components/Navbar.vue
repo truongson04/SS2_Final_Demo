@@ -24,7 +24,7 @@ getUserData();
     <nav
       class="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 transition-all"
     >
-      <router-link to="https://prebuiltui.com" class="flex items-center gap-2">
+      <router-link to="/" class="flex items-center gap-2">
         <div
           class="h-10 w-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl"
         >

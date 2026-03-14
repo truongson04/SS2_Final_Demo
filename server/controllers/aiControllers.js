@@ -53,7 +53,7 @@ export const interviewGenerate = async (req, res) => {
   if (!userContent) {
     return res.status(400).json({ message: "Missing required fields" });
   }
- 
+
   const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
   try {
     const model = genAI.getGenerativeModel({
@@ -91,12 +91,12 @@ export const interviewGenerate = async (req, res) => {
   }
 };
 // analysis resume
-export const analysisResume = async (req, res)=>{
- const { userContent } = req.body;
+export const analysisResume = async (req, res) => {
+  const { userContent } = req.body;
   if (!userContent) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  
+
   const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
   try {
     const model = genAI.getGenerativeModel({
@@ -165,7 +165,7 @@ export const uploadResume = async (req, res) => {
   try {
     const { resumeText, title } = req.body;
     const userId = req.userId;
-   
+
     if (!resumeText) {
       return res.status(400).json({ message: "Missing required fields" });
     }
@@ -279,7 +279,7 @@ professional_summary:{
     });
     const response = JSON.parse(result.response.text());
     const newResume = await Resume.create({ userId, title, ...response });
-    res.json({ resumeId: newResume._id , message :'Uploaded successfully but there could be some mistakes when extracting content, feel free to modify it :))'});
+    res.json({ resumeId: newResume._id, message: 'Uploaded successfully but there could be some mistakes when extracting content, feel free to modify it :))' });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });
@@ -290,7 +290,7 @@ const getSystemInstruction = (jobDescription, resumeContent) => {
     You are an expert Hiring Manager conducting a professional job interview.
     CONTEXT:
     - JOB DESCRIPTION: ${jobDescription}
-    - CANDIDATE'S RESUME: ${ JSON.stringify(resumeContent)}
+    - CANDIDATE'S RESUME: ${JSON.stringify(resumeContent)}
     
     RULES:
     1. Start immediately with the first question.
@@ -308,31 +308,31 @@ export const chatWithAi = async (req, res) => {
     const { text, userContent, sessionId } = req.body;
     const userId = req.userId;
 
-       if(text==='READY' && !sessionId){
+    if (text === 'READY' && !sessionId) {
 
-  return res.status(200).json({response:"Please paste your job description in the input chat to start"})
+      return res.status(200).json({ response: "Please paste your job description in the input chat to start" })
 
- }
+    }
     if (!sessionId) {
-      
 
-    
+
+
       const model = genAI.getGenerativeModel({
         model: process.env.GEMINI_MODEL,
         systemInstruction: getSystemInstruction(text, userContent),
       });
 
-      
+
       const chat = model.startChat({
         history: [],
-       
+
       });
 
-   
+
       const result = await chat.sendMessage("Please start the interview. Ask the first question based on my Resume");
       const firstQuestion = await result.response.text();
 
-   
+
       const newSession = new Sessions({
         userId,
         contextData: {
@@ -341,8 +341,8 @@ export const chatWithAi = async (req, res) => {
         },
         history: [
           {
-           role:'user',
-           parts:[{text:'Ask the first question'}]
+            role: 'user',
+            parts: [{ text: 'Ask the first question' }]
           },
           {
             role: "model",
@@ -355,23 +355,23 @@ export const chatWithAi = async (req, res) => {
       return res.status(200).json({ response: firstQuestion, sessionId: newSession._id });
     }
 
- 
-    
+
+
     const currentSession = await Sessions.findOne({ _id: sessionId });
     if (!currentSession) {
       return res.status(404).json({ message: "Session not found" });
     }
 
-  
+
     const model = genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL, 
+      model: process.env.GEMINI_MODEL,
       systemInstruction: getSystemInstruction(
         currentSession.contextData.jobDescription,
         currentSession.contextData.resumeContent
       ),
     });
 
-    
+
     const geminiHistory = currentSession.history.slice(-6).map((msg) => ({
       role: msg.role,
       parts: [{ text: msg.parts[0].text }],
@@ -379,14 +379,14 @@ export const chatWithAi = async (req, res) => {
 
     const chat = model.startChat({
       history: geminiHistory,
-     
+
     });
 
-    
-   const result = await chat.sendMessage(text);
-   const aiResponse= await result.response.text()
 
-   
+    const result = await chat.sendMessage(text);
+    const aiResponse = await result.response.text()
+
+
     currentSession.history.push(
       { role: "user", parts: [{ text: text }] },
       { role: "model", parts: [{ text: aiResponse }] }
@@ -398,8 +398,49 @@ export const chatWithAi = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-  
+
 
     return res.status(400).json({ message: "Something wrong", error: err.message });
+  }
+};
+
+// Quick chat with AI assistant (for floating chat widget)
+export const quickChat = async (req, res) => {
+  try {
+    const { message, history } = req.body;
+    if (!message) {
+      return res.status(400).json({ message: "Message is required" });
+    }
+
+    const model = genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL,
+      systemInstruction: `You are a friendly and helpful AI assistant for CVBuilder - a professional resume building platform.
+Your role is to help users with:
+- Resume/CV writing tips and best practices
+- Career advice and job search strategies  
+- Interview preparation tips
+- Professional development guidance
+- Any questions about using the CVBuilder platform
+
+Keep responses concise, helpful, and professional.
+You can respond in Vietnamese or English based on the user's language.`,
+    });
+
+    const geminiHistory = (history || [])
+      .filter((msg) => msg && msg.content && msg.content.trim())
+      .slice(-10)
+      .map((msg) => ({
+        role: msg.role === "user" ? "user" : "model",
+        parts: [{ text: msg.content }],
+      }));
+
+    const chat = model.startChat({ history: geminiHistory });
+    const result = await chat.sendMessage(message);
+    const aiResponse = await result.response.text();
+
+    return res.status(200).json({ response: aiResponse });
+  } catch (err) {
+    console.error("Quick chat error:", err.message || err);
+    return res.status(400).json({ message: "Something went wrong", error: err.message });
   }
 };

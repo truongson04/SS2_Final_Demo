@@ -1,7 +1,18 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import useAuth from "../../../store/auth";
+import LogoutModal from "../LogoutModal.vue";
 const router = useRouter();
+const authStore = useAuth();
+const showLogout = ref(false);
+const showUserMenu = ref(false);
+const logoutUser = () => {
+  authStore.logout();
+  showLogout.value = false;
+  showUserMenu.value = false;
+  router.push("/");
+};
 
 const menuClass = ref(
   "fixed inset-0 z-[100] bg-white/60 text-slate-800 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-300 -translate-x-full",
@@ -30,7 +41,7 @@ const closeMenu = () => {
     <nav
       class="z-50 flex items-center justify-between w-full py-6 px-6 md:px-12 lg:px-24 border-b border-white/10 backdrop-blur-md"
     >
-      <a href="https://prebuiltui.com" class="flex items-center gap-2">
+      <a href="/" class="flex items-center gap-2">
         <div
           class="h-10 w-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl"
         >
@@ -57,7 +68,65 @@ const closeMenu = () => {
         </a>
       </div>
 
-      <div class="hidden md:flex items-center gap-4">
+      <!-- Logged in: show user menu -->
+      <div v-if="authStore.user" class="hidden md:flex items-center gap-4 relative">
+        <button
+          @click="router.push('/app')"
+          class="px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-bold hover:from-cyan-400 hover:to-blue-500 transition active:scale-95"
+        >
+          New CV
+        </button>
+
+        <div class="relative">
+          <button
+            @click="showUserMenu = !showUserMenu"
+            class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-cyan-500/50 transition"
+          >
+            <div
+              class="h-8 w-8 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center text-xs font-bold text-white"
+            >
+              {{ authStore.user?.[0]?.name?.charAt(0).toUpperCase() }}
+            </div>
+            <span class="text-sm font-medium text-white">{{ authStore.user?.[0]?.name }}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+
+          <Transition
+            enter-active-class="transition duration-150 ease-out"
+            enter-from-class="opacity-0 -translate-y-2"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition duration-100 ease-in"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-2"
+          >
+            <div
+              v-if="showUserMenu"
+              class="absolute right-0 top-12 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50"
+            >
+              <button
+                @click="router.push('/app'); showUserMenu = false"
+                class="w-full px-4 py-3 text-left text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition flex items-center gap-2"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                My Resumes
+              </button>
+              <div class="border-t border-white/5"></div>
+              <button
+                @click="showLogout = true; showUserMenu = false"
+                class="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition flex items-center gap-2"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                Logout
+              </button>
+            </div>
+          </Transition>
+        </div>
+      </div>
+
+      <!-- Not logged in: show Login/Register -->
+      <div v-else class="hidden md:flex items-center gap-4">
         <button
           class="hover:text-cyan-400 transition text-slate-300 font-medium px-4"
           @click="router.push('/login')"
@@ -65,7 +134,7 @@ const closeMenu = () => {
           Login
         </button>
         <button
-          class="hover:text-cyan-400 transition text-slate-300 font-medium px-4"
+          class="px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-bold hover:from-cyan-400 hover:to-blue-500 transition active:scale-95"
           @click="router.push('/signup')"
         >
           Register
@@ -90,6 +159,12 @@ const closeMenu = () => {
         </svg>
       </button>
     </nav>
+
+    <logout-modal
+      :is-open="showLogout"
+      @close="showLogout = false"
+      @confirm="logoutUser"
+    />
 
     <div
       id="mobile-navLinks"
