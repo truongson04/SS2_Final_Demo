@@ -79,7 +79,7 @@ const uploadResume = async () => {
     console.log(error);
     isLoading.value = false;
 
-    toast.error(error?.response?.data?.message || error.message);
+    toast.error("Please check your uploaded file and try again");
   }
 };
 const editTitle = async () => {
@@ -121,17 +121,8 @@ onMounted(() => {
   <Loading v-if="isLoading" />
   <div
     v-else
-    class="min-h-screen bg-slate-950 relative overflow-hidden font-sans text-slate-300 selection:bg-cyan-500/30"
+    class="w-full relative font-sans text-slate-300"
   >
-    <div
-      class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
-    ></div>
-    <div
-      class="absolute top-20 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none"
-    ></div>
-    <div
-      class="absolute bottom-0 left-20 w-[400px] h-[400px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"
-    ></div>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
       <div
@@ -197,10 +188,35 @@ onMounted(() => {
       >
         <div v-for="(resume, index) in allResumes" :key="index">
           <div
-            class="group relative w-full h-64 flex flex-col rounded-2xl border border-white/5 bg-slate-900/60 backdrop-blur-sm hover:border-cyan-500/50 hover:bg-slate-900/80 hover:shadow-[0_0_30px_rgba(6,182,212,0.1)] transition-all duration-300 cursor-pointer overflow-hidden"
+            class="group relative w-full h-64 flex flex-col rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md hover:border-cyan-500/50 hover:bg-slate-900/60 hover:shadow-[0_0_40px_rgba(6,182,212,0.2)] hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+            :class="{
+              'opacity-60 grayscale hover:grayscale-0': resume.isLocked,
+            }"
           >
+            <!-- Locked Badge -->
             <div
-              class="flex-1 flex flex-col items-center justify-center p-6 text-center z-10"
+              v-if="resume.isLocked"
+              class="absolute top-3 left-3 z-30 bg-red-500/90 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded shadow-sm flex items-center gap-1 backdrop-blur-md"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Locked by Admin
+            </div>
+
+            <div
+              class="flex-1 flex flex-col items-center justify-center p-6 text-center z-10 cursor-pointer"
             >
               <div
                 class="mb-4 p-4 rounded-full bg-slate-800/50 group-hover:bg-cyan-500/10 group-hover:scale-110 transition-all duration-300"
@@ -241,8 +257,14 @@ onMounted(() => {
               class="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-20"
             >
               <button
-                @click="
+                @click.stop="
                   () => {
+                    if (resume.isLocked) {
+                      toast.error(
+                        'This resume is locked by the admin and cannot be edited.',
+                      );
+                      return;
+                    }
                     editResumeId = resume._id;
                     title = resume.title;
                   }
@@ -269,7 +291,17 @@ onMounted(() => {
               </button>
 
               <button
-                @click="deleteResume(resume._id)"
+                @click.stop="
+                  () => {
+                    if (resume.isLocked) {
+                      toast.error(
+                        'This resume is locked by the admin and cannot be deleted here.',
+                      );
+                      return;
+                    }
+                    deleteResume(resume._id);
+                  }
+                "
                 class="p-3 rounded-full bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/30 transition-all transform hover:scale-110"
                 title="Delete Resume"
               >
@@ -292,8 +324,14 @@ onMounted(() => {
               <button
                 class="p-3 rounded-full bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500 hover:text-white border border-cyan-500/50 transition-all transform hover:scale-110"
                 title="View Resume"
-                @click="
+                @click.stop="
                   () => {
+                    if (resume.isLocked) {
+                      toast.error(
+                        'This resume is locked by the admin and cannot be edited.',
+                      );
+                      return;
+                    }
                     router.push(`/app/builder/${resume._id}`);
                   }
                 "
@@ -326,7 +364,7 @@ onMounted(() => {
 
         <button
           @click="showCreate = true"
-          class="group w-full h-64 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700 hover:border-cyan-500/50 hover:bg-slate-900/30 transition-all duration-300"
+          class="group w-full h-64 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700/50 bg-slate-900/20 backdrop-blur-md hover:border-cyan-500/50 hover:bg-slate-900/40 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300"
         >
           <div
             class="p-4 rounded-full bg-slate-800 text-slate-400 group-hover:bg-cyan-500 group-hover:text-white transition-all duration-300"

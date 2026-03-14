@@ -15,12 +15,16 @@ const strength = computed(() => {
   return 3;
 });
 const handleReset = async () => {
-  console.log(newPassword.value);
-  console.log(confirmPassword.value);
+  if (!newPassword.value.trim()) {
+    toast.error("Please fill in your password !!");
+    return;
+  }
+
   if (newPassword.value !== confirmPassword.value) {
     toast.error("Passwords do not match.");
     return;
   }
+
   try {
     isLoading.value = true;
     const { data } = await clientApi.post("/api/users/reset", {
@@ -191,7 +195,7 @@ const handleReset = async () => {
       <button
         @click="handleReset"
         :disabled="isLoading"
-        class="w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold tracking-wide shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        class="w-full py-3.5 mt-2 rounded-xl bg-green-600 text-white font-bold tracking-wide shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         <span
           v-if="isLoading"

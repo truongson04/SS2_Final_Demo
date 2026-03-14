@@ -50,7 +50,7 @@ defineEmits(["close", "confirm"]);
 
           <h3 class="text-xl font-bold text-white mb-2">End Session?</h3>
           <p class="text-md text-slate-400 leading-relaxed mb-8">
-            Are you sure you want to log out ? :((
+            Are you sure you want to log out ?
           </p>
 
           <div class="flex gap-3">

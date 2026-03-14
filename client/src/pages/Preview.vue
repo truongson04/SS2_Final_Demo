@@ -5,18 +5,27 @@ import { onMounted, ref } from "vue";
 import ResumePreview from "../components/ResumePreview.vue";
 import Loading from "../components/Loading.vue";
 import clientApi from "../configs/api/clientApi";
+import { toast } from "vue3-toastify";
 
 const route = useRoute();
 const resumeId = route.params.resumeId;
 const isLoading = ref(false);
 const resumeData = ref({});
+const isLocked = ref(false);
 const loadResume = async () => {
   isLoading.value = true;
+  isLocked.value = false;
   try {
     const { data } = await clientApi.get(`/api/resumes/public/${resumeId}`);
     resumeData.value = data.resume;
   } catch (error) {
-    console.log(error);
+    if (error.response && error.response.status === 403) {
+      isLocked.value = true;
+    } else {
+      toast.error("Something went wrong when loading your resume");
+      console.log(error);
+    }
+    resumeData.value = null;
   } finally {
     isLoading.value = false;
   }
@@ -44,7 +53,7 @@ onMounted(async () => {
 
     <main class="flex-1 relative z-10 w-full flex flex-col">
       <div
-        v-if="resumeData"
+        v-if="resumeData && !isLocked"
         class="flex-1 flex flex-col items-center py-12 px-4"
       >
         <div
@@ -117,10 +126,19 @@ onMounted(async () => {
             </svg>
           </div>
 
-          <h2 class="text-2xl font-bold text-white mb-2">Resume Not Found</h2>
+          <h2 class="text-2xl font-bold text-white mb-2">
+            {{ isLocked ? "Resume Locked" : "Resume Not Found" }}
+          </h2>
           <p class="text-slate-400 mb-8 leading-relaxed">
-            The resume you are looking for might have been removed, renamed, or
-            is temporarily unavailable.
+            <template v-if="isLocked">
+              This resume has been locked by the administrator due to a
+              violation of our community standards. It is no longer publicly
+              available.
+            </template>
+            <template v-else>
+              The resume you are looking for might have been removed, renamed,
+              or is temporarily unavailable.
+            </template>
           </p>
 
           <router-link

@@ -134,7 +134,7 @@ const handleGithubSignIn = async () => {
                 autocomplete="name"
                 required
                 v-model="formData.name"
-                class="w-full pl-10 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition shadow-inner"
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 hover:border-slate-500 hover:bg-slate-900/50 transition duration-300 shadow-inner"
               />
             </div>
           </div>
@@ -170,7 +170,7 @@ const handleGithubSignIn = async () => {
                 autocomplete="email"
                 required
                 v-model="formData.email"
-                class="w-full pl-10 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition shadow-inner"
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 hover:border-slate-500 hover:bg-slate-900/50 transition duration-300 shadow-inner"
               />
             </div>
           </div>
@@ -205,7 +205,7 @@ const handleGithubSignIn = async () => {
                 autocomplete="new-password"
                 required
                 v-model="formData.password"
-                class="w-full pl-10 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition shadow-inner"
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 hover:border-slate-500 hover:bg-slate-900/50 transition duration-300 shadow-inner"
               />
             </div>
           </div>

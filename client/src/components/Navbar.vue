@@ -43,7 +43,7 @@ getUserData();
             {{ authStore.user?.[0]?.name?.charAt(0).toUpperCase() }}
           </div>
           <p class="text-sm font-medium text-slate-300 max-sm:hidden">
-            Hi, <span class="text-white">{{ authStore.user?.[0]?.name }}</span>
+            Hi, <span class="text-white">{{ authStore.user?.name }}</span>
           </p>
         </div>
 
