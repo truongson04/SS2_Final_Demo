@@ -6,8 +6,10 @@ import Testimonials from "../components/home/Testimonials.vue";
 </script>
 
 <template>
-  <Hero />
-  <Feature />
-  <Testimonials />
-  <Footer />
+  <div class="force-dark">
+    <Hero />
+    <Feature />
+    <Testimonials />
+    <Footer />
+  </div>
 </template>

@@ -13,7 +13,7 @@ defineEmits(["close", "confirm"]);
   >
     <div
       v-if="isOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 mt-40"
+      class="fixed inset-0 z-50 flex items-center justify-center"
     >
       <div
         class="relative w-full max-w-sm bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden transform transition-all scale-100"
@@ -56,7 +56,7 @@ defineEmits(["close", "confirm"]);
           <div class="flex gap-3">
             <button
               @click="$emit('close')"
-              class="flex-1 px-4 py-2.5 rounded-lg border border-slate-700 text-slate-300 font-medium hover:bg-slate-800 hover:text-white hover:border-slate-600 transition-all active:scale-95"
+              class="flex-1 px-4 py-2.5 rounded-lg border border-slate-700 text-slate-300 font-medium hover:bg-gray-200 hover:text-white hover:border-slate-600 transition-all active:scale-95"
             >
               Cancel
             </button>

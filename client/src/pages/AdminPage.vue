@@ -1,37 +1,41 @@
-<template>
+﻿<template>
   <admin-loading :is-loading="loading" />
-  <div class="min-h-screen bg-gray-50 pb-12">
+  <div class="min-h-screen pb-12 transition-colors duration-300 bg-gray-50">
     <!-- Header -->
     <header
-      class="bg-white shadow-sm sticky top-0 z-10 transition-shadow duration-300"
+      class="sticky top-0 z-10 transition-all duration-300 bg-white shadow-sm border-b border-gray-100"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center space-x-8">
             <h1
-              class="text-xl font-bold text-gray-900 tracking-tight flex items-center"
+              class="text-xl font-bold tracking-tight flex items-center transition-colors text-gray-900"
             >
               Admin Portal
             </h1>
             <nav class="hidden md:flex space-x-4">
               <router-link
                 to="/admin"
-                class="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                class="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition-colors bg-indigo-50 text-indigo-700"
               >
                 Users
               </router-link>
               <router-link
                 to="/admin/resumes"
-                class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-gray-500 hover:text-gray-900"
               >
                 Resumes
               </router-link>
             </nav>
           </div>
           <div class="flex gap-5 items-center">
-            <h1 class="text-right">Welcome {{ authStore.user.name }} !</h1>
+            <h1
+              class="text-right text-sm font-medium transition-colors text-gray-700"
+            >
+              Welcome {{ authStore.user.name }} !
+            </h1>
             <button
-              class="bg-red-500 p-3 rounded-full text-white cursor-pointer hover:bg-red-800"
+              class="bg-red-500 px-4 py-2 rounded-lg text-white text-sm font-medium cursor-pointer hover:bg-red-700 transition-colors"
               @click="handleLogout"
             >
               Log out
@@ -49,46 +53,52 @@
       >
         <!-- Total Users -->
         <div
-          class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between"
+          class="rounded-2xl shadow-sm border p-6 flex items-center justify-between transition-colors bg-white border-gray-100"
         >
           <div>
-            <p class="text-sm font-medium text-gray-500 mb-1">Total Users</p>
-            <h3 class="text-2xl font-bold text-gray-900">
+            <p class="text-sm font-medium mb-1 transition-colors text-gray-500">
+              Total Users
+            </p>
+            <h3 class="text-2xl font-bold transition-colors text-gray-900">
               {{ dashboardStats.totalUsers }}
             </h3>
           </div>
         </div>
         <!-- Active Users -->
         <div
-          class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between"
+          class="rounded-2xl shadow-sm border p-6 flex items-center justify-between transition-colors bg-white border-gray-100"
         >
           <div>
-            <p class="text-sm font-medium text-gray-500 mb-1">Active Users</p>
-            <h3 class="text-2xl font-bold text-gray-900">
+            <p class="text-sm font-medium mb-1 transition-colors text-gray-500">
+              Active Users
+            </p>
+            <h3 class="text-2xl font-bold transition-colors text-gray-900">
               {{ dashboardStats.activeUsersCount }}
             </h3>
           </div>
         </div>
         <!-- New Users -->
         <div
-          class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between"
+          class="rounded-2xl shadow-sm border p-6 flex items-center justify-between transition-colors bg-white border-gray-100"
         >
           <div>
-            <p class="text-sm font-medium text-gray-500 mb-1">
+            <p class="text-sm font-medium mb-1 transition-colors text-gray-500">
               New user in the last 7 days
             </p>
-            <h3 class="text-2xl font-bold text-gray-900">
+            <h3 class="text-2xl font-bold transition-colors text-gray-900">
               {{ dashboardStats.newUsersThisWeek }}
             </h3>
           </div>
         </div>
         <!-- Total Resumes -->
         <div
-          class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between"
+          class="rounded-2xl shadow-sm border p-6 flex items-center justify-between transition-colors bg-white border-gray-100"
         >
           <div>
-            <p class="text-sm font-medium text-gray-500 mb-1">Total Resumes</p>
-            <h3 class="text-2xl font-bold text-gray-900">
+            <p class="text-sm font-medium mb-1 transition-colors text-gray-500">
+              Total Resumes
+            </p>
+            <h3 class="text-2xl font-bold transition-colors text-gray-900">
               {{ dashboardStats.totalResumes }}
             </h3>
           </div>
@@ -97,7 +107,7 @@
 
       <!-- Top Action Bar -->
       <div
-        class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6"
+        class="rounded-2xl shadow-sm border p-6 mb-6 transition-colors bg-white border-gray-100"
       >
         <div
           class="flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -125,7 +135,7 @@
               type="text"
               v-model="searchInput"
               @keyup.enter="handleSearch"
-              class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 transition-colors sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              class="block w-full pl-10 pr-3 py-2.5 border rounded-xl leading-5 transition-colors sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 border-gray-200 text-gray-900 placeholder-gray-400"
               placeholder="Search by name or email (Enter)..."
             />
           </div>
@@ -135,10 +145,7 @@
             <div class="relative" ref="filterContainer">
               <button
                 @click.prevent="openFilters = !openFilters"
-                class="inline-flex items-center px-4 py-2.5 border border-gray-200 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                :class="{
-                  'ring-2 ring-indigo-500 border-indigo-500': hasActiveFilters,
-                }"
+                class="inline-flex items-center px-4 py-2.5 border shadow-sm text-sm font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors border-gray-200 text-gray-700 bg-white hover:bg-gray-50"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -173,11 +180,11 @@
               >
                 <div
                   v-show="openFilters"
-                  class="origin-top-right absolute right-0 mt-2 w-72 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-30 overflow-hidden"
+                  class="origin-top-right absolute right-0 mt-2 w-72 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 z-30 overflow-hidden transition-colors bg-white"
                 >
                   <div class="p-4 bg-white" role="menu">
                     <h3
-                      class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3"
+                      class="text-xs font-bold uppercase tracking-wider mb-3 transition-colors text-gray-500"
                     >
                       Filter by Date
                     </h3>
@@ -235,7 +242,7 @@
                     </div>
 
                     <div
-                      class="flex justify-end gap-2 mt-5 pt-3 border-t border-gray-100"
+                      class="flex justify-end gap-2 mt-5 pt-3 border-t transition-colors border-gray-100"
                     >
                       <button
                         @click="resetFilters"
@@ -255,7 +262,6 @@
               </transition>
             </div>
 
-            <!-- Export CSV Button (NEW) -->
             <button
               @click="exportDataToCSV"
               class="inline-flex items-center px-4 py-2.5 border border-indigo-200 shadow-sm text-sm font-medium rounded-xl text-indigo-700 bg-indigo-50 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
@@ -281,7 +287,7 @@
             <div class="relative" ref="dropdownContainer">
               <button
                 @click.prevent="open = !open"
-                class="inline-flex items-center px-4 py-2.5 border border-gray-200 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                class="inline-flex items-center px-4 py-2.5 border shadow-sm text-sm font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors border-gray-200 text-gray-700 bg-white hover:bg-gray-50"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -310,13 +316,13 @@
               >
                 <div
                   v-show="open"
-                  class="origin-top-right absolute right-0 mt-2 w-56 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20 overflow-hidden"
+                  class="origin-top-right absolute right-0 mt-2 w-56 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 z-20 overflow-hidden transition-colors bg-white"
                 >
                   <div class="py-1 p-2" role="menu" aria-orientation="vertical">
                     <label
                       v-for="heading in headings"
                       :key="heading.key"
-                      class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-md cursor-pointer transition-colors"
+                      class="flex items-center px-4 py-2 text-sm rounded-md cursor-pointer transition-colors text-gray-700 hover:bg-indigo-50 hover:text-indigo-700"
                     >
                       <input
                         type="checkbox"
@@ -393,7 +399,7 @@
       </div>
 
       <div
-        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+        class="rounded-2xl shadow-sm border overflow-hidden transition-colors bg-white border-gray-100"
       >
         <div class="overflow-x-auto custom-scrollbar">
           <table class="min-w-full divide-y divide-gray-200">
@@ -401,7 +407,7 @@
               <tr>
                 <th
                   scope="col"
-                  class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider w-12 sticky top-0 bg-gray-50 z-10 hidden sm:table-cell"
+                  class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider w-12 sticky top-0 z-10 hidden sm:table-cell transition-colors text-gray-500 bg-gray-50"
                 >
                   <div class="flex items-center">
                     <input
@@ -417,7 +423,7 @@
                   :key="heading.key"
                   v-show="!hiddenColumns.includes(heading.key)"
                   scope="col"
-                  class="px-6 py-4 text-left text-xs font-bold uppercase sticky top-0 bg-gray-50 z-10"
+                  class="px-6 py-4 text-left text-xs font-bold uppercase sticky top-0 z-10 transition-colors text-gray-600 bg-gray-50"
                 >
                   {{ heading.value }}
                 </th>
@@ -427,8 +433,7 @@
               <tr
                 v-for="user in users"
                 :key="user._id"
-                class="hover:bg-indigo-50/30 transition-colors duration-150"
-                :class="{ 'bg-indigo-50/50': selectedRows.includes(user._id) }"
+                class="transition-colors duration-150 hover:bg-indigo-50/30"
               >
                 <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                   <div class="flex items-center">
@@ -448,7 +453,7 @@
                 >
                   <div
                     v-if="heading.key === 'createdAt'"
-                    class="text-gray-600 font-medium"
+                    class="font-medium transition-colors text-gray-600"
                   >
                     {{ formatDate(user.createdAt) }}
                   </div>
@@ -507,10 +512,13 @@
                   <!-- Default Text -->
                   <div
                     v-else
+                    class="font-medium transition-colors"
                     :class="
                       user.role === 'admin' && heading.key === 'name'
-                        ? 'text-cyan-400 font-medium'
-                        : 'text-gray-900 font-medium'
+                        ? 'text-cyan-400'
+                        : isDark
+                          ? 'text-slate-200'
+                          : 'text-gray-900'
                     "
                   >
                     {{ user[heading.key] }}
@@ -559,12 +567,16 @@
 
         <!-- Server Pagination -->
         <div
-          class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4"
+          class="px-6 py-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors bg-gray-50 border-gray-200"
         >
-          <div class="text-sm text-gray-500 flex items-center gap-4">
+          <div
+            class="text-sm flex items-center gap-4 transition-colors text-gray-500"
+          >
             <span>
               Showing
-              <span class="font-medium text-gray-900">{{ users.length }}</span>
+              <span class="font-medium transition-colors text-gray-900">{{
+                users.length
+              }}</span>
               users
             </span>
             <span>
@@ -592,12 +604,12 @@
             <button
               @click="changePage(pagination.page - 1)"
               :disabled="pagination.page <= 1"
-              class="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              class="px-3 py-1.5 border rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
               Previous
             </button>
             <div class="flex items-center px-4">
-              <span class="text-sm text-gray-700"
+              <span class="text-sm transition-colors text-gray-700"
                 >Page <span class="font-medium">{{ pagination.page }}</span> of
                 <span class="font-medium">{{
                   pagination.totalPages > 0 ? pagination.totalPages : 1
@@ -607,7 +619,7 @@
             <button
               @click="changePage(pagination.page + 1)"
               :disabled="pagination.page >= pagination.totalPages"
-              class="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              class="px-3 py-1.5 border rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
               Next
             </button>
@@ -620,6 +632,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useTheme } from "../composables/useTheme";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
@@ -676,6 +689,7 @@ const activeFilterCount = computed(() => {
 });
 
 const router = useRouter();
+const { isDark } = { isDark: ref(false) };
 const selectedRows = ref([]);
 const hiddenColumns = ref([]);
 const open = ref(false);

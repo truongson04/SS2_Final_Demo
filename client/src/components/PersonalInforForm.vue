@@ -1,5 +1,7 @@
 <script setup>
 import { computed } from "vue";
+import { useTheme } from "../composables/useTheme";
+const { isDark } = useTheme();
 
 const data = defineModel("data");
 
@@ -52,15 +54,16 @@ const fields = [
 </script>
 <template>
   <div
-    class="bg-slate-900/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 relative overflow-hidden"
+    class="rounded-2xl p-6 sm:p-8 relative overflow-hidden border transition-colors duration-300"
+    :class="isDark ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm' : 'bg-white border-gray-200 shadow-sm'"
   >
     <div
       class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"
     ></div>
 
     <div class="mb-8 relative z-10">
-      <h3 class="text-xl font-bold text-white">Personal Information</h3>
-      <p class="text-sm text-slate-400 mt-1">
+      <h3 class="text-xl font-bold transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Personal Information</h3>
+      <p class="text-sm mt-1 transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
         Enter your personal details to display on your resume.
       </p>
     </div>
@@ -70,7 +73,8 @@ const fields = [
     >
       <label class="group relative cursor-pointer flex-shrink-0">
         <div
-          class="w-24 h-24 rounded-full border-2 border-dashed border-slate-600 bg-slate-950 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-cyan-500 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+          class="w-24 h-24 rounded-full border-2 border-dashed flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+          :class="isDark ? 'border-slate-600 bg-slate-950 group-hover:border-cyan-500' : 'border-gray-300 bg-gray-50 group-hover:border-indigo-400'"
         >
           <img
             v-if="data.personal_info.image"
@@ -80,7 +84,8 @@ const fields = [
           />
           <div
             v-else
-            class="flex flex-col items-center justify-center text-slate-500 group-hover:text-cyan-400 transition-colors"
+            class="flex flex-col items-center justify-center transition-colors"
+            :class="isDark ? 'text-slate-500 group-hover:text-cyan-400' : 'text-gray-400 group-hover:text-indigo-500'"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -132,8 +137,8 @@ const fields = [
       </label>
 
       <div class="flex flex-col gap-2">
-        <p class="text-sm font-medium text-white">Profile Picture</p>
-        <p class="text-xs text-slate-500 max-w-[250px]">
+        <p class="text-sm font-medium transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Profile Picture</p>
+        <p class="text-xs max-w-[250px] transition-colors" :class="isDark ? 'text-slate-500' : 'text-slate-400'">
           Upload a professional photo (JPG, PNG). Max size 5MB.
         </p>
       </div>
@@ -142,7 +147,8 @@ const fields = [
     <div class="flex flex-col gap-6 relative z-10">
       <div v-for="field in fields" :key="field.key" class="group w-full">
         <label
-          class="block text-sm font-medium text-slate-300 mb-2 transition-colors group-focus-within:text-cyan-400"
+          class="block text-sm font-medium mb-2 transition-colors group-focus-within:text-cyan-400"
+          :class="isDark ? 'text-slate-300' : 'text-slate-600'"
         >
           {{ field.label }}
           <span v-if="field.required" class="text-red-400 ml-0.5">*</span>
@@ -250,7 +256,8 @@ const fields = [
             v-model="data.personal_info[field.key]"
             :placeholder="`Enter your ${field.label.toLowerCase()}`"
             :required="field.required"
-            class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all shadow-inner text-sm sm:text-base"
+            class="w-full pl-11 pr-4 py-3 border rounded-lg placeholder-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all shadow-inner text-sm sm:text-base"
+            :class="isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-gray-200 text-slate-800'"
           />
         </div>
       </div>

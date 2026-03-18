@@ -6,8 +6,10 @@ import ResumePreview from "../components/ResumePreview.vue";
 import Loading from "../components/Loading.vue";
 import { toast } from "vue3-toastify";
 import { computed } from "vue";
+import { useTheme } from "../composables/useTheme";
 const route = useRoute();
 const resumeData = ref({});
+const { isDark } = useTheme();
 
 const { resumeId } = route.params;
 const isInterview = ref(false);
@@ -140,24 +142,43 @@ onMounted(async () => {
   <Loading v-if="isInterview" />
   <div
     v-else
-    class="h-screen bg-slate-950 flex flex-col lg:flex-row overflow-hidden relative font-sans text-slate-300"
+    class="h-screen flex flex-col lg:flex-row overflow-hidden relative font-sans transition-colors duration-300"
+    :class="
+      isDark ? 'bg-slate-950 text-slate-300' : 'bg-gray-50 text-slate-700'
+    "
   >
     <div
       class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
     ></div>
 
     <div
-      class="w-full lg:w-[45%] h-full flex flex-col border-r border-white/5 bg-slate-900/30 relative z-10"
+      class="w-full lg:w-[45%] h-full flex flex-col border-r relative z-10 transition-colors"
+      :class="
+        isDark ? 'border-white/5 bg-slate-900/30' : 'border-gray-200 bg-white'
+      "
     >
       <div
-        class="h-14 border-b border-white/5 flex items-center px-6 bg-slate-950/80 backdrop-blur"
+        class="h-14 border-b flex items-center px-6 transition-colors"
+        :class="
+          isDark ? 'border-white/5 bg-slate-950/80 backdrop-blur' : 'border-gray-200 bg-white'
+        "
       >
         <router-link
           :to="`/app/builder/${resumeId}`"
-          class="inline-flex gap-2 items-center text-slate-400 hover:text-cyan-400 transition-all group"
+          class="inline-flex gap-2 items-center transition-all group"
+          :class="
+            isDark
+              ? 'text-slate-400 hover:text-cyan-400'
+              : 'text-slate-500 hover:text-indigo-600'
+          "
         >
           <div
-            class="p-1.5 rounded-full bg-slate-900 border border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10 transition-colors"
+            class="p-1.5 rounded-full border transition-colors"
+            :class="
+              isDark
+                ? 'bg-slate-900 border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10'
+                : 'bg-gray-100 border-gray-300 group-hover:border-indigo-400'
+            "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -204,7 +225,10 @@ onMounted(async () => {
         </h2>
       </div>
 
-      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-slate-950/50">
+      <div
+        class="flex-1 overflow-y-auto custom-scrollbar p-6 transition-colors"
+        :class="isDark ? 'bg-slate-950/50' : 'bg-gray-50'"
+      >
         <div class="flex flex-col items-center min-h-full">
           <div
             class="relative w-full max-w-[21cm] origin-top transform scale-[0.85] xl:scale-95 transition-transform duration-300"
@@ -226,12 +250,19 @@ onMounted(async () => {
     </div>
 
     <div
-      class="w-full lg:w-[55%] h-full flex flex-col bg-slate-950 relative z-20"
+      class="w-full lg:w-[55%] h-full flex flex-col relative z-20 transition-colors"
+      :class="isDark ? 'bg-slate-950' : 'bg-white'"
     >
       <div
-        class="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur z-20"
+        class="h-14 border-b flex items-center justify-between px-6 z-20 transition-colors"
+        :class="
+          isDark ? 'border-white/5 bg-slate-900/80 backdrop-blur' : 'border-gray-200 bg-white'
+        "
       >
-        <h2 class="text-lg font-bold text-white tracking-tight">
+        <h2
+          class="text-lg font-bold tracking-tight transition-colors"
+          :class="isDark ? 'text-white' : 'text-slate-800'"
+        >
           Interview room
         </h2>
         <span class="text-xs text-slate-500 font-mono"
@@ -245,12 +276,16 @@ onMounted(async () => {
       >
         <div class="relative group mb-8"></div>
 
-        <h2 class="text-3xl font-bold text-white mb-3 tracking-tight">
+        <h2
+          class="text-3xl font-bold mb-3 tracking-tight transition-colors"
+          :class="isDark ? 'text-white' : 'text-slate-800'"
+        >
           Ready for your Interview?
         </h2>
 
         <p
-          class="text-slate-400 max-w-md mx-auto mb-10 leading-relaxed text-sm md:text-base"
+          class="max-w-md mx-auto mb-10 leading-relaxed text-sm md:text-base transition-colors"
+          :class="isDark ? 'text-slate-400' : 'text-slate-500'"
         >
           Our AI Interviewer will analyze your resume and generate technical
           questions tailored to your profile.
@@ -324,7 +359,8 @@ onMounted(async () => {
         >
           <div
             v-if="q.status === 'active'"
-            class="relative p-6 rounded-2xl bg-slate-900/90 border border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.15)] backdrop-blur-sm"
+            class="relative p-6 rounded-2xl border border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.15)] backdrop-blur-sm transition-colors"
+            :class="isDark ? 'bg-slate-900/90' : 'bg-white'"
           >
             <div
               class="absolute -left-[1px] top-6 bottom-6 w-1 bg-cyan-500 rounded-r-full shadow-[0_0_10px_rgba(6,182,212,0.8)]"
@@ -334,7 +370,12 @@ onMounted(async () => {
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
                   <span
-                    class="px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-[10px] font-bold uppercase tracking-wider text-slate-300"
+                    class="px-2 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider transition-colors"
+                    :class="
+                      isDark
+                        ? 'bg-slate-800 border-slate-700 text-slate-300'
+                        : 'bg-gray-100 border-gray-200 text-slate-600'
+                    "
                   >
                     {{ q.category }}
                   </span>
@@ -352,7 +393,8 @@ onMounted(async () => {
               </div>
 
               <h3
-                class="text-md md:text-xl font-medium text-white leading-relaxed"
+                class="text-md md:text-xl font-medium leading-relaxed transition-colors"
+                :class="isDark ? 'text-white' : 'text-slate-800'"
               >
                 {{ q.question }}
               </h3>
@@ -388,7 +430,13 @@ onMounted(async () => {
                     >Suggested Answer</span
                   >
                 </div>
-                <p class="text-sm text-purple-200/80 leading-relaxed italic">
+                <p
+                  :class="
+                    isDark
+                      ? 'text-sm text-purple-200/80 leading-relaxed italic'
+                      : 'text-sm text-black leading-relaxed italic '
+                  "
+                >
                   "{{ q.suggestedAnswer }}"
                 </p>
               </div>
@@ -397,8 +445,13 @@ onMounted(async () => {
 
           <div
             v-else
-            class="p-5 rounded-xl border border-white/5 bg-slate-900/40 hover:bg-slate-900/60 transition-colors opacity-70 hover:opacity-100"
-            :class="q.status === 'completed' ? 'opacity-50' : ''"
+            class="p-5 rounded-xl border transition-colors opacity-70 hover:opacity-100"
+            :class="[
+              q.status === 'completed' ? 'opacity-50' : '',
+              isDark
+                ? 'border-white/5 bg-slate-900/40 hover:bg-slate-900/60'
+                : 'border-gray-200 bg-white hover:bg-gray-50',
+            ]"
           >
             <div class="flex justify-between items-start mb-2">
               <div class="flex gap-2">
@@ -406,7 +459,12 @@ onMounted(async () => {
                   >#0{{ index + 1 }}</span
                 >
                 <span
-                  class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-slate-400 border border-slate-700 uppercase"
+                  class="px-1.5 py-0.5 rounded text-[10px] uppercase border transition-colors"
+                  :class="
+                    isDark
+                      ? 'bg-slate-800 text-slate-400 border-slate-700'
+                      : 'bg-gray-100 text-slate-500 border-gray-200'
+                  "
                   >{{ q.category }}</span
                 >
               </div>
@@ -414,20 +472,33 @@ onMounted(async () => {
                 q.difficulty
               }}</span>
             </div>
-            <p class="text-sm text-slate-400 line-clamp-2">{{ q.question }}</p>
+            <p
+              class="text-sm line-clamp-2 transition-colors"
+              :class="isDark ? 'text-slate-400' : 'text-slate-500'"
+            >
+              {{ q.question }}
+            </p>
           </div>
         </div>
       </div>
       <div
         v-if="mode === 'chat'"
-        class="flex flex-col h-full bg-slate-950 relative overflow-hidden font-sans border border-white/5 rounded-2xl shadow-2xl"
+        class="flex flex-col h-full relative overflow-hidden font-sans border rounded-2xl shadow-2xl transition-colors"
+        :class="
+          isDark ? 'bg-slate-950 border-white/5' : 'bg-white border-gray-200'
+        "
       >
         <div
           class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
         ></div>
 
         <div
-          class="px-6 py-4 border-b border-white/5 bg-slate-900/80 backdrop-blur z-10 flex items-center justify-between"
+          class="px-6 py-4 border-b backdrop-blur z-10 flex items-center justify-between transition-colors"
+          :class="
+            isDark
+              ? 'border-white/5 bg-slate-900/80'
+              : 'border-gray-200 bg-white'
+          "
         >
           <div class="flex items-center gap-3">
             <div class="relative w-2 h-2">
@@ -438,7 +509,10 @@ onMounted(async () => {
                 class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"
               ></span>
             </div>
-            <h3 class="font-bold text-white text-sm tracking-wide">
+            <h3
+              class="font-bold text-sm tracking-wide transition-colors"
+              :class="isDark ? 'text-white' : 'text-slate-800'"
+            >
               AI Assistant
             </h3>
           </div>
@@ -508,7 +582,9 @@ onMounted(async () => {
                 :class="
                   msg.role === 'user'
                     ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-tr-none'
-                    : 'bg-slate-800 border border-white/5 text-slate-300 rounded-tl-none'
+                    : isDark
+                      ? 'bg-slate-800 border border-white/5 text-slate-300 rounded-tl-none'
+                      : 'bg-gray-100 border border-gray-200 text-slate-700 rounded-tl-none'
                 "
               >
                 {{ msg.text }}
@@ -542,7 +618,12 @@ onMounted(async () => {
                 </svg>
               </div>
               <div
-                class="p-4 rounded-2xl bg-slate-800 border border-white/5 rounded-tl-none flex items-center gap-1"
+                class="p-4 rounded-2xl rounded-tl-none flex items-center gap-1 transition-colors"
+                :class="
+                  isDark
+                    ? 'bg-slate-800 border border-white/5'
+                    : 'bg-gray-100 border border-gray-200'
+                "
               >
                 <span
                   class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
@@ -562,7 +643,11 @@ onMounted(async () => {
 
         <div
           v-if="isReady"
-          class="p-4 bg-slate-900/90 backdrop-blur border-t border-white/10 z-10"
+          :class="
+            isDark
+              ? 'p-4 bg-slate-900/90 backdrop-blur border-t border-white/10 z-10'
+              : 'p-4 bg-white border-t border-white/10 z-10'
+          "
         >
           <div class="relative group">
             <div
@@ -577,7 +662,11 @@ onMounted(async () => {
                 v-model="userInput"
                 @keyup.enter="sendMessage"
                 placeholder="Type your answer in here..."
-                class="flex-1 bg-transparent border-none text-slate-200 placeholder-slate-500 px-4 py-3 focus:outline-none focus:ring-0 text-sm"
+                :class="
+                  isDark
+                    ? 'flex-1 bg-transparent border-none text-slate-200 placeholder-slate-500 px-4 py-3 focus:outline-none focus:ring-0 text-sm'
+                    : 'flex-1 bg-gray-200 border-none text-slate-800 placeholder-slate-800 px-4 py-3 focus:outline-none focus:ring-0 text-sm'
+                "
               />
 
               <button

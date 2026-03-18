@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, computed, toRaw } from "vue";
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
+import { useTheme } from "../composables/useTheme";
 
 import PersonalInforForm from "../components/PersonalInforForm.vue";
 import ResumePreview from "../components/ResumePreview.vue";
@@ -19,6 +20,7 @@ import _ from "lodash";
 
 const route = useRoute();
 const router = useRouter();
+const { isDark } = useTheme();
 const { resumeId } = route.params;
 const activeSectionIndex = ref(0);
 const removeBackground = ref(false);
@@ -126,18 +128,59 @@ const saveResume = async () => {
 // PDF CV
 const cvTemplate = ref(null);
 const printCV = async () => {
-  const htmlContent = `
+  isLoading.value = true;
+  try {
+    // Clone the template element to avoid modifying the UI
+    const clone = cvTemplate.value.cloneNode(true);
+
+    // Convert all blob images to base64 so Puppeteer can access them
+    const images = clone.getElementsByTagName("img");
+    for (const img of images) {
+      if (img.src.startsWith("blob:")) {
+        try {
+          const response = await fetch(img.src);
+          const blob = await response.blob();
+          const base64 = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(blob);
+          });
+          img.src = base64;
+        } catch (e) {
+          console.error("Failed to convert image to base64", e);
+        }
+      }
+    }
+
+    const htmlContent = `
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+        -webkit-print-color-adjust: exact;
+      }
+      /* Ensure the CV takes full width of the A4 page */
+      .max-w-4xl, .max-w-5xl, .max-w-7xl {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+      }
+    </style>
   </head>
   <body>
-    ${cvTemplate.value.innerHTML}
+    ${clone.innerHTML}
   </body>
 </html>
 `;
-  isLoading.value = true;
-  try {
+
     const response = await clientApi.post(
       "/api/resumes/pdf",
       {
@@ -150,14 +193,15 @@ const printCV = async () => {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `${resumeData.value.title}.pdf`);
+    link.setAttribute("download", `${resumeData.value.title || "Resume"}.pdf`);
     document.body.appendChild(link);
     link.click();
     link.remove();
     window.URL.revokeObjectURL(url);
+    toast.success("PDF Downloaded!");
   } catch (error) {
     console.log(error);
-    toast.error(error.message);
+    toast.error("Failed to generate PDF: " + error.message);
   } finally {
     isLoading.value = false;
   }
@@ -185,7 +229,10 @@ onMounted(async () => {
   <loading v-if="isLoading" />
   <div
     v-else
-    class="w-full relative font-sans text-slate-300"
+    class="w-full relative font-sans transition-colors duration-300"
+    :class="
+      isDark ? 'text-slate-300 bg-slate-950' : 'text-slate-700 bg-gray-50'
+    "
   >
     <save-modal
       :is-open="showSaveModal"
@@ -209,10 +256,20 @@ onMounted(async () => {
     <div class="max-w-7xl mx-auto px-4 py-6 relative z-10">
       <router-link
         to="/app"
-        class="inline-flex gap-2 items-center text-slate-400 hover:text-cyan-400 transition-all group"
+        class="inline-flex gap-2 items-center transition-all group"
+        :class="
+          isDark
+            ? 'text-slate-400 hover:text-cyan-400'
+            : 'text-slate-500 hover:text-indigo-600'
+        "
       >
         <div
-          class="p-1.5 rounded-full bg-slate-900 border border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10 transition-colors"
+          class="p-1.5 rounded-full border transition-colors"
+          :class="
+            isDark
+              ? 'bg-slate-900 border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10'
+              : 'bg-white border-gray-200 group-hover:border-indigo-400 shadow-sm'
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -237,7 +294,12 @@ onMounted(async () => {
         <button
           v-if="resumeData.public"
           @click="handleShare"
-          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+          class="p-2 backdrop-blur rounded-lg border shadow-lg transition"
+          :class="
+            isDark
+              ? 'bg-slate-900/80 text-slate-400 hover:text-white border-white/10 hover:border-cyan-500/50'
+              : 'bg-white/80 text-slate-500 hover:text-indigo-600 border-gray-200 hover:border-indigo-400'
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +323,12 @@ onMounted(async () => {
 
         <button
           @click="changeResumeVisibility"
-          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+          class="p-2 backdrop-blur rounded-lg border shadow-lg transition"
+          :class="
+            isDark
+              ? 'bg-slate-900/80 text-slate-400 hover:text-white border-white/10 hover:border-cyan-500/50'
+              : 'bg-white/80 text-slate-500 hover:text-indigo-600 border-gray-200 hover:border-indigo-400'
+          "
         >
           <svg
             v-if="resumeData.public"
@@ -306,7 +373,12 @@ onMounted(async () => {
         </button>
         <button
           @click="printCV"
-          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+          class="p-2 backdrop-blur rounded-lg border shadow-lg transition"
+          :class="
+            isDark
+              ? 'bg-slate-900/80 text-slate-400 hover:text-white border-white/10 hover:border-cyan-500/50'
+              : 'bg-white/80 text-slate-500 hover:text-indigo-600 border-gray-200 hover:border-indigo-400'
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -334,7 +406,12 @@ onMounted(async () => {
               },
             })
           "
-          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+          class="p-2 rounded-lg border shadow-lg transition text-sm"
+          :class="
+            isDark
+              ? 'bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white border-white/10 hover:border-cyan-500/50'
+              : 'bg-white text-slate-600 hover:text-indigo-700 border-gray-200 hover:border-indigo-400 font-medium'
+          "
         >
           Analysis
         </button>
@@ -347,7 +424,12 @@ onMounted(async () => {
               },
             })
           "
-          class="p-2 bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white rounded-lg border border-white/10 shadow-lg hover:border-cyan-500/50 transition"
+          class="p-2 rounded-lg border shadow-lg transition text-sm"
+          :class="
+            isDark
+              ? 'bg-slate-900/80 backdrop-blur text-slate-400 hover:text-white border-white/10 hover:border-cyan-500/50'
+              : 'bg-white text-slate-600 hover:text-indigo-700 border-gray-200 hover:border-indigo-400 font-medium'
+          "
         >
           Interview prepare
         </button>
@@ -358,7 +440,12 @@ onMounted(async () => {
       <div class="grid lg:grid-cols-12 gap-8 h-full">
         <div class="lg:col-span-5 flex flex-col h-full">
           <div
-            class="relative bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col h-full"
+            class="relative flex flex-col h-full transition-colors"
+            :class="
+              isDark
+                ? 'bg-slate-900/80 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl overflow-hidden'
+                : 'bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden'
+            "
           >
             <div class="absolute top-0 left-0 right-0 h-1 bg-slate-800">
               <div
@@ -372,7 +459,12 @@ onMounted(async () => {
             </div>
 
             <div
-              class="flex flex-col sm:flex-row justify-between items-center gap-4 p-5 border-b border-white/5 bg-slate-900/50"
+              class="flex flex-col sm:flex-row justify-between items-center gap-4 p-5 border-b transition-colors"
+              :class="
+                isDark
+                  ? 'border-white/5 bg-slate-900/50'
+                  : 'border-gray-100 bg-gray-50'
+              "
             >
               <div class="flex items-center gap-3">
                 <template-selector
@@ -390,7 +482,12 @@ onMounted(async () => {
                   @click="
                     activeSectionIndex = Math.max(activeSectionIndex - 1, 0)
                   "
-                  class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10 transition-all"
+                  class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition-all"
+                  :class="
+                    isDark
+                      ? 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent hover:border-white/10'
+                      : 'text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 border-transparent hover:border-indigo-200'
+                  "
                   :disabled="activeSectionIndex === 0"
                 >
                   <svg
@@ -445,17 +542,21 @@ onMounted(async () => {
             >
               <div class="mb-6">
                 <h2
-                  class="text-xl font-bold text-white flex items-center gap-2"
+                  class="text-xl font-bold flex items-center gap-2 transition-colors"
+                  :class="isDark ? 'text-white' : 'text-slate-800'"
                 >
                   <span
-                    class="flex items-center justify-center w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 text-xs border border-cyan-500/50"
+                    class="flex items-center justify-center w-6 h-6 rounded-full border transition-colors"
+                    :class="
+                      isDark
+                        ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50'
+                        : 'bg-cyan-600/20 text-cyan-700 border-cyan-600/30'
+                    "
                   >
                     {{ activeSectionIndex + 1 }}
                   </span>
 
                   {{ activeSection.name || "Section Title" }}
-
-                  <p>{{ activeSection.id }}</p>
                 </h2>
               </div>
 
@@ -506,7 +607,8 @@ onMounted(async () => {
 
         <div class="lg:col-span-7 flex flex-col h-full relative">
           <div
-            class="flex-1 bg-slate-900/40 backdrop-blur-md border border-white/10 shadow-2xl rounded-xl relative overflow-hidden flex flex-col"
+            class="flex-1 backdrop-blur-md border border-white/10 shadow-2xl rounded-xl relative overflow-hidden flex flex-col transition-colors"
+            :class="isDark ? 'bg-slate-900/40' : 'bg-gray-100/80'"
           >
             <div
               class="absolute inset-0 opacity-20 bg-[size:20px_20px] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] pointer-events-none"

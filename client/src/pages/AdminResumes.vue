@@ -1,37 +1,41 @@
-<template>
+﻿<template>
   <admin-loading :is-loading="loading" />
-  <div class="min-h-screen bg-gray-50 pb-12">
+  <div class="min-h-screen pb-12 transition-colors duration-300 bg-gray-50">
     <!-- Header -->
     <header
-      class="bg-white shadow-sm sticky top-0 z-10 transition-shadow duration-300"
+      class="sticky top-0 z-10 transition-all duration-300 bg-white shadow-sm"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center space-x-8">
             <h1
-              class="text-xl font-bold text-gray-900 tracking-tight flex items-center"
+              class="text-xl font-bold tracking-tight flex items-center transition-colors text-gray-900"
             >
               Admin Portal
             </h1>
             <nav class="hidden md:flex space-x-4">
               <router-link
                 to="/admin"
-                class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-gray-500 hover:text-gray-900"
               >
                 Users
               </router-link>
               <router-link
                 to="/admin/resumes"
-                class="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                class="px-3 py-2 rounded-md text-sm font-medium transition-colors bg-indigo-50 text-indigo-700"
               >
                 Resumes
               </router-link>
             </nav>
           </div>
           <div class="flex gap-5 items-center">
-            <h1 class="text-right">Welcome {{ authStore.user?.name }} !</h1>
+            <h1
+              class="text-right text-sm font-medium transition-colors text-gray-700"
+            >
+              Welcome {{ authStore.user?.name }} !
+            </h1>
             <button
-              class="bg-red-500 p-3 rounded-full text-white cursor-pointer hover:bg-red-800"
+              class="bg-red-500 px-4 py-2 rounded-lg text-white text-sm font-medium cursor-pointer hover:bg-red-700 transition-colors"
               @click="handleLogout"
             >
               Log out
@@ -49,11 +53,13 @@
       >
         <!-- Total Resumes card -->
         <div
-          class="min-w-[200px] bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between shrink-0"
+          class="min-w-[200px] rounded-2xl shadow-sm border p-6 flex items-center justify-between shrink-0 transition-colors bg-white border-gray-100"
         >
           <div>
-            <p class="text-sm font-medium text-gray-500 mb-1">Total Resumes</p>
-            <h3 class="text-2xl font-bold text-gray-900">
+            <p class="text-sm font-medium mb-1 transition-colors text-gray-500">
+              Total Resumes
+            </p>
+            <h3 class="text-2xl font-bold transition-colors text-gray-900">
               {{ pagination.total }}
             </h3>
           </div>
@@ -62,13 +68,15 @@
         <div
           v-for="stat in templateStats"
           :key="stat._id"
-          class="min-w-[200px] bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between shrink-0 border-l-4"
+          class="min-w-[200px] rounded-2xl shadow-sm border p-6 flex items-center justify-between shrink-0 border-l-4 transition-colors bg-white border-gray-100"
         >
           <div>
-            <p class="text-sm font-medium text-gray-500 mb-1 capitalize">
+            <p
+              class="text-sm font-medium mb-1 capitalize transition-colors text-gray-500"
+            >
               {{ stat._id || "Unknown" }} Template
             </p>
-            <h3 class="text-2xl font-bold text-gray-900">
+            <h3 class="text-2xl font-bold transition-colors text-gray-900">
               {{ stat.count }} usage
             </h3>
           </div>
@@ -77,7 +85,7 @@
 
       <!-- Top Action Bar -->
       <div
-        class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6"
+        class="rounded-2xl shadow-sm border p-6 mb-6 transition-colors bg-white border-gray-100"
       >
         <div
           class="flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -104,7 +112,7 @@
               type="text"
               v-model="searchInput"
               @keyup.enter="handleSearch"
-              class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 transition-colors sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              class="block w-full pl-10 pr-3 py-2.5 border rounded-xl leading-5 transition-colors sm:text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400"
               placeholder="Search by resume title (Enter)..."
             />
           </div>
@@ -115,10 +123,7 @@
             <div class="relative" ref="filterDropdownContainer">
               <button
                 @click.prevent="openFilters = !openFilters"
-                class="inline-flex items-center px-4 py-2.5 border border-gray-200 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
-                :class="{
-                  'ring-2 ring-indigo-500 border-indigo-500': openFilters,
-                }"
+                class="inline-flex items-center px-4 py-2.5 border shadow-sm text-sm font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors border-gray-200 text-gray-700 bg-white hover:bg-gray-50"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -152,12 +157,12 @@
               >
                 <div
                   v-show="openFilters"
-                  class="origin-top-right absolute right-0 mt-2 w-72 rounded-xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-30 overflow-hidden"
+                  class="origin-top-right absolute right-0 mt-2 w-72 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 z-30 overflow-hidden transition-colors bg-white"
                 >
                   <div class="p-4 bg-white" role="menu">
                     <!-- Date Range -->
                     <h3
-                      class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3"
+                      class="text-xs font-bold uppercase tracking-wider mb-3 transition-colors text-gray-500"
                     >
                       Filter by Created Date
                     </h3>
@@ -186,7 +191,7 @@
 
                     <!-- Owner & Template -->
                     <h3
-                      class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 mt-4"
+                      class="text-xs font-bold uppercase tracking-wider mb-3 mt-4 transition-colors text-gray-500"
                     >
                       Filter by Details
                     </h3>
@@ -228,7 +233,7 @@
                     </div>
 
                     <div
-                      class="flex justify-end gap-2 mt-5 pt-3 border-t border-gray-100"
+                      class="flex justify-end gap-2 mt-5 pt-3 border-t transition-colors border-gray-100"
                     >
                       <button
                         @click="resetFilters"
@@ -253,7 +258,7 @@
 
       <!-- Resumes Table -->
       <div
-        class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+        class="rounded-2xl shadow-sm border overflow-hidden transition-colors bg-white border-gray-100"
       >
         <div class="overflow-x-auto custom-scrollbar">
           <table class="min-w-full divide-y divide-gray-200">
@@ -301,31 +306,32 @@
               <tr
                 v-for="resume in resumes"
                 :key="resume._id"
-                class="hover:bg-indigo-50/30 transition-colors duration-150"
-                :class="{ 'opacity-60 bg-gray-50': resume.isLocked }"
+                class="transition-colors duration-150 hover:bg-indigo-50/30"
               >
                 <td
-                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium transition-colors text-gray-900"
                 >
                   {{ resume.title }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <p class="font-medium text-gray-900">
+                  <p class="font-medium transition-colors text-gray-900">
                     {{ resume.ownerName || "Unknown User" }}
                   </p>
-                  <p class="text-xs text-indigo-600">
+                  <p class="text-xs text-indigo-500">
                     {{ resume.ownerEmail || "" }}
                   </p>
                 </td>
                 <td
-                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize"
+                  class="px-6 py-4 whitespace-nowrap text-sm capitalize transition-colors text-gray-500"
                 >
                   <span
-                    class="px-2 py-1 bg-gray-100 rounded-md text-xs font-medium text-gray-600 border border-gray-200"
+                    class="px-2 py-1 rounded-md text-xs font-medium border transition-colors bg-gray-100 text-gray-600 border-gray-200"
                     >{{ resume.template }}</span
                   >
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm transition-colors text-gray-500"
+                >
                   {{ formatDate(resume.createdAt) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
@@ -333,7 +339,7 @@
                     :class="
                       resume.public
                         ? 'text-green-600 bg-green-50 px-2 py-1 rounded-md'
-                        : 'text-gray-500 bg-gray-100 px-2 py-1 rounded-md'
+                        : 'text-gray-500 bg-gray-100'
                     "
                   >
                     {{ resume.public ? "Public" : "Private" }}
@@ -362,7 +368,10 @@
                 </td>
               </tr>
               <tr v-if="resumes.length === 0 && !loading">
-                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                <td
+                  colspan="6"
+                  class="px-6 py-12 text-center transition-colors text-gray-500"
+                >
                   No resumes found.
                 </td>
               </tr>
@@ -372,22 +381,26 @@
 
         <!-- Server Pagination -->
         <div
-          class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4"
+          class="px-6 py-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors bg-gray-50 border-gray-200"
         >
-          <div class="text-sm text-gray-500 flex items-center gap-4">
+          <div
+            class="text-sm flex items-center gap-4 transition-colors text-gray-500"
+          >
             <span
               >Showing
-              <span class="font-medium text-gray-900">{{
+              <span class="font-medium transition-colors text-gray-900">{{
                 resumes.length
               }}</span>
               items</span
             >
             <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-500">Rows per page:</span>
+              <span class="text-sm transition-colors text-gray-500"
+                >Rows per page:</span
+              >
               <select
                 v-model="pagination.limit"
                 @change="changeLimit"
-                class="text-sm border-gray-300 rounded-md py-1 pl-2 pr-6"
+                class="text-sm rounded-md py-1 pl-2 pr-6 transition-colors border-gray-300"
               >
                 <option :value="10">10</option>
                 <option :value="30">30</option>
@@ -399,18 +412,18 @@
             <button
               @click="changePage(pagination.page - 1)"
               :disabled="pagination.page <= 1"
-              class="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50"
+              class="px-3 py-1.5 border rounded-md text-sm font-medium disabled:opacity-50 transition-colors border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
               Previous
             </button>
-            <span class="text-sm text-gray-700 px-2"
+            <span class="text-sm px-2 transition-colors text-gray-700"
               >Page {{ pagination.page }} of
               {{ pagination.totalPages || 1 }}</span
             >
             <button
               @click="changePage(pagination.page + 1)"
               :disabled="pagination.page >= pagination.totalPages"
-              class="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-medium bg-white hover:bg-gray-50 disabled:opacity-50"
+              class="px-3 py-1.5 border rounded-md text-sm font-medium disabled:opacity-50 transition-colors border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
             >
               Next
             </button>
@@ -434,19 +447,19 @@
           class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
         >
           <div
-            class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity"
+            class="absolute inset-0 backdrop-blur-sm transition-opacity bg-gray-900/70"
             @click="closeResume"
           ></div>
 
           <div
-            class="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden transform transition-all border border-gray-200"
+            class="relative w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden transform transition-all border bg-white border-gray-200"
           >
             <div
-              class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white z-10 sticky top-0 shadow-sm"
+              class="flex items-center justify-between px-6 py-4 border-b z-10 sticky top-0 shadow-sm transition-colors bg-white border-gray-100"
             >
               <div class="flex items-center space-x-4">
                 <h3
-                  class="text-xl font-bold text-gray-900 truncate max-w-[200px] sm:max-w-md"
+                  class="text-xl font-bold truncate max-w-[200px] sm:max-w-md transition-colors text-gray-900"
                 >
                   {{ selectedResume?.title || "Resume Preview" }}
                 </h3>
@@ -475,7 +488,7 @@
             </div>
 
             <div
-              class="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-8 flex justify-center custom-scrollbar inset-shadow-sm"
+              class="flex-1 overflow-y-auto p-4 sm:p-8 flex justify-center custom-scrollbar inset-shadow-sm transition-colors bg-gray-50"
             >
               <ResumeDisplay
                 v-if="selectedResume"
@@ -487,11 +500,11 @@
             </div>
 
             <div
-              class="bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end"
+              class="border-t px-6 py-4 flex justify-end transition-colors bg-gray-50 border-gray-200"
             >
               <button
                 @click="closeResume"
-                class="inline-flex justify-center items-center px-6 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                class="inline-flex justify-center items-center px-6 py-2 border shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:text-gray-900"
               >
                 Close Details
               </button>
@@ -505,6 +518,7 @@
 
 <script setup>
 import { ref, onMounted, computed, onUnmounted } from "vue";
+import { useTheme } from "../composables/useTheme";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import useAuth from "../../store/auth";

@@ -149,7 +149,7 @@ export const saveResume = async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: "new",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -157,20 +157,34 @@ export const saveResume = async (req, res) => {
         "--disable-accelerated-2d-canvas",
         "--no-first-run",
         "--no-zygote",
-
         "--disable-gpu",
       ],
     });
     const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+    // Set a desktop viewport to ensure md: and lg: classes are applied correctly
+    await page.setViewport({
+      width: 1200,
+      height: 1600,
+      deviceScaleFactor: 2, // Higher quality
+    });
+
+    await page.setContent(htmlContent, { 
+      waitUntil: ["networkidle0", "domcontentloaded", "load"] 
+    });
+
+    // Small delay to allow Tailwind 4 to finish processing and injecting styles
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
+      preferCSSPageSize: true,
       margin: {
-        top: "10mm",
-        bottom: "10mm",
-        left: "10mm",
-        right: "10mm",
+        top: "0mm", // Removing margins to allow template to control it or fit better
+        bottom: "0mm",
+        left: "0mm",
+        right: "0mm",
       },
     });
 
@@ -181,9 +195,10 @@ export const saveResume = async (req, res) => {
     res.send(pdfBuffer);
     await browser.close();
   } catch (error) {
-    console.log(error);
+    console.error("PDF Export Error:", error);
     return res.status(500).json({
       message: "PDF save error",
+      error: error.message,
     });
   }
 };

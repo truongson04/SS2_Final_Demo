@@ -62,15 +62,16 @@ const handleGithubSignIn = async () => {
 };
 </script>
 <template>
-  <Transition
-    enter-active-class="transition duration-300 ease-out"
-    enter-from-class="opacity-0 transform translate-y-4"
-    enter-to-class="opacity-100 transform translate-y-0"
-    leave-active-class="transition duration-200 ease-in"
-    leave-from-class="opacity-100 transform translate-y-0"
-    leave-to-class="opacity-0 transform translate-y-4"
-    mode="out-in"
-  >
+  <div class="force-dark">
+    <Transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 transform translate-y-4"
+      enter-to-class="opacity-100 transform translate-y-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 transform translate-y-0"
+      leave-to-class="opacity-0 transform translate-y-4"
+      mode="out-in"
+    >
     <div
       v-if="!showOtp"
       class="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden px-4"
@@ -325,4 +326,6 @@ const handleGithubSignIn = async () => {
     :type="legalModalType"
     @close="showLegalModal = false"
   />
+  </div>
 </template>
+

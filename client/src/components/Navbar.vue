@@ -4,10 +4,14 @@ import { onMounted, ref } from "vue";
 import useAuth from "../../store/auth";
 import getUserData from "../composables/useGetData";
 import LogoutModal from "./LogoutModal.vue";
-const authStore = useAuth();
+import { useTheme } from "../composables/useTheme";
 
+const authStore = useAuth();
 const router = useRouter();
 const isOpen = ref(false);
+
+const { isDark, toggleTheme } = useTheme();
+
 const logoutUser = () => {
   authStore.logout();
   isOpen.value = false;
@@ -19,7 +23,12 @@ getUserData();
 </script>
 <template>
   <div
-    class="sticky top-0 z-50 w-full bg-slate-950/80 backdrop-blur-md border-b border-white/10"
+    class="sticky top-0 z-50 w-full backdrop-blur-md border-b transition-all"
+    :class="
+      isDark
+        ? 'bg-slate-950/85 border-white/10'
+        : 'bg-white/90 border-slate-200 shadow-sm'
+    "
   >
     <nav
       class="flex items-center justify-between max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 transition-all"
@@ -30,28 +39,100 @@ getUserData();
         >
           <img src="../assets/dummy_profile.png" class="object-cover" />
         </div>
-        <span class="font-bold text-xl tracking-tight text-white"
+        <span
+          class="font-bold text-xl tracking-tight transition-colors"
+          :class="isDark ? 'text-white' : 'text-slate-800'"
           >CVBuilder</span
         >
       </router-link>
 
-      <div class="flex items-center gap-6">
+      <div class="flex items-center gap-3">
+        <!-- User info -->
         <div class="flex items-center gap-3">
           <div
-            class="h-8 w-8 rounded-full bg-gradient-to-tr from-slate-700 to-slate-600 border border-white/10 flex items-center justify-center text-xs font-bold text-cyan-400"
+            class="h-8 w-8 rounded-full bg-gradient-to-tr flex items-center justify-center text-xs font-bold transition-all"
+            :class="isDark ? '' : 'border border-black'"
           >
-            {{ authStore.user?.[0]?.name?.charAt(0).toUpperCase() }}
+            <img
+              src="../assets/avt.png"
+              class="object-cover w-full h-full rounded-full"
+            />
           </div>
-          <p class="text-sm font-medium text-slate-300 max-sm:hidden">
-            Hi, <span class="text-white">{{ authStore.user?.name }}</span>
+          <p
+            class="text-sm font-medium max-sm:hidden transition-colors"
+            :class="isDark ? 'text-slate-300' : 'text-slate-600'"
+          >
+            Hi,
+            <span :class="isDark ? 'text-white' : 'text-slate-800'">{{
+              authStore.user?.name
+            }}</span>
           </p>
         </div>
 
-        <div class="h-5 w-px bg-white/10 hidden sm:block"></div>
+        <div
+          class="h-5 w-px hidden sm:block transition-colors"
+          :class="isDark ? 'bg-white/10' : 'bg-slate-200'"
+        ></div>
 
         <button
+          @click="toggleTheme"
+          :title="isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'"
+          class="relative h-9 w-9 rounded-full flex items-center justify-center transition-all active:scale-90 focus:outline-none"
+          :class="
+            isDark
+              ? 'bg-slate-800 border border-white/10 text-yellow-300 hover:bg-slate-700 hover:border-yellow-400/30'
+              : 'bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 hover:border-slate-300'
+          "
+        >
+          <!-- Sun icon (shown in dark mode) -->
+          <svg
+            v-if="isDark"
+            xmlns="http://www.w3.org/2000/svg"
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="m4.93 4.93 1.41 1.41"></path>
+            <path d="m17.66 17.66 1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="m6.34 17.66-1.41 1.41"></path>
+            <path d="m19.07 4.93-1.41 1.41"></path>
+          </svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
+
+        <div
+          class="h-5 w-px hidden sm:block transition-colors"
+          :class="isDark ? 'bg-white/10' : 'bg-slate-200'"
+        ></div>
+
+        <!-- Logout Button -->
+        <button
           @click="isOpen = true"
-          class="flex items-center gap-2 px-4 py-1.5 rounded-full border border-slate-700 bg-slate-900/50 text-slate-400 text-sm font-medium transition-all hover:text-white hover:border-cyan-500/50 hover:bg-slate-800 active:scale-95"
+          class="flex items-center gap-2 px-4 py-1.5 rounded-full text-sm transition-all active:scale-95 bg-red-500 font-bold text-white hover:bg-red-900"
         >
           <span>Logout</span>
           <svg
