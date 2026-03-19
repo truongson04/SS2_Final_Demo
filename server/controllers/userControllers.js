@@ -100,6 +100,7 @@ export const getUserById = async (req, res) => {
 };
 // get CV
 export const getUserResumes = async (req, res) => {
+
   try {
     const userId = req.userId;
     const resumes = await Resume.find({ userId });

@@ -176,7 +176,7 @@ const closeMenu = () => {
           Login
         </button>
         <button
-          class="px-4 py-2 rounded-full text-sm text-slate-300 hover:text-cyan-500"
+          class="hover:text-cyan-400 transition text-slate-300 font-medium px-4"
           @click="router.push('/signup')"
         >
           Register
