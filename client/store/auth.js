@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
 
 const useAuth = defineStore("auth", () => {
   const token = ref(null);
@@ -15,16 +16,19 @@ user.value = newUser[0];
     else{
       user.value= newUser
     }
+ 
     
     
     localStorage.setItem("token", newToken);
     localStorage.setItem("role",user.value.role )
     if(user.value.role==='admin'){
     router.replace("/admin"); 
+
     }
     else{
       router.replace("/app")
     }
+    toast.success("Login successfully !")
   };
   const logout = () => {
     token.value = "";
@@ -32,6 +36,7 @@ user.value = newUser[0];
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     router.replace("/")
+    toast.success("Logout successfully !")
   };
   return { token, user, login, logout, loading };
 });
