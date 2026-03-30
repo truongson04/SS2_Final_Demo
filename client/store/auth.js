@@ -28,7 +28,7 @@ user.value = newUser[0];
     else{
       router.replace("/app")
     }
-    toast.success("Login successfully !")
+   
   };
   const logout = () => {
     token.value = "";

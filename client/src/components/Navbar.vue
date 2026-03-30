@@ -76,7 +76,7 @@ getUserData();
 
         <button
           @click="toggleTheme"
-          :title="isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'"
+          :title="isDark ? 'Change to light mode' : 'Change to dark mode'"
           class="relative h-9 w-9 rounded-full flex items-center justify-center transition-all active:scale-90 focus:outline-none"
           :class="
             isDark

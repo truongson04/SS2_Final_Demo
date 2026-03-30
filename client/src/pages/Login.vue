@@ -21,6 +21,7 @@ const handleSubmit = async () => {
     localStorage.setItem("token", data.token);
 
     router.push("/");
+    toast.success("Login successfully !");
   } catch (error) {
     toast.error(error?.response?.data?.message || error.message);
   } finally {

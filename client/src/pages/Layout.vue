@@ -15,7 +15,6 @@ const router = useRouter();
 const { isDark, initTheme } = useTheme();
 
 onMounted(async () => {
-  // Initialize theme from localStorage / system preference
   initTheme();
 
   const token = route.query.token;
@@ -42,6 +41,7 @@ onMounted(async () => {
 
 <template>
   <Loading v-if="authStore.loading" />
+
   <div
     v-if="authStore.user"
     class="min-h-screen relative font-sans selection:bg-cyan-500/30 transition-colors duration-300"
