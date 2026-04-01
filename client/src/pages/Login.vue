@@ -35,9 +35,10 @@ const handleGithubSignIn = async () => {
 };
 </script>
 <template>
-  <div
-    class="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden px-4"
-  >
+  <div class="force-dark">
+    <div
+      class="min-h-screen flex items-center justify-center bg-slate-950 relative overflow-hidden px-4"
+    >
     <div
       class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-10 pointer-events-none"
     ></div>
@@ -225,5 +226,8 @@ const handleGithubSignIn = async () => {
         <a href="#" class="hover:text-slate-400 underline">Privacy Policy</a>.
       </p>
     </div>
+    </div>
   </div>
 </template>
+
+

@@ -3,6 +3,7 @@ import { ref, watch, nextTick, computed } from "vue";
 import clientApi from "../configs/api/clientApi";
 import useAuth from "../../store/auth";
 import { marked } from "marked";
+import { useTheme } from "../composables/useTheme";
 
 marked.setOptions({
   breaks: true,
@@ -10,7 +11,10 @@ marked.setOptions({
 });
 
 const authStore = useAuth();
-const isLoggedIn = computed(() => !!authStore.token || !!localStorage.getItem("token"));
+const isLoggedIn = computed(
+  () => !!authStore.token || !!localStorage.getItem("token"),
+);
+const { isDark } = useTheme();
 const isOpen = ref(false);
 const message = ref("");
 const messages = ref([]);
@@ -47,10 +51,9 @@ const sendMessage = async () => {
   scrollToBottom();
 
   try {
-    // Only send real conversation messages (exclude greeting)
     const chatHistory = messages.value
       .filter((m) => !m.isGreeting)
-      .slice(0, -1) // exclude the message we just sent (it goes as 'message' param)
+      .slice(0, -1)
       .map((m) => ({ role: m.role, content: m.content }));
 
     const { data } = await clientApi.post("/api/ai/quick-chat", {
@@ -115,7 +118,6 @@ watch(messages, scrollToBottom, { deep: true });
       </svg>
     </button>
 
-    <!-- Chat Box -->
     <Transition
       enter-active-class="chat-enter-active"
       enter-from-class="chat-enter-from"
@@ -124,28 +126,21 @@ watch(messages, scrollToBottom, { deep: true });
       leave-from-class="chat-leave-from"
       leave-to-class="chat-leave-to"
     >
-      <div v-if="isOpen" class="ai-chatbox">
-        <!-- Header -->
+      <div
+        v-if="isOpen"
+        class="ai-chatbox"
+        :class="isDark ? 'ai-chatbox--dark' : 'ai-chatbox--light'"
+      >
         <div class="ai-chatbox__header">
           <div class="ai-chatbox__header-info">
             <div class="ai-chatbox__avatar">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  d="M12 2a8 8 0 0 1 8 8c0 3.3-2 6.2-5 7.5V20a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2v-2.5C6 16.2 4 13.3 4 10a8 8 0 0 1 8-8z"
-                />
-                <path d="M9 10h.01" />
-                <path d="M15 10h.01" />
-              </svg>
+              <img
+                src="../assets/chatbot-icon.png"
+                class="object-cover h-full w-full rounded-full"
+              />
             </div>
             <div>
-              <h3 class="ai-chatbox__title">AI Assistant</h3>
+              <h3 class="ai-chatbox__title">Your "Blue-eyes" Assistant</h3>
               <span class="ai-chatbox__status">Online</span>
             </div>
           </div>
@@ -175,10 +170,7 @@ watch(messages, scrollToBottom, { deep: true });
               'ai-chatbox__msg--ai': msg.role === 'assistant',
             }"
           >
-            <div
-              v-if="msg.role === 'user'"
-              class="ai-chatbox__bubble"
-            >
+            <div v-if="msg.role === 'user'" class="ai-chatbox__bubble">
               {{ msg.content }}
             </div>
             <div
@@ -252,7 +244,8 @@ watch(messages, scrollToBottom, { deep: true });
   justify-content: center;
   background: linear-gradient(135deg, #06b6d4, #3b82f6);
   color: white;
-  box-shadow: 0 4px 24px rgba(6, 182, 212, 0.4),
+  box-shadow:
+    0 4px 24px rgba(6, 182, 212, 0.4),
     0 0 40px rgba(6, 182, 212, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -260,7 +253,8 @@ watch(messages, scrollToBottom, { deep: true });
 }
 .ai-fab:hover {
   transform: scale(1.1);
-  box-shadow: 0 6px 32px rgba(6, 182, 212, 0.5),
+  box-shadow:
+    0 6px 32px rgba(6, 182, 212, 0.5),
     0 0 60px rgba(6, 182, 212, 0.2);
 }
 .ai-fab--active {
@@ -306,8 +300,69 @@ watch(messages, scrollToBottom, { deep: true });
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5),
     0 0 40px rgba(6, 182, 212, 0.1);
+}
+
+/* Light mode overrides */
+.ai-chatbox--light {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.12),
+    0 0 20px rgba(99, 102, 241, 0.06);
+}
+.ai-chatbox--light .ai-chatbox__header {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.ai-chatbox--light .ai-chatbox__title {
+  color: #1e293b;
+}
+.ai-chatbox--light .ai-chatbox__close {
+  color: #94a3b8;
+}
+.ai-chatbox--light .ai-chatbox__close:hover {
+  color: #1e293b;
+  background: rgba(0, 0, 0, 0.05);
+}
+.ai-chatbox--light .ai-chatbox__msg--ai .ai-chatbox__bubble {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.ai-chatbox--light .ai-chatbox__footer {
+  background: #f8fafc;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+.ai-chatbox--light .ai-chatbox__input {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1e293b;
+}
+.ai-chatbox--light .ai-chatbox__input::placeholder {
+  color: #94a3b8;
+}
+.ai-chatbox--light .ai-chatbox__input:focus {
+  border-color: #6366f1;
+}
+.ai-chatbox--light .ai-chatbox__body {
+  background: #ffffff;
+}
+.ai-chatbox--light .ai-chatbox__bubble--md :deep(h1),
+.ai-chatbox--light .ai-chatbox__bubble--md :deep(h2),
+.ai-chatbox--light .ai-chatbox__bubble--md :deep(h3) {
+  color: #4f46e5;
+}
+.ai-chatbox--light .ai-chatbox__bubble--md :deep(strong) {
+  color: #1e293b;
+}
+.ai-chatbox--light .ai-chatbox__bubble--md :deep(code) {
+  background: rgba(99, 102, 241, 0.1);
+}
+.ai-chatbox--light .ai-chatbox__bubble--md :deep(pre) {
+  background: #f1f5f9;
 }
 
 /* Transition */

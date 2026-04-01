@@ -271,10 +271,33 @@ const imageUrl = computed(() => {
             class="relative pl-6 border-l-2"
             :style="{ borderLeftColor: accentColor }"
           >
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-center">
               <div>
                 <h3 class="text-lg font-bold text-gray-800">{{ p.name }}</h3>
               </div>
+              <a
+                v-if="p.link"
+                :href="p.link"
+                target="_blank"
+                class="text-xs font-medium flex items-center gap-1 hover:underline transition-all"
+                :style="{ color: accentColor }"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                View Project
+              </a>
             </div>
 
             <div

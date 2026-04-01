@@ -5,10 +5,12 @@ import ResumePreview from "../components/ResumePreview.vue";
 import { toast } from "vue3-toastify";
 import clientApi from "../configs/api/clientApi";
 import Loading from "../components/Loading.vue";
+import { useTheme } from "../composables/useTheme";
 const route = useRoute();
 const { resumeId } = route.params;
 const resumeData = ref({});
 const isGenerating = ref(false);
+const { isDark } = useTheme();
 
 const analysisResult = ref(null);
 
@@ -57,24 +59,29 @@ onMounted(async () => {
   <Loading v-if="isGenerating" />
 
   <div
-    class="h-screen bg-slate-950 flex flex-col lg:flex-row overflow-hidden relative font-sans text-slate-300"
+    class="h-screen flex flex-col lg:flex-row overflow-hidden relative font-sans transition-colors duration-300"
+    :class="isDark ? 'bg-slate-950 text-slate-300' : 'bg-gray-50 text-slate-700'"
   >
     <div
       class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
     ></div>
 
     <div
-      class="w-full lg:w-[40%] h-full flex flex-col border-r border-white/5 bg-slate-900/30 relative z-10"
+      class="w-full lg:w-[40%] h-full flex flex-col border-r relative z-10 transition-colors"
+      :class="isDark ? 'border-white/5 bg-slate-900/30' : 'border-gray-200 bg-white'"
     >
       <div
-        class="h-14 border-b border-white/5 flex items-center px-6 bg-slate-950/80 backdrop-blur"
+        class="h-14 border-b flex items-center px-6 transition-colors"
+        :class="isDark ? 'border-white/5 bg-slate-950/80 backdrop-blur' : 'border-gray-200 bg-white'"
       >
         <router-link
           :to="`/app/builder/${resumeId}`"
-          class="inline-flex gap-2 items-center text-slate-400 hover:text-cyan-400 transition-all group mr-10"
+          class="inline-flex gap-2 items-center transition-all group mr-10"
+          :class="isDark ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500 hover:text-indigo-600'"
         >
           <div
-            class="p-1.5 rounded-full bg-slate-900 border border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10 transition-colors"
+            class="p-1.5 rounded-full border transition-colors"
+            :class="isDark ? 'bg-slate-900 border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10' : 'bg-gray-100 border-gray-300 group-hover:border-indigo-400'"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +108,7 @@ onMounted(async () => {
           Original Resume
         </h2>
       </div>
-      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-slate-950/50">
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 transition-colors" :class="isDark ? 'bg-slate-950/50' : 'bg-gray-50'">
         <div class="flex flex-col items-center min-h-full">
           <div
             class="relative w-full max-w-[21cm] origin-top transform scale-[0.8] xl:scale-[0.9] transition-transform duration-300"
@@ -136,7 +143,8 @@ onMounted(async () => {
         ></div>
 
         <div
-          class="relative w-28 h-28 bg-slate-900 rounded-2xl rotate-3 flex items-center justify-center border border-white/10 shadow-[0_0_30px_rgba(6,182,212,0.15)] group-hover:rotate-0 group-hover:scale-105 transition-all duration-300 ease-out z-10"
+          class="relative w-28 h-28 rounded-2xl rotate-3 flex items-center justify-center border shadow-[0_0_30px_rgba(6,182,212,0.15)] group-hover:rotate-0 group-hover:scale-105 transition-all duration-300 ease-out z-10"
+          :class="isDark ? 'bg-slate-900 border-white/10' : 'bg-white border-gray-200'"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -149,6 +157,7 @@ onMounted(async () => {
             stroke-linecap="round"
             stroke-linejoin="round"
             class="text-slate-300 group-hover:text-white transition-colors"
+            :class="isDark ? 'text-slate-300' : 'text-slate-500 group-hover:text-slate-800'"
           >
             <path
               d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
@@ -182,13 +191,15 @@ onMounted(async () => {
       </div>
 
       <h2
-        class="text-3xl md:text-4xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-slate-400 mb-4 tracking-tight"
+        class="text-3xl md:text-4xl font-bold text-center mb-4 tracking-tight transition-colors"
+        :class="isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-slate-400' : 'text-slate-800'"
       >
         Resume Audit AI
       </h2>
 
       <p
-        class="text-slate-400 text-center max-w-md mx-auto mb-10 leading-relaxed text-sm md:text-base"
+        class="text-center max-w-md mx-auto mb-10 leading-relaxed text-sm md:text-base transition-colors"
+        :class="isDark ? 'text-slate-400' : 'text-slate-500'"
       >
         Our advanced AI will scan your resume for ATS compatibility, highlight
         strengths, and identify areas for improvement.
@@ -223,9 +234,10 @@ onMounted(async () => {
       </button>
 
       <div
-        class="mt-10 inline-flex items-center justify-center gap-6 px-5 py-2 rounded-full bg-slate-900/50 border border-white/5 backdrop-blur-sm mx-auto"
+        class="mt-10 inline-flex items-center justify-center gap-6 px-5 py-2 rounded-full mx-auto border transition-colors"
+        :class="isDark ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm' : 'bg-white border-gray-200 shadow-sm'"
       >
-        <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+        <div class="flex items-center gap-2 text-xs font-mono transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
           <span class="relative flex h-2 w-2">
             <span
               class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
@@ -237,9 +249,9 @@ onMounted(async () => {
           AI Model Ready
         </div>
 
-        <div class="w-px h-3 bg-slate-700"></div>
+        <div class="w-px h-3 transition-colors" :class="isDark ? 'bg-slate-700' : 'bg-gray-300'"></div>
 
-        <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+        <div class="flex items-center gap-2 text-xs font-mono transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="12"
@@ -264,13 +276,16 @@ onMounted(async () => {
     <!-- result part  -->
     <div
       v-else
-      class="w-full lg:w-[60%] h-full flex flex-col bg-slate-950 relative z-20"
+      class="w-full lg:w-[60%] h-full flex flex-col relative z-20 transition-colors"
+      :class="isDark ? 'bg-slate-950' : 'bg-white'"
     >
       <div
-        class="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-slate-900/80 backdrop-blur z-20"
+        class="h-14 border-b flex items-center justify-between px-6 z-20 transition-colors"
+        :class="isDark ? 'border-white/5 bg-slate-900/80 backdrop-blur' : 'border-gray-200 bg-white'"
       >
         <h2
-          class="text-lg font-bold text-white tracking-tight flex items-center gap-2"
+          class="text-lg font-bold tracking-tight flex items-center gap-2 transition-colors"
+          :class="isDark ? 'text-white' : 'text-slate-800'"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -298,7 +313,8 @@ onMounted(async () => {
       <div class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
         <div class="max-w-4xl mx-auto space-y-8">
           <div
-            class="relative p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-900 border border-white/10 shadow-2xl flex items-center justify-between overflow-hidden"
+            class="relative p-6 rounded-2xl border shadow-2xl flex items-center justify-between overflow-hidden transition-colors"
+            :class="isDark ? 'bg-gradient-to-br from-slate-900 to-slate-900 border-white/10' : 'bg-white border-gray-100'"
           >
             <div
               class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none"
@@ -306,25 +322,27 @@ onMounted(async () => {
 
             <div>
               <h3
-                class="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1"
+                class="text-sm font-bold uppercase tracking-widest mb-1 transition-colors"
+                :class="isDark ? 'text-slate-400' : 'text-gray-500'"
               >
                 ATS Compatibility Score
               </h3>
-              <p class="text-2xl font-bold text-white mb-2">Overall Quality</p>
-              <p class="text-slate-500 text-sm max-w-sm">
+              <p class="text-2xl font-bold mb-2 transition-colors" :class="isDark ? 'text-white' : 'text-gray-900'">Overall Quality</p>
+              <p class="text-sm max-w-sm transition-colors" :class="isDark ? 'text-slate-500' : 'text-gray-500'">
                 {{ analysisResult.summary }}
               </p>
             </div>
 
             <div
-              class="relative w-24 h-24 flex items-center justify-center rounded-full border-4 bg-slate-950 shadow-[0_0_20px_rgba(0,0,0,0.5)]"
-              :class="getScoreColor(analysisResult.score)"
+              class="relative w-24 h-24 flex items-center justify-center rounded-full border-4 shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-colors"
+              :class="[getScoreColor(analysisResult.score), isDark ? 'bg-slate-950' : 'bg-white']"
             >
               <span class="text-3xl font-bold font-mono">{{
                 analysisResult.score
               }}</span>
               <div
-                class="absolute -bottom-6 text-[10px] font-bold uppercase text-slate-500 tracking-widest"
+                class="absolute -bottom-6 text-[10px] font-bold uppercase tracking-widest transition-colors"
+                :class="isDark ? 'text-slate-500' : 'text-gray-400'"
               >
                 / 100
               </div>
@@ -333,7 +351,8 @@ onMounted(async () => {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div
-              class="p-6 rounded-2xl bg-slate-900/50 border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.05)] relative"
+              class="p-6 rounded-2xl border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.05)] relative transition-colors"
+              :class="isDark ? 'bg-slate-900/50' : 'bg-white'"
             >
               <div class="flex items-center gap-2 mb-4">
                 <h3 class="font-bold text-lg text-green-500">Strengths</h3>
@@ -348,7 +367,8 @@ onMounted(async () => {
                 <li
                   v-for="(item, i) in analysisResult.strengths"
                   :key="i"
-                  class="flex gap-3 text-sm text-slate-300"
+                  class="flex gap-3 text-sm transition-colors"
+                  :class="isDark ? 'text-slate-300' : 'text-slate-600'"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -370,7 +390,8 @@ onMounted(async () => {
             </div>
 
             <div
-              class="p-6 rounded-2xl bg-slate-900/50 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.05)] relative"
+              class="p-6 rounded-2xl border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.05)] relative transition-colors"
+              :class="isDark ? 'bg-slate-900/50' : 'bg-white'"
             >
               <div class="flex items-center gap-2 mb-4">
                 <h3 class="font-bold text-red-500 text-lg">Areas to Improve</h3>
@@ -385,7 +406,8 @@ onMounted(async () => {
                 <li
                   v-for="(item, i) in analysisResult.weaknesses"
                   :key="i"
-                  class="flex gap-3 text-sm text-slate-300"
+                  class="flex gap-3 text-sm transition-colors"
+                  :class="isDark ? 'text-slate-300' : 'text-slate-600'"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -409,7 +431,8 @@ onMounted(async () => {
           </div>
 
           <div
-            class="relative p-6 rounded-2xl bg-slate-900 border border-cyan-500/30 overflow-hidden"
+            class="relative p-6 rounded-2xl border border-cyan-500/30 overflow-hidden transition-colors"
+            :class="isDark ? 'bg-slate-900' : 'bg-indigo-50'"
           >
             <div
               class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-cyan-500 to-blue-600"
@@ -424,21 +447,22 @@ onMounted(async () => {
                   src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbHpwZzV4aTh0eXF3ejBiZGg0bWk5bmg0ODlpeTZjaGZsZDkxeW12NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2IudUHdI075HL02Pkk/giphy.gif"
                 />
               </div>
-              <h3 class="font-bold text-white text-lg">Recommended Actions</h3>
+              <h3 class="font-bold text-lg transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Recommended Actions</h3>
             </div>
 
             <div class="space-y-4">
               <div
                 v-for="(item, i) in analysisResult.improvements"
                 :key="i"
-                class="flex gap-4 p-3 rounded-lg bg-slate-800/50 hover:bg-slate-800 transition-colors border border-white/5"
+                class="flex gap-4 p-3 rounded-lg border transition-colors"
+                :class="isDark ? 'bg-slate-800/50 hover:bg-slate-800 border-white/5' : 'bg-white hover:bg-gray-50 border-gray-200'"
               >
                 <div
                   class="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold border border-cyan-500/30"
                 >
                   {{ i + 1 }}
                 </div>
-                <p class="text-sm text-slate-300 leading-relaxed">{{ item }}</p>
+                <p class="text-sm leading-relaxed transition-colors" :class="isDark ? 'text-slate-300' : 'text-slate-600'">{{ item }}</p>
               </div>
             </div>
           </div>

@@ -2,12 +2,15 @@
 import { ref } from "vue";
 import { toast } from "vue3-toastify";
 import clientApi from "../configs/api/clientApi";
+import { useTheme } from "../composables/useTheme";
 const data = defineModel("data");
+const { isDark } = useTheme();
 
 const addProject = () => {
   const newProject = {
     name: "",
     type: "",
+    link: "",
     description: "",
   };
   data.value.push(newProject);
@@ -38,28 +41,49 @@ const generateDescription = async (index) => {
 </script>
 <template>
   <div
-    class="bg-slate-900/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 relative overflow-hidden"
+    class="rounded-2xl p-6 sm:p-8 relative overflow-hidden border transition-colors duration-300"
+    :class="
+      isDark
+        ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm'
+        : 'bg-white border-gray-200 shadow-sm'
+    "
   >
     <div
       class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"
     ></div>
 
     <div class="mb-8 relative z-10">
-      <h3 class="text-xl font-bold text-white">Featured Projects</h3>
-      <p class="text-sm text-slate-400 mt-1">
+      <h3
+        class="text-xl font-bold transition-colors"
+        :class="isDark ? 'text-white' : 'text-slate-800'"
+      >
+        Featured Projects
+      </h3>
+      <p
+        class="text-sm mt-1 transition-colors"
+        :class="isDark ? 'text-slate-400' : 'text-slate-500'"
+      >
         Showcase the projects that demonstrate your skills and experience.
       </p>
     </div>
 
     <div class="relative z-10">
       <div class="flex justify-between items-center mb-6">
-        <label class="text-sm font-medium text-slate-300">
+        <label
+          class="text-sm font-medium transition-colors"
+          :class="isDark ? 'text-slate-300' : 'text-slate-600'"
+        >
           Project Portfolio
         </label>
 
         <button
           @click="addProject"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 hover:border-cyan-500/50 hover:from-cyan-500/20 hover:to-blue-500/20 transition-all text-xs font-bold text-cyan-400 hover:text-cyan-300 group shadow-lg shadow-cyan-500/5"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-xs font-bold group shadow-lg"
+          :class="
+            isDark
+              ? 'bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border-cyan-500/20 text-cyan-400 hover:text-cyan-300 hover:border-cyan-500/50 hover:from-cyan-500/20 hover:to-blue-500/20 shadow-cyan-500/5'
+              : 'bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border-cyan-600/30 text-cyan-700 hover:text-cyan-800 hover:border-cyan-600/50 shadow-cyan-600/10'
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -82,9 +106,21 @@ const generateDescription = async (index) => {
 
       <div
         v-if="data.length === 0"
-        class="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-700/50 rounded-xl bg-slate-950/30"
+        class="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-xl transition-colors"
+        :class="
+          isDark
+            ? 'border-slate-700/50 bg-slate-950/30'
+            : 'border-gray-200 bg-gray-50'
+        "
       >
-        <div class="p-4 rounded-full bg-slate-800/50 text-slate-500 mb-3">
+        <div
+          class="p-4 rounded-full mb-3 transition-colors"
+          :class="
+            isDark
+              ? 'bg-slate-800/50 text-slate-500'
+              : 'bg-gray-200 text-gray-400'
+          "
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -101,8 +137,16 @@ const generateDescription = async (index) => {
             />
           </svg>
         </div>
-        <p class="text-slate-400 font-medium">No projects added</p>
-        <p class="text-xs text-slate-500 mt-1">
+        <p
+          class="font-medium transition-colors"
+          :class="isDark ? 'text-slate-400' : 'text-slate-500'"
+        >
+          No projects added
+        </p>
+        <p
+          class="text-xs mt-1 transition-colors"
+          :class="isDark ? 'text-slate-500' : 'text-slate-400'"
+        >
           Add your key projects to impress recruiters.
         </p>
       </div>
@@ -111,14 +155,28 @@ const generateDescription = async (index) => {
         <div
           v-for="(project, index) in data"
           :key="index"
-          class="group relative bg-slate-950 border border-slate-800 rounded-xl p-5 transition-all hover:border-slate-600"
+          class="group relative border rounded-xl p-5 transition-all"
+          :class="
+            isDark
+              ? 'bg-slate-950 border-slate-800 hover:border-slate-600'
+              : 'bg-gray-50 border-gray-200 hover:border-gray-400'
+          "
         >
           <div
-            class="flex justify-between items-start mb-4 border-b border-slate-800 pb-3"
+            class="flex justify-between items-start mb-4 border-b pb-3 transition-colors"
+            :class="isDark ? 'border-slate-800' : 'border-gray-200'"
           >
-            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+            <h4
+              class="text-sm font-bold flex items-center gap-2 transition-colors"
+              :class="isDark ? 'text-white' : 'text-slate-800'"
+            >
               <span
-                class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-[10px] text-slate-400 border border-slate-700"
+                class="flex items-center justify-center w-5 h-5 rounded-full text-[10px] border transition-colors"
+                :class="
+                  isDark
+                    ? 'bg-slate-800 text-slate-400 border-slate-700'
+                    : 'bg-gray-200 text-slate-600 border-gray-300'
+                "
               >
                 {{ index + 1 }}
               </span>
@@ -147,7 +205,7 @@ const generateDescription = async (index) => {
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div class="space-y-4 mb-4">
             <div class="space-y-1.5">
               <label class="text-xs text-slate-400 ml-1">Project Name</label>
               <div class="relative">
@@ -155,7 +213,12 @@ const generateDescription = async (index) => {
                   type="text"
                   placeholder="e.g. E-commerce Platform"
                   v-model="project.name"
-                  class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm pl-9"
+                  class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm pl-9"
+                  :class="
+                    isDark
+                      ? 'bg-slate-900 border-slate-700 text-white'
+                      : 'bg-white border-gray-200 text-slate-800'
+                  "
                 />
                 <div
                   class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"
@@ -171,25 +234,27 @@ const generateDescription = async (index) => {
                     stroke-linecap="round"
                     stroke-linejoin="round"
                   >
-                    <path d="M2 12h20" />
-                    <path d="M12 2v20" />
-                    <path d="m4.93 4.93 14.14 14.14" />
-                    <path d="m19.07 4.93-14.14 14.14" />
+                    <path
+                      d="M21 7 6.82 21.18a2.83 2.83 0 0 1-3.99-.01a2.83 2.83 0 0 1 0-4L17 3a4.95 4.95 0 0 1 7 7Z"
+                    />
                   </svg>
                 </div>
               </div>
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs text-slate-400 ml-1"
-                >Project Type / Tech Stack</label
-              >
+              <label class="text-xs text-slate-400 ml-1">Tech Stack</label>
               <div class="relative">
                 <input
                   type="text"
-                  placeholder="e.g. Mobile App, React & Node.js"
+                  placeholder="e.g. React & Node.js"
                   v-model="project.type"
-                  class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm pl-9"
+                  class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm pl-9"
+                  :class="
+                    isDark
+                      ? 'bg-slate-900 border-slate-700 text-white'
+                      : 'bg-white border-gray-200 text-slate-800'
+                  "
                 />
                 <div
                   class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"
@@ -211,8 +276,46 @@ const generateDescription = async (index) => {
                 </div>
               </div>
             </div>
-          </div>
 
+            <div class="space-y-1.5">
+              <label class="text-xs text-slate-400 ml-1">Project Link</label>
+              <div class="relative">
+                <input
+                  type="url"
+                  placeholder="e.g. https://github.com/..."
+                  v-model="project.link"
+                  class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm pl-9"
+                  :class="
+                    isDark
+                      ? 'bg-slate-900 border-slate-700 text-white'
+                      : 'bg-white border-gray-200 text-slate-800'
+                  "
+                />
+                <div
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+                    />
+                    <path
+                      d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="space-y-2">
             <div class="flex justify-between items-end">
               <label class="text-xs text-slate-400 ml-1">Description</label>
@@ -227,7 +330,9 @@ const generateDescription = async (index) => {
                 :class="
                   generatingIndex === index
                     ? 'bg-slate-800 border-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-purple-500/10 border border-purple-500/20 hover:border-purple-500/40 text-purple-300 hover:text-purple-200'
+                    : isDark
+                      ? 'bg-purple-500/10 border-purple-500/20 hover:border-purple-500/40 text-purple-300 hover:text-purple-200'
+                      : 'bg-purple-600/20 border-purple-600/30 hover:border-purple-600/50 text-purple-700 hover:text-purple-800'
                 "
               >
                 <svg
@@ -275,7 +380,12 @@ const generateDescription = async (index) => {
                 v-model="project.description"
                 rows="4"
                 :disabled="generatingIndex === index"
-                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y disabled:opacity-50"
+                class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y disabled:opacity-50"
+                :class="
+                  isDark
+                    ? 'bg-slate-900 border-slate-700 text-white'
+                    : 'bg-white border-gray-200 text-slate-800'
+                "
                 placeholder="• Led a team of 5 developers...&#10;• Increased system performance by 20%..."
               ></textarea>
 

@@ -5,9 +5,11 @@ import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import ResumeDisplay from "../components/ResumeDisplay.vue";
 import AdminLoading from "./AdminLoading.vue";
+import { useTheme } from "../composables/useTheme";
 
 const route = useRoute();
 const router = useRouter();
+const { isDark } = useTheme();
 
 const user = ref({});
 const resumeList = ref([]);
@@ -64,16 +66,18 @@ onMounted(async () => {
 
 <template>
   <AdminLoading :is-loading="loading" />
-  <div class="min-h-screen bg-gray-50 pb-12">
+  <div class="min-h-screen pb-12 transition-colors duration-300" :class="isDark ? 'bg-slate-900' : 'bg-gray-50'">
     <header
-      class="bg-white shadow-sm sticky top-0 z-10 transition-shadow duration-300"
+      class="sticky top-0 z-10 transition-all duration-300"
+      :class="isDark ? 'bg-slate-800 border-b border-slate-700 shadow-slate-900/50 shadow-sm' : 'bg-white shadow-sm'"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
             <button
               @click="router.back()"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
+              class="inline-flex items-center px-4 py-2 border shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200"
+              :class="isDark ? 'border-slate-600 text-slate-300 bg-slate-700 hover:bg-slate-600 hover:text-white' : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:text-indigo-600'"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -92,7 +96,8 @@ onMounted(async () => {
               Back to Users
             </button>
             <h1
-              class="ml-6 text-xl font-bold text-gray-900 truncate tracking-tight"
+              class="ml-6 text-xl font-bold truncate tracking-tight transition-colors"
+              :class="isDark ? 'text-white' : 'text-gray-900'"
             >
               Candidate Profile
             </h1>
@@ -103,7 +108,8 @@ onMounted(async () => {
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
       <div
-        class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-10 flex flex-col items-center transform transition-all hover:shadow-md relative overflow-hidden"
+        class="rounded-2xl shadow-sm border p-8 mb-10 flex flex-col items-center transform transition-all hover:shadow-md relative overflow-hidden"
+        :class="isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'"
       >
         <div
           class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-2xl opacity-10"
@@ -118,7 +124,8 @@ onMounted(async () => {
         </div>
 
         <h2
-          class="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight text-center"
+          class="text-3xl font-extrabold mb-3 tracking-tight text-center transition-colors"
+          :class="isDark ? 'text-white' : 'text-gray-900'"
         >
           {{ user.name || "Loading details..." }}
         </h2>
@@ -156,7 +163,7 @@ onMounted(async () => {
       </div>
 
       <div class="mb-6 flex items-center justify-between">
-        <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+        <h3 class="text-2xl font-bold flex items-center transition-colors" :class="isDark ? 'text-white' : 'text-gray-900'">
           Candidate Resumes
         </h3>
         <span
@@ -169,14 +176,17 @@ onMounted(async () => {
 
       <div
         v-if="resumeList.length === 0"
-        class="bg-white rounded-3xl border border-gray-100 p-16 text-center shadow-sm"
+        class="rounded-3xl border p-16 text-center shadow-sm transition-colors"
+        :class="isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'"
       >
         <div
-          class="bg-gray-50 h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner"
+          class="h-24 w-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner transition-colors"
+          :class="isDark ? 'bg-slate-700' : 'bg-gray-50'"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-12 w-12 text-gray-400"
+            class="h-12 w-12 transition-colors"
+            :class="isDark ? 'text-slate-400' : 'text-gray-400'"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -189,10 +199,10 @@ onMounted(async () => {
             />
           </svg>
         </div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-2">
+        <h3 class="text-xl font-semibold mb-2 transition-colors" :class="isDark ? 'text-white' : 'text-gray-900'">
           No resumes available
         </h3>
-        <p class="text-gray-500 max-w-sm mx-auto">
+        <p class="max-w-sm mx-auto transition-colors" :class="isDark ? 'text-slate-400' : 'text-gray-500'">
           This candidate hasn't created or uploaded any resumes to their profile
           yet.
         </p>
@@ -205,7 +215,8 @@ onMounted(async () => {
         <div
           v-for="resume in resumeList"
           :key="resume.id || resume._id || Math.random()"
-          class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden flex flex-col transform hover:-translate-y-1.5"
+          class="group rounded-2xl border shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden flex flex-col transform hover:-translate-y-1.5"
+          :class="isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'"
           @click="openResume(resume)"
         >
           <div
@@ -221,22 +232,18 @@ onMounted(async () => {
             <div
               class="absolute inset-0 bg-black transition-opacity duration-300 opacity-50 group-hover:opacity-10"
             ></div>
-            <!-- <div
-              class="absolute -bottom-6 -right-6 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"
-            ></div>
-            <div
-              class="absolute top-4 right-4 bg-white/20 backdrop-blur-md rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            ></div> -->
+        
           </div>
           <div
-            class="p-6 flex-1 flex flex-col justify-between relative bg-white"
+            class="p-6 flex-1 flex flex-col justify-between relative transition-colors"
+            :class="isDark ? 'bg-slate-800' : 'bg-white'"
           >
             <div>
-              <h4 class="text-xl font-bold text-gray-900 line-clamp-2 mb-2">
+              <h4 class="text-xl font-bold line-clamp-2 mb-2 transition-colors" :class="isDark ? 'text-white' : 'text-gray-900'">
                 {{ resume.title || "Untitled Resume" }}
               </h4>
               <p
-                class="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed"
+                class="text-sm line-clamp-2 mb-4 leading-relaxed transition-colors" :class="isDark ? 'text-slate-400' : 'text-gray-500'"
               >
                 Click to view the detailed template and contents of this resume
                 document.
@@ -287,14 +294,17 @@ onMounted(async () => {
           ></div>
 
           <div
-            class="relative w-full max-w-5xl max-h-[90vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden transform transition-all border border-gray-200"
+            class="relative w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden transform transition-all border"
+            :class="isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'"
           >
             <div
-              class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white z-10 sticky top-0 shadow-sm"
+              class="flex items-center justify-between px-6 py-4 border-b z-10 sticky top-0 shadow-sm transition-colors"
+              :class="isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100'"
             >
               <div class="flex items-center space-x-4">
                 <h3
-                  class="text-xl font-bold text-gray-900 truncate max-w-[200px] sm:max-w-md"
+                  class="text-xl font-bold truncate max-w-[200px] sm:max-w-md transition-colors"
+                  :class="isDark ? 'text-white' : 'text-gray-900'"
                 >
                   {{ selectedResume?.title || "Resume Preview" }}
                 </h3>
@@ -323,7 +333,8 @@ onMounted(async () => {
             </div>
 
             <div
-              class="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-8 flex justify-center custom-scrollbar inset-shadow-sm"
+              class="flex-1 overflow-y-auto p-4 sm:p-8 flex justify-center custom-scrollbar inset-shadow-sm transition-colors"
+              :class="isDark ? 'bg-slate-900/50' : 'bg-gray-50'"
             >
               <ResumeDisplay
                 v-if="selectedResume"
@@ -335,11 +346,13 @@ onMounted(async () => {
             </div>
 
             <div
-              class="bg-gray-50 border-t border-gray-200 px-6 py-4 flex justify-end"
+              class="border-t px-6 py-4 flex justify-end transition-colors"
+              :class="isDark ? 'bg-slate-800 border-slate-700' : 'bg-gray-50 border-gray-200'"
             >
               <button
                 @click="closeResume"
-                class="inline-flex justify-center items-center px-6 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                class="inline-flex justify-center items-center px-6 py-2 border shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                :class="isDark ? 'border-slate-600 text-slate-300 bg-slate-700 hover:bg-slate-600' : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:text-gray-900'"
               >
                 Close Preview
               </button>

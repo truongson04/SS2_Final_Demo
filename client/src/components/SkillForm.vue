@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from "vue";
+import { useTheme } from "../composables/useTheme";
+const { isDark } = useTheme();
 const data = defineModel("data");
 const newSkill = ref("");
 const addSkill = () => {
@@ -16,15 +18,16 @@ const removeSkill = (index) => {
 </script>
 <template>
   <div
-    class="bg-slate-900/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 relative overflow-hidden"
+    class="rounded-2xl p-6 sm:p-8 relative overflow-hidden border transition-colors duration-300"
+    :class="isDark ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm' : 'bg-white border-gray-200 shadow-sm'"
   >
     <div
       class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"
     ></div>
 
     <div class="mb-6 relative z-10">
-      <h3 class="text-xl font-bold text-white">Skills</h3>
-      <p class="text-sm text-slate-400 mt-1">
+      <h3 class="text-xl font-bold transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Skills</h3>
+      <p class="text-sm mt-1 transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
         Add technical proficiency and soft skills (e.g., Java, Leadership).
       </p>
     </div>
@@ -57,13 +60,15 @@ const removeSkill = (index) => {
           placeholder="Type a skill and press Enter..."
           v-model="newSkill"
           @keyup.enter="addSkill"
-          class="w-full pl-10 pr-20 py-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm shadow-inner"
+          class="w-full pl-10 pr-20 py-3 border rounded-xl placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm shadow-inner"
+          :class="isDark ? 'bg-slate-950 border-slate-700 text-white' : 'bg-white border-gray-200 text-slate-800'"
         />
 
         <button
           @click="addSkill"
           :disabled="!newSkill.trim()"
-          class="absolute right-1.5 top-1.5 bottom-1.5 px-4 rounded-lg bg-slate-800 hover:bg-cyan-600 text-slate-300 hover:text-white text-xs font-bold transition-all disabled:opacity-50 disabled:hover:bg-slate-800 disabled:cursor-not-allowed flex items-center gap-1"
+          class="absolute right-1.5 top-1.5 bottom-1.5 px-4 rounded-lg text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm"
+          :class="isDark ? 'bg-slate-800 hover:bg-cyan-600 text-slate-300 hover:text-white disabled:hover:bg-slate-800 shadow-none' : 'bg-slate-200 hover:bg-cyan-600 text-slate-700 hover:text-white disabled:hover:bg-gray-100'"
         >
           Add
           <svg
@@ -87,7 +92,8 @@ const removeSkill = (index) => {
         <span
           v-for="(skill, index) in data"
           :key="index"
-          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-200 text-sm group hover:border-cyan-500/50 hover:bg-slate-800 transition-all"
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm group transition-all"
+          :class="isDark ? 'bg-slate-900 border-slate-700 text-slate-200 hover:border-cyan-500/50 hover:bg-slate-800' : 'bg-gray-100 border-gray-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50'"
         >
           <span class="font-medium">{{ skill }}</span>
           <button
@@ -114,9 +120,10 @@ const removeSkill = (index) => {
 
       <div
         v-else
-        class="flex flex-col items-center justify-center py-8 border-2 border-dashed border-slate-700/50 rounded-xl bg-slate-950/30"
+        class="flex flex-col items-center justify-center py-8 border-2 border-dashed rounded-xl transition-colors"
+        :class="isDark ? 'border-slate-700/50 bg-slate-950/30' : 'border-gray-200 bg-gray-50'"
       >
-        <div class="p-3 rounded-full bg-slate-800/50 text-slate-500 mb-2">
+        <div class="p-3 rounded-full mb-2 transition-colors" :class="isDark ? 'bg-slate-800/50 text-slate-500' : 'bg-gray-200 text-gray-400'">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -132,12 +139,13 @@ const removeSkill = (index) => {
             <path d="m9 12 2 2 4-4" />
           </svg>
         </div>
-        <p class="text-sm text-slate-400">No skills added yet</p>
+        <p class="text-sm transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">No skills added yet</p>
       </div>
     </div>
 
     <div
-      class="mt-6 flex gap-3 p-4 rounded-lg bg-blue-900/10 border border-blue-500/10 relative z-10"
+      class="mt-6 flex gap-3 p-4 rounded-lg border relative z-10 transition-colors shadow-sm"
+      :class="isDark ? 'bg-blue-900/10 border-blue-500/10 shadow-none' : 'bg-blue-600/10 border-blue-600/20'"
     >
       <div class="flex-shrink-0 mt-0.5">
         <svg
@@ -150,7 +158,8 @@ const removeSkill = (index) => {
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="text-blue-400"
+          class="transition-colors"
+          :class="isDark ? 'text-blue-400' : 'text-blue-600'"
         >
           <path d="M12 2v4" />
           <path d="m16.2 7.8 2.9-2.9" />
@@ -165,11 +174,12 @@ const removeSkill = (index) => {
       </div>
       <div>
         <h4
-          class="text-xs font-bold text-blue-300 uppercase tracking-wide mb-1"
+          class="text-xs font-bold uppercase tracking-wide mb-1 transition-colors"
+          :class="isDark ? 'text-blue-300' : 'text-blue-700'"
         >
           Pro Tip
         </h4>
-        <p class="text-xs text-slate-400 leading-relaxed">
+        <p class="text-xs leading-relaxed transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
           Add 6-10 relevant skills. Include a mix of technical ("Hard") skills
           and "Soft" skills like Communication or Leadership.
         </p>

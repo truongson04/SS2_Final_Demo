@@ -1,8 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
+
 * {
   font-family: "Outfit", sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
 @layer base {
   button {
     @apply cursor-pointer;
@@ -11,3 +14,282 @@
     @apply outline-none focus:ring border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg;
   }
 }
+
+
+:root,
+html.dark {
+  --bg-primary: #020617;       /* slate-950 */
+  --bg-secondary: #0f172a;     /* slate-900 */
+  --bg-card: #1e293b;          /* slate-800 */
+  --bg-card-hover: #334155;    /* slate-700 */
+  --bg-input: #3d3d3d;         /* slate-900 */
+
+  --text-primary: #f1f5f9;     /* slate-100 */
+  --text-secondary: #94a3b8;   /* slate-400 */
+  --text-muted: #64748b;       /* slate-500 */
+
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-card: #1e293b;
+
+  --accent-primary: #22d3ee;   /* cyan-400 */
+  --accent-secondary: #3b82f6; /* blue-500 */
+
+  --navbar-bg: rgba(2, 6, 23, 0.85);
+  --orb-cyan: rgba(34, 211, 238, 0.10);
+  --orb-blue: rgba(59, 130, 246, 0.10);
+
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+/* =====================================================
+   LIGHT THEME VARIABLES
+   ===================================================== */
+html.light {
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-input: #ffffff;
+
+  --text-primary: #0f172a;     /* slate-900 */
+  --text-secondary: #475569;   /* slate-600 */
+  --text-muted: #94a3b8;       /* slate-400 */
+
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-card: #e2e8f0;
+
+  --accent-primary: #0891b2;   /* cyan-600 */
+  --accent-secondary: #2563eb; /* blue-600 */
+
+  --navbar-bg: rgba(255, 255, 255, 0.90);
+  --orb-cyan: rgba(8, 145, 178, 0.06);
+  --orb-blue: rgba(37, 99, 235, 0.06);
+
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+/* =====================================================
+   THEME UTILITY CLASSES
+   ===================================================== */
+
+/* Background */
+.theme-bg-primary   { background-color: var(--bg-primary); }
+.theme-bg-secondary { background-color: var(--bg-secondary); }
+.theme-bg-card      { background-color: var(--bg-card); }
+
+/* Text */
+.theme-text-primary   { color: var(--text-primary); }
+.theme-text-secondary { color: var(--text-secondary); }
+.theme-text-muted     { color: var(--text-muted); }
+
+/* Border */
+.theme-border { border-color: var(--border-color); }
+
+/* Card */
+.theme-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+}
+
+/* Navbar */
+.theme-navbar {
+  background-color: var(--navbar-bg);
+  border-bottom-color: var(--border-color);
+}
+
+/* Input themed */
+html.light input:not([type="checkbox"]) {
+  @apply border-slate-300 bg-white text-slate-900;
+}
+html.dark input:not([type="checkbox"]) {
+  @apply border-slate-700 bg-slate-900 text-slate-100;
+}
+
+/* =====================================================
+   FORM COMPONENTS — LIGHT MODE
+   ===================================================== */
+
+/* Outer form wrapper (bg-slate-900/50) */
+html.light .bg-slate-900\/50 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+/* Input / Textarea fields (bg-slate-950, bg-slate-900) */
+html.light input.bg-slate-950,
+html.light input.bg-slate-900,
+html.light textarea.bg-slate-950,
+html.light textarea.bg-slate-900,
+html.light textarea.w-full.bg-slate-950,
+html.light input.w-full.bg-slate-950 {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html.light input.bg-slate-100 {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Placeholder */
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Form heading (text-white) — only inside form wrappers */
+html.light .bg-slate-900\/50 h3.text-white,
+html.light .bg-slate-900\/50 h4.text-white,
+html.light .bg-slate-900\/50 span.text-white,
+html.light .bg-slate-900\/50 p.text-sm.font-medium.text-white {
+  color: #0f172a !important;
+}
+
+/* Labels (text-slate-300, text-slate-400) */
+html.light .bg-slate-900\/50 label.text-slate-300,
+html.light .bg-slate-900\/50 label.text-sm.font-medium.text-slate-300,
+html.light label.text-xs.text-slate-400 {
+  color: #334155 !important;
+}
+
+/* Experience / Education card items */
+html.light .bg-slate-950 {
+  background-color: #f8fafc !important;
+}
+html.light .group.relative.bg-slate-950 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html.light .group.relative.bg-slate-950:hover {
+  border-color: #94a3b8 !important;
+}
+
+/* Card item header separator */
+html.light .border-b.border-slate-800 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Card item number badge */
+html.light .bg-slate-800.text-\[10px\].text-slate-400 {
+  background-color: #e2e8f0 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light h4.text-sm.font-bold.text-white {
+  color: #0f172a !important;
+}
+
+/* Empty state placeholder area */
+html.light .border-dashed.border-slate-700\/50 {
+  border-color: #cbd5e1 !important;
+  background-color: #f1f5f9 !important;
+}
+html.light .bg-slate-800\/50.text-slate-500 {
+  background-color: #e2e8f0 !important;
+  color: #64748b !important;
+}
+html.light p.text-slate-400,
+html.light .bg-slate-900\/50 p.text-slate-400,
+html.light p.text-xs.text-slate-400,
+html.light p.text-xs.text-slate-500 {
+  color: #64748b !important;
+}
+html.light p.text-slate-500 {
+  color: #94a3b8 !important;
+}
+html.light p.font-medium.text-slate-400 {
+  color: #475569 !important;
+}
+
+/* Skill tags */
+html.light .bg-slate-900.border-slate-700.text-slate-200 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+html.light .bg-slate-900.border-slate-700.text-slate-200:hover {
+  background-color: #e2e8f0 !important;
+  border-color: #94a3b8 !important;
+}
+
+/* Add button in skill input */
+html.light .bg-slate-800.hover\:bg-cyan-600 {
+  background-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+html.light .bg-slate-800.hover\:bg-cyan-600:hover {
+  background-color: #0891b2 !important;
+  color: white !important;
+}
+
+/* Pro Tip box */
+html.light .bg-blue-900\/10.border-blue-500\/10 {
+  background-color: rgba(219, 234, 254, 0.5) !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Experience textarea */
+html.light .bg-slate-900.border-slate-700.rounded-lg.text-white {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+html.light .bg-slate-900.border-slate-700.rounded-xl {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Textarea description field */
+html.light textarea.bg-slate-900 {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Profile image upload circle */
+html.light .border-dashed.border-slate-600.bg-slate-950 {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+}
+html.light .flex.flex-col.items-center.justify-center.text-slate-500 {
+  color: #64748b !important;
+}
+
+/* SaveModal / LogoutModal */
+html.light .bg-slate-900.rounded-xl,
+html.light .bg-slate-900.rounded-2xl {
+  background-color: #ffffff !important;
+}
+
+/* TemplateSelector dropdown */
+html.light .bg-slate-800 {
+  background-color: #f1f5f9 !important;
+}
+html.light .text-slate-200 {
+  color: #334155 !important;
+}
+html.light .text-slate-300 {
+  color: #475569 !important;
+}
+
+/* =====================================================
+   FORCE DARK — Home page always stays dark
+   Overrides any html.light rules inside .force-dark
+   ===================================================== */
+html.light .force-dark .bg-slate-900\/50 { background-color: rgba(15,23,42,0.5) !important; border-color: rgba(255,255,255,0.05) !important; box-shadow: none !important; }
+html.light .force-dark .bg-slate-950 { background-color: #020617 !important; }
+html.light .force-dark .bg-slate-900 { background-color: #0f172a !important; }
+html.light .force-dark .bg-slate-800 { background-color: #1e293b !important; }
+html.light .force-dark .text-slate-300 { color: #cbd5e1 !important; }
+html.light .force-dark .text-slate-200 { color: #e2e8f0 !important; }
+html.light .force-dark .text-white { color: #ffffff !important; }
+html.light .force-dark p.text-slate-400 { color: #94a3b8 !important; }
+html.light .force-dark p.text-slate-500 { color: #64748b !important; }
+html.light .force-dark h4.text-sm.font-bold.text-white { color: #ffffff !important; }
+html.light .force-dark input:not([type="checkbox"]) { background-color: #0f172a !important; border-color: #334155 !important; color: #f1f5f9 !important; }
+html.light .force-dark .border-dashed { border-color: rgba(51,65,85,0.5) !important; background-color: rgba(2,6,23,0.3) !important; }

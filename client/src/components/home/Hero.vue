@@ -69,7 +69,10 @@ const closeMenu = () => {
       </div>
 
       <!-- Logged in: show user menu -->
-      <div v-if="authStore.user" class="hidden md:flex items-center gap-4 relative">
+      <div
+        v-if="authStore.user"
+        class="hidden md:flex items-center gap-4 relative"
+      >
         <button
           @click="router.push('/app')"
           class="px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-bold hover:from-cyan-400 hover:to-blue-500 transition active:scale-95"
@@ -87,9 +90,19 @@ const closeMenu = () => {
             >
               {{ authStore.user?.[0]?.name?.charAt(0).toUpperCase() }}
             </div>
-            <span class="text-sm font-medium text-white">{{ authStore.user?.[0]?.name }}</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400">
-              <path d="m6 9 6 6 6-6"/>
+            <span class="text-sm font-medium text-white">{{
+              authStore.user?.[0]?.name
+            }}</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              class="text-slate-400"
+            >
+              <path d="m6 9 6 6 6-6" />
             </svg>
           </button>
 
@@ -106,18 +119,47 @@ const closeMenu = () => {
               class="absolute right-0 top-12 w-48 bg-slate-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50"
             >
               <button
-                @click="router.push('/app'); showUserMenu = false"
+                @click="
+                  router.push('/app');
+                  showUserMenu = false;
+                "
                 class="w-full px-4 py-3 text-left text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition flex items-center gap-2"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect width="7" height="9" x="3" y="3" rx="1" />
+                  <rect width="7" height="5" x="14" y="3" rx="1" />
+                  <rect width="7" height="9" x="14" y="12" rx="1" />
+                  <rect width="7" height="5" x="3" y="16" rx="1" />
+                </svg>
                 My Resumes
               </button>
               <div class="border-t border-white/5"></div>
               <button
-                @click="showLogout = true; showUserMenu = false"
+                @click="
+                  showLogout = true;
+                  showUserMenu = false;
+                "
                 class="w-full px-4 py-3 text-left text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition flex items-center gap-2"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" x2="9" y1="12" y2="12" />
+                </svg>
                 Logout
               </button>
             </div>
@@ -134,7 +176,7 @@ const closeMenu = () => {
           Login
         </button>
         <button
-          class="px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-bold hover:from-cyan-400 hover:to-blue-500 transition active:scale-95"
+          class="px-4 py-2 rounded-full text-sm text-slate-300 hover:text-cyan-500"
           @click="router.push('/signup')"
         >
           Register

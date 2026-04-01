@@ -2,9 +2,11 @@
 import { ref } from "vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
+import { useTheme } from "../composables/useTheme";
 
 const data = defineModel("data");
 const isGenerating = ref(false);
+const { isDark } = useTheme();
 const generateSummary = async () => {
   try {
     isGenerating.value = true;
@@ -25,15 +27,16 @@ const generateSummary = async () => {
 </script>
 <template>
   <div
-    class="bg-slate-900/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 relative overflow-hidden"
+    class="rounded-2xl p-6 sm:p-8 relative overflow-hidden border transition-colors duration-300"
+    :class="isDark ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm' : 'bg-white border-gray-200 shadow-sm'"
   >
     <div
       class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"
     ></div>
 
     <div class="mb-6 relative z-10">
-      <h3 class="text-xl font-bold text-white">Professional Summary</h3>
-      <p class="text-sm text-slate-400 mt-1">
+      <h3 class="text-xl font-bold transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Professional Summary</h3>
+      <p class="text-sm mt-1 transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
         Write a short overview of your career history, skills, and value
         proposition.
       </p>
@@ -41,7 +44,7 @@ const generateSummary = async () => {
 
     <div class="relative z-10 group">
       <div class="flex justify-between items-end mb-3">
-        <label class="text-sm font-medium text-slate-300">
+        <label class="text-sm font-medium transition-colors" :class="isDark ? 'text-slate-300' : 'text-slate-600'">
           Summary Content
         </label>
 
@@ -49,7 +52,12 @@ const generateSummary = async () => {
           :disabled="isGenerating"
           @click="generateSummary"
           type="button"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 hover:border-purple-500/50 hover:from-purple-500/20 hover:to-blue-500/20 transition-all text-xs font-bold text-purple-300 hover:text-purple-200 group/btn"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-xs font-bold group/btn shadow-lg"
+          :class="
+            isDark
+              ? 'bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/20 text-purple-300 hover:text-purple-200 hover:border-purple-500/50 hover:from-purple-500/20 hover:to-blue-500/20 shadow-purple-500/5'
+              : 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-purple-600/30 text-purple-700 hover:text-purple-800 hover:border-purple-600/50 shadow-purple-600/10'
+          "
         >
           <svg
             v-if="isGenerating"
@@ -105,7 +113,8 @@ const generateSummary = async () => {
           v-model="data"
           rows="6"
           :disabled="isGenerating"
-          class="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-slate-300 placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-y leading-relaxed text-sm sm:text-base shadow-inner disabled:cursor-not-allowed"
+          class="w-full border rounded-xl p-4 placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-y leading-relaxed text-sm sm:text-base shadow-inner disabled:cursor-not-allowed"
+          :class="isDark ? 'bg-slate-950 border-slate-700 text-slate-300' : 'bg-white border-gray-200 text-slate-700'"
           placeholder="e.g. Detail-oriented Editorial Assistant with 2+ years of experience..."
         ></textarea>
 
@@ -155,7 +164,8 @@ const generateSummary = async () => {
     </div>
 
     <div
-      class="mt-4 flex gap-3 p-4 rounded-lg bg-blue-900/10 border border-blue-500/10"
+      class="mt-4 flex gap-3 p-4 rounded-lg border transition-colors shadow-sm"
+      :class="isDark ? 'bg-blue-900/10 border-blue-500/10 shadow-none' : 'bg-blue-600/10 border-blue-600/20'"
     >
       <div class="flex-shrink-0 mt-0.5">
         <svg
@@ -168,7 +178,8 @@ const generateSummary = async () => {
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="text-blue-400"
+          class="transition-colors"
+          :class="isDark ? 'text-blue-400' : 'text-blue-600'"
         >
           <path d="M12 2v4" />
           <path d="m16.2 7.8 2.9-2.9" />
@@ -183,11 +194,12 @@ const generateSummary = async () => {
       </div>
       <div>
         <h4
-          class="text-xs font-bold text-blue-300 uppercase tracking-wide mb-1"
+          class="text-xs font-bold uppercase tracking-wide mb-1 transition-colors"
+          :class="isDark ? 'text-blue-300' : 'text-blue-700'"
         >
           Pro Tip
         </h4>
-        <p class="text-xs text-slate-400 leading-relaxed">
+        <p class="text-xs leading-relaxed transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
           Keep it concise (3-4 sentences). Focus on your most relevant
           achievements and skills that match the job description. Use strong
           action verbs.

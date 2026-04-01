@@ -2,8 +2,10 @@
 import { ref } from "vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
+import { useTheme } from "../composables/useTheme";
 
 const data = defineModel("data");
+const { isDark } = useTheme();
 
 const addExperience = () => {
   const newExperience = {
@@ -47,19 +49,21 @@ const generateDescription = async (index) => {
 </script>
 <template>
   <div
-    class="bg-slate-900/50 backdrop-blur-sm border border-white/5 rounded-2xl p-6 sm:p-8 relative overflow-hidden"
+    class="rounded-2xl p-6 sm:p-8 relative overflow-hidden border transition-colors duration-300"
+    :class="isDark ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm' : 'bg-white border-gray-200 shadow-sm'"
   >
     <div
       class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"
     ></div>
 
     <div class="mb-8 relative z-10">
-      <h3 class="text-xl font-bold text-white">Professional Experience</h3>
-      <p class="text-sm text-slate-400 mt-1">
+      <h3 class="text-xl font-bold transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Professional Experience</h3>
+      <p class="text-sm mt-1 transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
         Highlight your career journey and key achievements.
       </p>
       <div
-        class="mt-6 flex gap-3 p-4 rounded-lg bg-blue-900/10 border border-blue-500/10 relative z-10"
+        class="mt-6 flex gap-3 p-4 rounded-lg relative z-10 transition-colors"
+        :class="isDark ? 'bg-blue-900/10 border border-blue-500/10' : 'bg-blue-600/10 border border-blue-600/20 shadow-sm'"
       >
         <div class="flex-shrink-0 mt-0.5">
           <svg
@@ -72,7 +76,8 @@ const generateDescription = async (index) => {
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="text-blue-400"
+            class="transition-colors"
+            :class="isDark ? 'text-blue-400' : 'text-blue-600'"
           >
             <path d="M12 2v4" />
             <path d="m16.2 7.8 2.9-2.9" />
@@ -87,11 +92,12 @@ const generateDescription = async (index) => {
         </div>
         <div>
           <h4
-            class="text-xs font-bold text-blue-300 uppercase tracking-wide mb-1"
+            class="text-xs font-bold uppercase tracking-wide mb-1 transition-colors"
+            :class="isDark ? 'text-blue-300' : 'text-blue-700'"
           >
             Pro Tip
           </h4>
-          <p class="text-xs text-slate-400 leading-relaxed">
+          <p class="text-xs leading-relaxed transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
             Use bullet points to list achievements in the description. Quantify
             results where possible (e.g., "Increased sales by 20%").
           </p>
@@ -101,11 +107,16 @@ const generateDescription = async (index) => {
 
     <div class="relative z-10">
       <div class="flex justify-between items-center mb-6">
-        <label class="text-sm font-medium text-slate-300"> Work History </label>
+        <label class="text-sm font-medium transition-colors" :class="isDark ? 'text-slate-300' : 'text-slate-600'"> Work History </label>
 
         <button
           @click="addExperience"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 hover:border-cyan-500/50 hover:from-cyan-500/20 hover:to-blue-500/20 transition-all text-xs font-bold text-cyan-400 hover:text-cyan-300 group shadow-lg shadow-cyan-500/5"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-xs font-bold group shadow-lg"
+          :class="
+            isDark
+              ? 'bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border-cyan-500/20 text-cyan-400 hover:text-cyan-300 hover:border-cyan-500/50 hover:from-cyan-500/20 hover:to-blue-500/20 shadow-cyan-500/5'
+              : 'bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border-cyan-600/30 text-cyan-700 hover:text-cyan-800 hover:border-cyan-600/50 shadow-cyan-600/10'
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -128,9 +139,10 @@ const generateDescription = async (index) => {
 
       <div
         v-if="data.length == 0"
-        class="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-700/50 rounded-xl bg-slate-950/30"
+        class="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-xl transition-colors"
+        :class="isDark ? 'border-slate-700/50 bg-slate-950/30' : 'border-gray-200 bg-gray-50'"
       >
-        <div class="p-4 rounded-full bg-slate-800/50 text-slate-500 mb-3">
+        <div class="p-4 rounded-full mb-3 transition-colors" :class="isDark ? 'bg-slate-800/50 text-slate-500' : 'bg-gray-200 text-gray-400'">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -148,8 +160,8 @@ const generateDescription = async (index) => {
             <rect width="20" height="14" x="2" y="6" rx="2" />
           </svg>
         </div>
-        <p class="text-slate-400 font-medium">No experience added yet</p>
-        <p class="text-xs text-slate-500 mt-1">
+        <p class="font-medium transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">No experience added yet</p>
+        <p class="text-xs mt-1 transition-colors" :class="isDark ? 'text-slate-500' : 'text-slate-400'">
           Click the button above to add your first job.
         </p>
       </div>
@@ -158,14 +170,17 @@ const generateDescription = async (index) => {
         <div
           v-for="(experience, index) in data"
           :key="index"
-          class="group relative bg-slate-950 border border-slate-800 rounded-xl p-5 transition-all hover:border-slate-600"
+          class="group relative border rounded-xl p-5 transition-all"
+          :class="isDark ? 'bg-slate-950 border-slate-800 hover:border-slate-600' : 'bg-gray-50 border-gray-200 hover:border-gray-400'"
         >
           <div
-            class="flex justify-between items-start mb-4 border-b border-slate-800 pb-3"
+            class="flex justify-between items-start mb-4 border-b pb-3 transition-colors"
+            :class="isDark ? 'border-slate-800' : 'border-gray-200'"
           >
-            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+            <h4 class="text-sm font-bold flex items-center gap-2 transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">
               <span
-                class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-[10px] text-slate-400 border border-slate-700"
+                class="flex items-center justify-center w-5 h-5 rounded-full text-[10px] border transition-colors"
+                :class="isDark ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-gray-200 text-slate-600 border-gray-300'"
               >
                 {{ index + 1 }}
               </span>
@@ -194,14 +209,19 @@ const generateDescription = async (index) => {
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div class="space-y-4 mb-4">
             <div class="space-y-1.5">
               <label class="text-xs text-slate-400 ml-1">Job Title</label>
               <input
                 type="text"
                 placeholder="e.g. Senior Product Designer"
                 v-model="experience.position"
-                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                :class="
+                  isDark
+                    ? 'bg-slate-900 border-slate-700 text-white'
+                    : 'bg-white border-gray-200 text-slate-800'
+                "
               />
             </div>
 
@@ -211,7 +231,12 @@ const generateDescription = async (index) => {
                 type="text"
                 placeholder="e.g. Google Inc."
                 v-model="experience.company"
-                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
+                :class="
+                  isDark
+                    ? 'bg-slate-900 border-slate-700 text-white'
+                    : 'bg-white border-gray-200 text-slate-800'
+                "
               />
             </div>
 
@@ -312,7 +337,8 @@ const generateDescription = async (index) => {
                 v-model="experience.description"
                 rows="4"
                 :disabled="generatingIndex === index"
-                class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y disabled:opacity-50"
+                class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y disabled:opacity-50"
+                :class="isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-gray-200 text-slate-800'"
                 placeholder="• Led a team of 5 developers...&#10;• Increased system performance by 20%..."
               ></textarea>
 
