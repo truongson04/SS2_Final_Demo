@@ -130,10 +130,8 @@ const cvTemplate = ref(null);
 const printCV = async () => {
   isLoading.value = true;
   try {
-    // Clone the template element to avoid modifying the UI
     const clone = cvTemplate.value.cloneNode(true);
 
-    // Convert all blob images to base64 so Puppeteer can access them
     const images = clone.getElementsByTagName("img");
     for (const img of images) {
       if (img.src.startsWith("blob:")) {

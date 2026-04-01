@@ -1,4 +1,10 @@
-<script setup></script>
+<script setup>
+import { onMounted } from "vue";
+import { useTheme } from "../composables/useTheme";
+onMounted(() => {
+  useTheme();
+});
+</script>
 <template>
   <div
     class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 font-mono"
@@ -37,7 +43,10 @@
       </div>
 
       <div class="text-center space-y-2">
-        <h3 class="text-xl font-bold text-white tracking-[0.2em] animate-pulse">
+        <h3
+          class="text-xl font-bold tracking-[0.2em] animate-pulse"
+          :class="useTheme.isDark ? 'text-white' : 'text-dark'"
+        >
           INITIALIZING
         </h3>
         <p class="text-xs text-slate-500 uppercase tracking-widest">

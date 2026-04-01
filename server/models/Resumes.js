@@ -48,7 +48,7 @@ const resumeSchema = new mongoose.Schema(
         company: { type: String },
         position: { type: String },
         start_date: { type: String },
-        end_data: { type: String },
+        end_date: { type: String },
         description: { type: String },
         is_current: { type: Boolean },
       },
@@ -69,14 +69,7 @@ const resumeSchema = new mongoose.Schema(
         gpa: { type: String },
       },
     ],
-    questions: [
-      {
-        category: String,
-        difficulty: String,
-        question: String,
-        suggestedAnswer: String,
-      },
-    ],
+   
   },
   { timestamps: true },
 );
