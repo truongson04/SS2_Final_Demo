@@ -7,18 +7,18 @@ const UserSchema = new mongoose.Schema(
     password: String,
     googleId: String,
     githubId: String,
-    isDeleted:{
-      type:Boolean,
-      default:false
+    isActive: {
+      type: Boolean,
+      default: true,
     },
-    isActive:{
-      type:Boolean,
-      default:true
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
-    role:{
-      type:String,
-      default:"user"
-    }
+    role: {
+      type: String,
+      default: "user",
+    },
   },
   { timestamps: true },
 );
