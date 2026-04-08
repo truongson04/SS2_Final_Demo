@@ -125,6 +125,7 @@ const saveResume = async () => {
     console.log(error);
   }
 };
+
 // PDF CV
 const cvTemplate = ref(null);
 const printCV = async () => {

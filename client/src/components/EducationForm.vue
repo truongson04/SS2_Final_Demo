@@ -130,10 +130,7 @@ const removeEducation = (index) => {
         </p>
       </div>
 
-      <div
-        v-else
-        class="flex flex-col gap-6"
-      >
+      <div v-else class="flex flex-col gap-6">
         <div
           v-for="(education, index) in data"
           :key="index"
@@ -221,9 +218,7 @@ const removeEducation = (index) => {
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs text-slate-400 ml-1"
-                >Field of Study</label
-              >
+              <label class="text-xs text-slate-400 ml-1">Field of Study</label>
               <input
                 type="text"
                 placeholder="e.g. Computer Science"
@@ -238,24 +233,20 @@ const removeEducation = (index) => {
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs text-slate-400 ml-1"
-                >Graduation Date</label
-              >
+              <label class="text-xs text-slate-400 ml-1">Graduation Date</label>
               <input
-                type="month"
+                type="date"
                 v-model="education.graduation_date"
                 class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm"
                 :class="
                   isDark
-                    ? 'bg-slate-900 border-slate-700 text-white'
+                    ? '!bg-gray-500 border-slate-700 text-white'
                     : 'bg-white border-gray-200 text-slate-800'
                 "
               />
             </div>
             <div class="space-y-1.5">
-              <label class="text-xs text-slate-400 ml-1"
-                >GPA (Optional)</label
-              >
+              <label class="text-xs text-slate-400 ml-1">GPA (Optional)</label>
               <input
                 type="text"
                 placeholder="e.g. 3.8/4.0"
