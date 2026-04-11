@@ -54,10 +54,9 @@ const imageUrl = computed(() => {
         </h1>
         <p
           v-if="data.personal_info?.profession"
-          class="text-lg opacity-90 mb-4 font-medium uppercase tracking-wider"
-        >
-          {{ data.personal_info.profession }}
-        </p>
+          class="text-lg opacity-90 mb-4 font-medium uppercase tracking-wider prose prose-sm prose-invert max-w-none"
+          v-html="data.personal_info.profession"
+        ></p>
 
         <div
           class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm mt-4"
@@ -126,7 +125,7 @@ const imageUrl = computed(() => {
               <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
-            <span>{{ data.personal_info.location }}</span>
+            <span v-html="data.personal_info.location"></span>
           </div>
 
           <a
@@ -204,9 +203,10 @@ const imageUrl = computed(() => {
         >
           Professional Summary
         </h2>
-        <p class="text-gray-700 leading-relaxed text-justify">
-          {{ data.professional_summary }}
-        </p>
+        <div 
+          class="text-gray-700 leading-relaxed text-justify prose prose-sm max-w-none"
+          v-html="data.professional_summary"
+        ></div>
       </section>
 
       <section
@@ -248,10 +248,9 @@ const imageUrl = computed(() => {
 
             <div
               v-if="exp.description"
-              class="text-gray-600 leading-relaxed mt-2 whitespace-pre-line text-sm"
-            >
-              {{ exp.description }}
-            </div>
+              class="text-gray-600 leading-relaxed mt-2 text-sm prose prose-sm max-w-none"
+              v-html="exp.description"
+            ></div>
           </div>
         </div>
       </section>
@@ -302,10 +301,9 @@ const imageUrl = computed(() => {
 
             <div
               v-if="p.description"
-              class="text-gray-600 leading-relaxed text-sm mt-2 whitespace-pre-line"
-            >
-              {{ p.description }}
-            </div>
+              class="text-gray-600 leading-relaxed mt-2 text-sm prose prose-sm max-w-none"
+              v-html="p.description"
+            ></div>
           </div>
         </div>
       </section>
@@ -337,6 +335,11 @@ const imageUrl = computed(() => {
                   >GPA: {{ edu.gpa }}</span
                 >
               </div>
+              <div
+                v-if="edu.description"
+                class="text-gray-600 leading-relaxed mt-2 text-sm prose prose-sm max-w-none"
+                v-html="edu.description"
+              ></div>
             </div>
           </div>
         </section>

@@ -5,6 +5,11 @@ const interviewSessionSchema = new mongoose.Schema({
     ref: 'User', 
     required: true
     },
+    resumeId:{
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Resume', 
+        required: true
+    },
     contextData:{
         jobDescription: { type: String, required: true },
         resumeContent:{

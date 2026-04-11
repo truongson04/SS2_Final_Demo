@@ -14,7 +14,6 @@ const { isDark } = useTheme();
 const { resumeId } = route.params;
 const isInterview = ref(false);
 
-const questions = ref([]);
 const mode = ref("");
 
 const cloneResume = computed(() => {
@@ -27,43 +26,7 @@ const cloneResume = computed(() => {
   delete newResume.personal_info;
   return newResume;
 });
-// gen tag questions
-const setActive = (index) => {
-  questions.value.forEach((q, i) => {
-    if (i < index) q.status = "completed";
-    else if (i === index) q.status = "active";
-    else q.status = "pending";
-  });
-};
-const getDifficultyColor = (difficulty) => {
-  switch (difficulty.toLowerCase()) {
-    case "easy":
-      return "text-green-400 bg-green-400/10 border-green-400/20";
-    case "medium":
-      return "text-amber-400 bg-amber-400/10 border-amber-400/20";
-    case "hard":
-      return "text-red-400 bg-red-400/10 border-red-400/20";
-    default:
-      return "text-slate-400 bg-slate-400/10 border-slate-400/20";
-  }
-};
-const generateQuestions = async () => {
-  isInterview.value = true;
-  mode.value = "question";
 
-  try {
-    const { data } = await clientApi.post("/api/ai/interview", {
-      userContent: cloneResume.value,
-    });
-    questions.value = JSON.parse(data.questions);
-    toast.success(data.message);
-  } catch (error) {
-    toast.error(error.message);
-    console.log(error);
-  } finally {
-    isInterview.value = false;
-  }
-};
 // chat
 const userInput = ref("READY");
 const chatContainer = ref(null);
@@ -80,6 +43,84 @@ const messages = ref([
 const isTexting = ref(false);
 const isReady = ref(false);
 const sessionId = ref("");
+const interviewHistory = ref([]);
+const isHistoryLoading = ref(false);
+
+const fetchHistory = async () => {
+  isHistoryLoading.value = true;
+  try {
+    const { data } = await clientApi.get(`/api/ai/interview/history?resumeId=${resumeId}`);
+    interviewHistory.value = data.history;
+  } catch (error) {
+    console.error("Failed to fetch history:", error);
+  } finally {
+    isHistoryLoading.value = false;
+  }
+};
+
+const loadSession = async (id) => {
+  isInterview.value = true;
+  try {
+    const { data } = await clientApi.get(`/api/ai/interview/session/${id}`);
+    const session = data.session;
+
+    sessionId.value = session._id;
+    mode.value = "chat";
+    isReady.value = true;
+
+    // Map history to chat messages
+    messages.value = session.history.map((h) => ({
+      role: h.role === "model" ? "ai" : "user",
+      text: h.parts[0].text,
+    }));
+
+    // Remove the 'Ask the first question' user message if present (it's internal)
+    if (messages.value[0]?.text === "Ask the first question") {
+      messages.value.shift();
+    }
+
+    toast.success("Interview session loaded");
+  } catch (error) {
+    toast.error("Failed to load session: " + error.message);
+  } finally {
+    isInterview.value = false;
+  }
+};
+
+const startNewInterview = () => {
+  sessionId.value = "";
+  messages.value = [
+    {
+      role: "ai",
+      text: "Hi, I am your AI assistant",
+    },
+    {
+      role: "ai",
+      text: "Today, I will be your interviewer. Please paste the job description you are applying for to start.",
+    },
+  ];
+  isReady.value = false;
+  mode.value = "chat";
+  userInput.value = "READY";
+};
+
+const deleteSession = async (id) => {
+  if (!confirm("Are you sure you want to delete this interview history?"))
+    return;
+
+  try {
+    await clientApi.delete(`/api/ai/interview/session/${id}`);
+    interviewHistory.value = interviewHistory.value.filter((s) => s._id !== id);
+    if (sessionId.value === id) {
+      mode.value = "";
+      sessionId.value = "";
+    }
+    toast.success("History deleted");
+  } catch (error) {
+    toast.error("Failed to delete history");
+  }
+};
+
 const sendMessage = async () => {
   messages.value.push({
     role: "user",
@@ -99,12 +140,14 @@ const sendMessage = async () => {
       role: "user",
       text: message,
       sessionId: sessionId.value,
+      resumeId: resumeId,
     });
 
-    console.log(data);
-    if (data.sessionId) {
+    if (data.sessionId && !sessionId.value) {
       sessionId.value = data.sessionId;
+      fetchHistory(); // Refresh history list when a new session is created
     }
+
     messages.value.push({
       role: "ai",
       text: data.response,
@@ -131,6 +174,7 @@ onMounted(async () => {
     isInterview.value = true;
     const { data } = await clientApi.get(`/api/resumes/get/${resumeId}`);
     resumeData.value = data.resume;
+    await fetchHistory();
   } catch (error) {
     toast.error("Failed to load your resume " + error.message);
   } finally {
@@ -160,7 +204,9 @@ onMounted(async () => {
       <div
         class="h-14 border-b flex items-center px-6 transition-colors"
         :class="
-          isDark ? 'border-white/5 bg-slate-950/80 backdrop-blur' : 'border-gray-200 bg-white'
+          isDark
+            ? 'border-white/5 bg-slate-950/80 backdrop-blur'
+            : 'border-gray-200 bg-white'
         "
       >
         <router-link
@@ -256,459 +302,441 @@ onMounted(async () => {
       <div
         class="h-14 border-b flex items-center justify-between px-6 z-20 transition-colors"
         :class="
-          isDark ? 'border-white/5 bg-slate-900/80 backdrop-blur' : 'border-gray-200 bg-white'
+          isDark
+            ? 'border-white/5 bg-slate-900/80 backdrop-blur'
+            : 'border-gray-200 bg-white'
         "
       >
-        <h2
-          class="text-lg font-bold tracking-tight transition-colors"
-          :class="isDark ? 'text-white' : 'text-slate-800'"
-        >
-          Interview room
-        </h2>
-        <span class="text-xs text-slate-500 font-mono"
-          >{{ questions.length }} items</span
-        >
-      </div>
-      <!-- interview part  -->
-      <div
-        v-if="!mode"
-        class="h-full flex flex-col items-center justify-center p-8 text-center relative z-10"
-      >
-        <div class="relative group mb-8"></div>
-
-        <h2
-          class="text-3xl font-bold mb-3 tracking-tight transition-colors"
-          :class="isDark ? 'text-white' : 'text-slate-800'"
-        >
-          Ready for your Interview?
-        </h2>
-
-        <p
-          class="max-w-md mx-auto mb-10 leading-relaxed text-sm md:text-base transition-colors"
-          :class="isDark ? 'text-slate-400' : 'text-slate-500'"
-        >
-          Our AI Interviewer will analyze your resume and generate technical
-          questions tailored to your profile.
-        </p>
-        <div class="flex gap-10">
-          <button
-            @click="generateQuestions"
-            class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-lg tracking-wide shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 overflow-hidden"
+        <div class="flex items-center gap-4">
+          <h2
+            class="text-lg font-bold tracking-tight transition-colors"
+            :class="isDark ? 'text-white' : 'text-slate-800'"
           >
-            <div
-              class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
-            ></div>
-
-            <span class="relative flex items-center gap-3">
-              Generate question cards
-            </span>
-          </button>
+            Interview room
+          </h2>
           <button
-            @click="handleChat"
-            class="group relative px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-lg tracking-wide shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 overflow-hidden"
+            @click="startNewInterview"
+            class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 hover:bg-cyan-500 hover:text-white transition-all shadow-lg shadow-cyan-500/10"
           >
-            <div
-              class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
-            ></div>
-
-            <span class="relative flex items-center gap-3">
-              Start chat Interview
-            </span>
-          </button>
-        </div>
-
-        <div
-          class="mt-8 flex items-center gap-4 text-xs text-slate-500 font-mono"
-        >
-          <div class="flex items-center gap-1.5">
-            <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-            AI Ready
-          </div>
-          <div class="flex items-center gap-1.5">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
+              width="10"
+              height="10"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="3"
               stroke-linecap="round"
               stroke-linejoin="round"
             >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-          </div>
+            New Chat
+          </button>
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6" v-else>
-        <button
-          @click="mode = ''"
-          class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border"
-        >
-          < Back
-        </button>
-        <div
-          v-if="mode === 'question'"
-          v-for="(q, index) in questions"
-          :key="q.id"
-          class="transition-all duration-300 group"
-          @click="setActive(index)"
-        >
+      <div class="flex-1 flex overflow-hidden">
+        <!-- Main content area -->
+        <div class="flex-1 flex flex-col overflow-hidden relative">
+          <!-- interview part  -->
           <div
-            v-if="q.status === 'active'"
-            class="relative p-6 rounded-2xl border border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.15)] backdrop-blur-sm transition-colors"
-            :class="isDark ? 'bg-slate-900/90' : 'bg-white'"
+            v-if="!mode"
+            class="h-full flex flex-col items-center justify-center p-8 text-center relative z-10"
+          >
+            <div class="relative group mb-8"></div>
+
+            <h2
+              class="text-3xl font-bold mb-3 tracking-tight transition-colors"
+              :class="isDark ? 'text-white' : 'text-slate-800'"
+            >
+              Ready for your Interview?
+            </h2>
+
+            <p
+              class="max-w-md mx-auto mb-10 leading-relaxed text-sm md:text-base transition-colors"
+              :class="isDark ? 'text-slate-400' : 'text-slate-500'"
+            >
+              Our AI Interviewer will analyze your resume and conduct a mock
+              interview based on the job description you provide.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 md:gap-10">
+              <button
+                @click="handleChat"
+                class="group relative px-10 py-4 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold text-lg tracking-wide shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 overflow-hidden"
+              >
+                <div
+                  class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"
+                ></div>
+
+                <span class="relative flex items-center gap-3">
+                  Start chat Interview
+                </span>
+              </button>
+            </div>
+
+            <div
+              class="mt-8 flex items-center gap-4 text-xs text-slate-500 font-mono"
+            >
+              <div class="flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                AI Ready
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-else-if="mode === 'chat'"
+            class="flex flex-col h-full relative overflow-hidden font-sans transition-colors"
+            :class="isDark ? 'bg-slate-950' : 'bg-white'"
           >
             <div
-              class="absolute -left-[1px] top-6 bottom-6 w-1 bg-cyan-500 rounded-r-full shadow-[0_0_10px_rgba(6,182,212,0.8)]"
-            ></div>
-
-            <div class="flex flex-col gap-4">
-              <div class="flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                  <span
-                    class="px-2 py-1 rounded-md border text-[10px] font-bold uppercase tracking-wider transition-colors"
-                    :class="
-                      isDark
-                        ? 'bg-slate-800 border-slate-700 text-slate-300'
-                        : 'bg-gray-100 border-gray-200 text-slate-600'
-                    "
-                  >
-                    {{ q.category }}
-                  </span>
-                  <span class="text-xs font-mono text-cyan-500"
-                    >#0{{ index + 1 }}</span
-                  >
-                </div>
-
-                <span
-                  class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border"
-                  :class="getDifficultyColor(q.difficulty)"
+              class="px-6 py-4 flex items-center justify-between transition-colors sticky top-0 bg-inherit z-10"
+            >
+              <div class="flex items-center gap-3">
+                <button
+                  @click="mode = ''"
+                  class="p-2 -ml-2 rounded-full hover:bg-white/5 transition-colors"
                 >
-                  {{ q.difficulty }}
-                </span>
-              </div>
-
-              <h3
-                class="text-md md:text-xl font-medium leading-relaxed transition-colors"
-                :class="isDark ? 'text-white' : 'text-slate-800'"
-              >
-                {{ q.question }}
-              </h3>
-
-              <div
-                class="relative mt-2 p-4 rounded-xl bg-purple-900/10 border border-purple-500/20"
-              >
-                <div class="flex items-center gap-2 mb-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
+                    width="16"
+                    height="16"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="text-purple-400"
+                    stroke-width="2.5"
                   >
-                    <path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
-                    <path d="M12 3v1" />
-                    <path d="M12 20v1" />
-                    <path d="M3 12h1" />
-                    <path d="M20 12h1" />
-                    <path d="m18.364 5.636-.707.707" />
-                    <path d="m6.343 17.657-.707.707" />
-                    <path d="m5.636 5.636.707.707" />
-                    <path d="m17.657 17.657.707.707" />
+                    <path d="m15 18-6-6 6-6" />
                   </svg>
-                  <span
-                    class="text-[10px] font-bold text-purple-400 uppercase tracking-widest"
-                    >Suggested Answer</span
+                </button>
+                <div class="flex flex-col">
+                  <h3
+                    class="font-bold text-sm tracking-wide transition-colors"
+                    :class="isDark ? 'text-white' : 'text-slate-800'"
                   >
+                    AI Interviewer
+                  </h3>
+                  <div class="flex items-center gap-1.5">
+                    <span
+                      class="relative flex h-2 w-2 rounded-full bg-green-500"
+                    ></span>
+                    <span class="text-[10px] text-slate-500 uppercase"
+                      >Session:
+                      {{ sessionId ? sessionId.slice(-6) : "New" }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              ref="chatContainer"
+              class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 scroll-smooth"
+            >
+              <div
+                v-for="(msg, msgIdx) in messages"
+                :key="msgIdx"
+                class="flex w-full"
+                :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
+              >
+                <div
+                  class="flex max-w-[85%] md:max-w-[80%] gap-3"
+                  :class="msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'"
+                >
+                  <div
+                    class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border shadow-lg overflow-hidden transition-colors"
+                    :class="
+                      msg.role === 'user'
+                        ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400'
+                        : 'bg-cyan-500/20 border-cyan-500/30 text-cyan-400'
+                    "
+                  >
+                    <svg
+                      v-if="msg.role === 'ai'"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M12 8V4H8" />
+                      <rect width="16" height="12" x="4" y="8" rx="2" />
+                      <path d="M2 14h2" />
+                      <path d="M20 14h2" />
+                      <path d="M15 13v2" />
+                      <path d="M9 13v2" />
+                    </svg>
+                    <svg
+                      v-else
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                    >
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+
+                  <div
+                    class="p-4 rounded-2xl text-sm leading-relaxed shadow-sm transition-colors"
+                    :class="
+                      msg.role === 'user'
+                        ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-tr-none'
+                        : isDark
+                          ? 'bg-slate-900 border border-white/5 text-slate-200 rounded-tl-none'
+                          : 'bg-white border border-gray-200 text-slate-700 rounded-tl-none shadow-sm'
+                    "
+                  >
+                    {{ msg.text }}
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="isTexting" class="flex justify-start w-full">
+                <div class="flex max-w-[80%] gap-3">
+                  <div
+                    class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 flex items-center justify-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path d="M12 8V4H8" />
+                      <rect width="16" height="12" x="4" y="8" rx="2" />
+                      <path d="M2 14h2" />
+                      <path d="M20 14h2" />
+                      <path d="M15 13v2" />
+                      <path d="M9 13v2" />
+                    </svg>
+                  </div>
+                  <div
+                    class="p-4 rounded-2xl rounded-tl-none flex items-center gap-1 transition-colors"
+                    :class="
+                      isDark
+                        ? 'bg-slate-900 border border-white/5'
+                        : 'bg-white border border-gray-200'
+                    "
+                  >
+                    <span
+                      class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-bounce"
+                    ></span>
+                    <span
+                      class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-bounce"
+                      style="animation-delay: 0.1s"
+                    ></span>
+                    <span
+                      class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-bounce"
+                      style="animation-delay: 0.2s"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input area -->
+            <div
+              class="p-6 transition-colors"
+              :class="
+                isDark
+                  ? 'bg-slate-950/80 backdrop-blur'
+                  : 'bg-white border-t border-gray-100'
+              "
+            >
+              <div v-if="isReady">
+                <div class="relative group">
+                  <div
+                    class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur-lg"
+                  ></div>
+
+                  <div
+                    class="relative flex items-center p-1 bg-slate-900 border border-white/10 rounded-2xl group-focus-within:border-cyan-500/50 transition-all duration-300"
+                    :class="!isDark && 'bg-gray-50 border-gray-200'"
+                  >
+                    <input
+                      type="text"
+                      v-model="userInput"
+                      @keyup.enter="sendMessage"
+                      placeholder="Type your answer, or paste JD to start..."
+                      class="flex-1 bg-transparent border-none px-4 py-3 focus:outline-none focus:ring-0 text-sm transition-colors"
+                      :class="
+                        isDark
+                          ? 'text-white placeholder-slate-500'
+                          : 'text-slate-800 placeholder-slate-400'
+                      "
+                    />
+
+                    <button
+                      @click="sendMessage"
+                      :disabled="!userInput.trim() || isTexting"
+                      class="p-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all active:scale-95 disabled:opacity-40 disabled:grayscale"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                      >
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 <p
-                  :class="
-                    isDark
-                      ? 'text-sm text-purple-200/80 leading-relaxed italic'
-                      : 'text-sm text-black leading-relaxed italic '
-                  "
+                  class="text-[10px] text-center text-slate-500 mt-2 font-medium opacity-60"
                 >
-                  "{{ q.suggestedAnswer }}"
+                  Tip: Be detailed in your answers for better feedback later.
+                </p>
+              </div>
+              <div v-else class="flex flex-col items-center gap-4">
+                <button
+                  @click="
+                    () => {
+                      isReady = true;
+                      userInput = 'READY';
+                      sendMessage();
+                    }
+                  "
+                  class="px-8 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-white font-bold shadow-xl shadow-cyan-500/20 transform hover:-translate-y-1 transition-all active:translate-y-0"
+                >
+                  CLICK HERE TO BEGIN INTERVIEW
+                </button>
+                <p
+                  class="text-[10px] text-slate-500 uppercase tracking-widest font-bold"
+                >
+                  {{
+                    sessionId ? "Continuing previous session" : "System ready"
+                  }}
                 </p>
               </div>
             </div>
           </div>
-
-          <div
-            v-else
-            class="p-5 rounded-xl border transition-colors opacity-70 hover:opacity-100"
-            :class="[
-              q.status === 'completed' ? 'opacity-50' : '',
-              isDark
-                ? 'border-white/5 bg-slate-900/40 hover:bg-slate-900/60'
-                : 'border-gray-200 bg-white hover:bg-gray-50',
-            ]"
-          >
-            <div class="flex justify-between items-start mb-2">
-              <div class="flex gap-2">
-                <span class="text-xs font-mono text-slate-500"
-                  >#0{{ index + 1 }}</span
-                >
-                <span
-                  class="px-1.5 py-0.5 rounded text-[10px] uppercase border transition-colors"
-                  :class="
-                    isDark
-                      ? 'bg-slate-800 text-slate-400 border-slate-700'
-                      : 'bg-gray-100 text-slate-500 border-gray-200'
-                  "
-                  >{{ q.category }}</span
-                >
-              </div>
-              <span class="text-[10px] text-slate-500 uppercase">{{
-                q.difficulty
-              }}</span>
-            </div>
-            <p
-              class="text-sm line-clamp-2 transition-colors"
-              :class="isDark ? 'text-slate-400' : 'text-slate-500'"
-            >
-              {{ q.question }}
-            </p>
-          </div>
         </div>
-      </div>
-      <div
-        v-if="mode === 'chat'"
-        class="flex flex-col h-full relative overflow-hidden font-sans border rounded-2xl shadow-2xl transition-colors"
-        :class="
-          isDark ? 'bg-slate-950 border-white/5' : 'bg-white border-gray-200'
-        "
-      >
-        <div
-          class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
-        ></div>
 
+        <!-- History Sidebar -->
         <div
-          class="px-6 py-4 border-b backdrop-blur z-10 flex items-center justify-between transition-colors"
+          class="w-64 border-l transition-colors hidden xl:flex flex-col"
           :class="
             isDark
-              ? 'border-white/5 bg-slate-900/80'
-              : 'border-gray-200 bg-white'
+              ? 'border-white/5 bg-slate-900/20'
+              : 'border-gray-200 bg-gray-50/50'
           "
         >
-          <div class="flex items-center gap-3">
-            <div class="relative w-2 h-2">
-              <span
-                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"
-              ></span>
-              <span
-                class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"
-              ></span>
-            </div>
+          <div
+            class="p-4 border-b flex items-center justify-between transition-colors"
+            :class="isDark ? 'border-white/5' : 'border-gray-200'"
+          >
             <h3
-              class="font-bold text-sm tracking-wide transition-colors"
-              :class="isDark ? 'text-white' : 'text-slate-800'"
+              class="text-xs font-bold uppercase tracking-widest text-slate-500"
             >
-              AI Assistant
+              History
             </h3>
+            <span
+              class="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-bold border border-gray-200 dark:border-white/5 text-black"
+              >{{ interviewHistory.length }}</span
+            >
           </div>
-        </div>
 
-        <div
-          ref="chatContainer"
-          class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 scroll-smooth"
-        >
-          <div
-            v-for="msg in messages"
-            :key="msg.id"
-            class="flex w-full"
-            :class="msg.role === 'user' ? 'justify-end' : 'justify-start'"
-          >
+          <div class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+            <div v-if="isHistoryLoading" class="p-4 text-center">
+              <div
+                class="inline-block w-4 h-4 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"
+              ></div>
+            </div>
+
             <div
-              class="flex max-w-[80%] md:max-w-[70%] gap-3"
-              :class="msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'"
+              v-else-if="interviewHistory.length === 0"
+              class="p-4 text-center"
+            >
+              <p class="text-[10px] text-slate-500 italic">
+                No past sessions found.
+              </p>
+            </div>
+
+            <div
+              v-for="session in interviewHistory"
+              :key="session._id"
+              class="group relative p-3 rounded-xl border transition-all cursor-pointer overflow-hidden"
+              :class="[
+                sessionId === session._id
+                  ? 'border-cyan-500 bg-cyan-500/5 ring-1 ring-cyan-500/20'
+                  : isDark
+                    ? 'border-white/5 bg-slate-950/40 hover:bg-slate-900 shadow-sm'
+                    : 'border-gray-200 bg-white hover:bg-white shadow-sm',
+              ]"
+              @click="loadSession(session._id)"
             >
               <div
-                class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border shadow-lg"
-                :class="
-                  msg.role === 'user'
-                    ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400'
-                    : 'bg-cyan-500/20 border-cyan-500/30 text-cyan-400'
-                "
+                class="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
               >
-                <svg
-                  v-if="msg.role === 'ai'"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-bot-icon lucide-bot"
+                <button
+                  @click.stop="deleteSession(session._id)"
+                  class="p-1 rounded-md hover:bg-red-500/10 text-slate-500 hover:text-red-500"
                 >
-                  <path d="M12 8V4H8" />
-                  <rect width="16" height="12" x="4" y="8" rx="2" />
-                  <path d="M2 14h2" />
-                  <path d="M20 14h2" />
-                  <path d="M15 13v2" />
-                  <path d="M9 13v2" />
-                </svg>
-                <svg
-                  v-else
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"
+                    />
+                  </svg>
+                </button>
               </div>
 
-              <div
-                class="p-4 rounded-2xl text-sm leading-relaxed shadow-md"
-                :class="
-                  msg.role === 'user'
-                    ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-tr-none'
-                    : isDark
-                      ? 'bg-slate-800 border border-white/5 text-slate-300 rounded-tl-none'
-                      : 'bg-gray-100 border border-gray-200 text-slate-700 rounded-tl-none'
-                "
-              >
-                {{ msg.text }}
+              <div class="flex flex-col gap-1 pr-4">
+                <p
+                  class="text-[11px] font-bold line-clamp-1 transition-colors"
+                  :class="
+                    sessionId === session._id
+                      ? 'text-cyan-400'
+                      : isDark
+                        ? 'text-slate-300'
+                        : 'text-slate-700'
+                  "
+                >
+                  {{
+                    session.contextData?.jobDescription || "Untitled Interview"
+                  }}
+                </p>
+                <div class="flex items-center justify-between">
+                  <p class="text-[9px] text-slate-500">
+                    {{ new Date(session.createdAt).toLocaleDateString() }}
+                  </p>
+                  <span
+                    class="text-[8px] font-bold px-1 rounded-sm uppercase border"
+                    :class="[
+                      session.status === 'active'
+                        ? 'text-green-500 border-green-500/20 bg-green-500/5'
+                        : 'text-slate-400 border-slate-300',
+                    ]"
+                    >{{ session.status }}</span
+                  >
+                </div>
               </div>
             </div>
           </div>
-
-          <div v-if="isTexting" class="flex justify-start w-full">
-            <div class="flex max-w-[80%] gap-3">
-              <div
-                class="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 flex items-center justify-center"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-bot-icon lucide-bot"
-                >
-                  <path d="M12 8V4H8" />
-                  <rect width="16" height="12" x="4" y="8" rx="2" />
-                  <path d="M2 14h2" />
-                  <path d="M20 14h2" />
-                  <path d="M15 13v2" />
-                  <path d="M9 13v2" />
-                </svg>
-              </div>
-              <div
-                class="p-4 rounded-2xl rounded-tl-none flex items-center gap-1 transition-colors"
-                :class="
-                  isDark
-                    ? 'bg-slate-800 border border-white/5'
-                    : 'bg-gray-100 border border-gray-200'
-                "
-              >
-                <span
-                  class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
-                ></span>
-                <span
-                  class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
-                  style="animation-delay: 0.1s"
-                ></span>
-                <span
-                  class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
-                  style="animation-delay: 0.2s"
-                ></span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          v-if="isReady"
-          :class="
-            isDark
-              ? 'p-4 bg-slate-900/90 backdrop-blur border-t border-white/10 z-10'
-              : 'p-4 bg-white border-t border-white/10 z-10'
-          "
-        >
-          <div class="relative group">
-            <div
-              class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl opacity-0 group-focus-within:opacity-20 transition duration-500 blur"
-            ></div>
-
-            <div
-              class="relative flex items-center bg-slate-950 rounded-xl border border-slate-700 group-focus-within:border-cyan-500/50 transition-colors"
-            >
-              <input
-                type="text"
-                v-model="userInput"
-                @keyup.enter="sendMessage"
-                placeholder="Type your answer in here..."
-                :class="
-                  isDark
-                    ? 'flex-1 bg-transparent border-none text-slate-200 placeholder-slate-500 px-4 py-3 focus:outline-none focus:ring-0 text-sm'
-                    : 'flex-1 bg-gray-200 border-none text-slate-800 placeholder-slate-800 px-4 py-3 focus:outline-none focus:ring-0 text-sm'
-                "
-              />
-
-              <button
-                @click="sendMessage"
-                :disabled="!userInput.trim() || isTexting"
-                class="mr-2 p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-cyan-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="22" y1="2" x2="11" y2="13" />
-                  <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <p class="text-[10px] text-center text-slate-600 mt-2">
-            AI generated content may be inaccurate. Double check important
-            information.
-          </p>
-        </div>
-        <div v-else class="flex justify-end">
-          <button
-            @click="
-              () => {
-                isReady = true;
-                userInput = 'READY';
-                sendMessage();
-              }
-            "
-            class="p-4 bg-cyan-500 mb-25 ml-30 rounded-xl animate-bounce text-slate-800"
-          >
-            READY
-          </button>
         </div>
       </div>
     </div>

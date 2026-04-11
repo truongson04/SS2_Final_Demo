@@ -3,6 +3,7 @@ import { ref } from "vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import { useTheme } from "../composables/useTheme";
+import TiptapEditor from "./TiptapEditor.vue";
 
 const data = defineModel("data");
 const isGenerating = ref(false);
@@ -109,26 +110,11 @@ const generateSummary = async () => {
       </div>
 
       <div class="relative group">
-        <textarea
+        <TiptapEditor
           v-model="data"
-          rows="6"
+          :placeholder="'e.g. Detail-oriented Editorial Assistant with 2+ years of experience...'"
           :disabled="isGenerating"
-          class="w-full border rounded-xl p-4 placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-y leading-relaxed text-sm sm:text-base shadow-inner disabled:cursor-not-allowed"
-          :class="isDark ? 'bg-slate-950 border-slate-700 text-slate-300' : 'bg-white border-gray-200 text-slate-700'"
-          placeholder="e.g. Detail-oriented Editorial Assistant with 2+ years of experience..."
-        ></textarea>
-
-        <div class="absolute bottom-2 right-2 pointer-events-none opacity-50">
-          <svg
-            width="10"
-            height="10"
-            viewBox="0 0 10 10"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M10 10H0L10 0V10Z" fill="#334155" />
-          </svg>
-        </div>
+        />
 
         <Transition
           enter-active-class="transition duration-500 ease-out"

@@ -3,7 +3,7 @@
     class="max-w-5xl mx-auto bg-white shadow-xl overflow-hidden text-slate-800 flex flex-col md:flex-row min-h-[1000px]"
   >
     <aside
-      class="w-full md:w-[35%] bg-slate-50 p-8 flex flex-col gap-10 border-r border-slate-200"
+      class="w-full md:w-[35%] bg-slate-50 flex flex-col gap-10 border-r border-slate-200 p-[20px] min-w-0"
     >
       <div v-if="data.personal_info?.image" class="flex justify-center pt-4">
         <div
@@ -106,6 +106,11 @@
             <p class="text-xs text-slate-400 mt-1 font-medium tracking-wide">
               {{ formatDate(edu.graduation_date) }}
             </p>
+            <div
+              v-if="edu.description"
+              class="text-xs text-slate-600 mt-2 prose prose-sm max-w-none"
+              v-html="edu.description"
+            ></div>
           </div>
         </div>
       </section>
@@ -150,9 +155,10 @@
         >
           Profile
         </h2>
-        <p class="text-slate-600 leading-relaxed text-justify">
-          {{ data.professional_summary }}
-        </p>
+        <div
+          class="text-slate-600 leading-relaxed text-justify prose prose-sm max-w-none"
+          v-html="data.professional_summary"
+        ></div>
       </section>
 
       <section v-if="data.experience?.length">
@@ -190,18 +196,11 @@
               {{ exp.company }}
             </p>
 
-            <ul
+            <div
               v-if="exp.description"
-              class="list-disc list-outside ml-4 text-sm text-slate-600 leading-relaxed space-y-1.5"
-            >
-              <li
-                v-for="(line, i) in exp.description.split('\n')"
-                :key="i"
-                class="pl-1"
-              >
-                {{ line }}
-              </li>
-            </ul>
+              class="text-sm text-slate-600 leading-relaxed space-y-1.5 prose prose-sm max-w-none"
+              v-html="exp.description"
+            ></div>
           </div>
         </div>
       </section>
@@ -260,18 +259,11 @@
               </a>
             </div>
 
-            <ul
+            <div
               v-if="project.description"
-              class="list-disc list-outside ml-4 text-sm text-slate-600 leading-relaxed space-y-1.5 mt-2"
-            >
-              <li
-                v-for="(line, i) in project.description.split('\n')"
-                :key="i"
-                class="pl-1"
-              >
-                {{ line }}
-              </li>
-            </ul>
+              class="text-sm text-slate-600 leading-relaxed space-y-1.5 mt-2 prose prose-sm max-w-none"
+              v-html="project.description"
+            ></div>
           </div>
         </div>
       </section>

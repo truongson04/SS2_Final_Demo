@@ -48,48 +48,6 @@ export const enhanceProjectDescription = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
-export const interviewGenerate = async (req, res) => {
-  const { userContent } = req.body;
-  if (!userContent) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
-
-  const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
-  try {
-    const model = genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL,
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-      systemInstruction: `
-      You are a Senior Technical Recruiter.
-    Analyze the following CV and generate a list of interview questions.
-
-    **CRITICAL REQUIREMENT:**
-    The output must be a JSON array (no markdown formatting) complying with this structure:
-    
-         [
-            {
-                "id": "integer",
-                "category": "string (Technical/Behavioral/Project)",
-                "difficulty": "string (Low/Medium/High)",
-                "question": "string",
-                "suggestedAnswer":string (How to answer the question well ?)
-            }
-        ]
-    
-      `,
-    });
-    const result = await model.generateContent(userPrompt);
-    const response = await result.response;
-    const questions = response.text();
-    return res
-      .status(200)
-      .json({ message: "Generated successfully", questions });
-  } catch (error) {
-    return res.status(400).json({ message: "Two many request, please comeback later :))" });
-  }
-};
 // analysis resume
 export const analysisResume = async (req, res) => {
   const { userContent } = req.body;
@@ -305,7 +263,7 @@ const getSystemInstruction = (jobDescription, resumeContent) => {
 // interview with AI
 export const chatWithAi = async (req, res) => {
   try {
-    const { text, userContent, sessionId } = req.body;
+    const { text, userContent, sessionId, resumeId } = req.body;
     const userId = req.userId;
 
     if (text === 'READY' && !sessionId) {
@@ -335,6 +293,7 @@ export const chatWithAi = async (req, res) => {
 
       const newSession = new Sessions({
         userId,
+        resumeId,
         contextData: {
           jobDescription: text,
           resumeContent: userContent,
@@ -401,6 +360,59 @@ export const chatWithAi = async (req, res) => {
 
 
     return res.status(400).json({ message: "Something wrong", error: err.message });
+  }
+};
+
+// Get all interview sessions for a user
+export const getInterviewHistory = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { resumeId } = req.query;
+    
+    const query = { userId };
+    if (resumeId) query.resumeId = resumeId;
+
+    const history = await Sessions.find(query)
+      .select('createdAt contextData.jobDescription status')
+      .sort({ createdAt: -1 });
+    
+    return res.status(200).json({ history });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+// Get a specific interview session
+export const getInterviewSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const userId = req.userId;
+    
+    const session = await Sessions.findOne({ _id: sessionId, userId });
+    if (!session) {
+      return res.status(404).json({ message: "Session not found or unauthorized" });
+    }
+    
+    return res.status(200).json({ session });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+// Delete an interview session
+export const deleteInterviewSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const userId = req.userId;
+    
+    const result = await Sessions.deleteOne({ _id: sessionId, userId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "Session not found or unauthorized" });
+    }
+    
+    return res.status(200).json({ message: "Session deleted successfully" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
   }
 };
 

@@ -67,9 +67,9 @@ const resumeSchema = new mongoose.Schema(
         field: { type: String },
         graduation_date: { type: String },
         gpa: { type: String },
+        description: { type: String },
       },
     ],
-   
   },
   { timestamps: true },
 );

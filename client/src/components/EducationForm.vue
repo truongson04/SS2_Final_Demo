@@ -1,5 +1,6 @@
 <script setup>
 import { useTheme } from "../composables/useTheme";
+import TiptapEditor from "./TiptapEditor.vue";
 const { isDark } = useTheme();
 const data = defineModel("data");
 const addEducation = () => {
@@ -9,6 +10,7 @@ const addEducation = () => {
     field: "",
     graduation_date: "",
     gpa: "",
+    description: "",
   };
   data.value.push(newEducation);
 };
@@ -257,6 +259,14 @@ const removeEducation = (index) => {
                     ? 'bg-slate-900 border-slate-700 text-white'
                     : 'bg-white border-gray-200 text-slate-800'
                 "
+              />
+            </div>
+
+            <div class="space-y-1.5 pt-2">
+              <label class="text-xs text-slate-400 ml-1">Description / Awards (Optional)</label>
+              <TiptapEditor
+                v-model="education.description"
+                :placeholder="'• Dean\'s List for 4 consecutive semesters...\n• Key subjects: Algorithms, Machine Learning...'"
               />
             </div>
           </div>

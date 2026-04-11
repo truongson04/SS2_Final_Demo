@@ -56,9 +56,10 @@ const formatDate = (dateStr) => {
     </header>
 
     <section v-if="data.professional_summary" class="mb-10">
-      <p class="text-gray-700">
-        {{ data.professional_summary }}
-      </p>
+      <div 
+        class="text-gray-700 prose prose-sm max-w-none"
+        v-html="data.professional_summary"
+      ></div>
     </section>
 
     <section v-if="data.experience && data.experience.length > 0" class="mb-10">
@@ -82,10 +83,9 @@ const formatDate = (dateStr) => {
 
           <div
             v-if="exp.description"
-            class="text-gray-700 leading-relaxed whitespace-pre-line"
-          >
-            {{ exp.description }}
-          </div>
+            class="text-gray-700 leading-relaxed prose prose-sm max-w-none"
+            v-html="exp.description"
+          ></div>
         </div>
       </div>
     </section>
@@ -130,7 +130,10 @@ const formatDate = (dateStr) => {
               Project
             </a>
           </div>
-          <p class="text-gray-600">{{ proj.description }}</p>
+          <div 
+            class="text-gray-600 prose prose-sm max-w-none"
+            v-html="proj.description"
+          ></div>
         </div>
       </div>
     </section>
@@ -157,6 +160,11 @@ const formatDate = (dateStr) => {
             <p v-if="edu.gpa" class="text-sm text-gray-500">
               GPA: {{ edu.gpa }}
             </p>
+            <div
+              v-if="edu.description"
+              class="text-gray-600 text-sm mt-1 prose prose-sm max-w-none"
+              v-html="edu.description"
+            ></div>
           </div>
           <span class="text-sm text-gray-500">
             {{ formatDate(edu.graduation_date) }}

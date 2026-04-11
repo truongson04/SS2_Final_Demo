@@ -3,6 +3,7 @@ import { ref } from "vue";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import { useTheme } from "../composables/useTheme";
+import TiptapEditor from "./TiptapEditor.vue";
 
 const data = defineModel("data");
 const { isDark } = useTheme();
@@ -50,20 +51,36 @@ const generateDescription = async (index) => {
 <template>
   <div
     class="rounded-2xl p-6 sm:p-8 relative overflow-hidden border transition-colors duration-300"
-    :class="isDark ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm' : 'bg-white border-gray-200 shadow-sm'"
+    :class="
+      isDark
+        ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm'
+        : 'bg-white border-gray-200 shadow-sm'
+    "
   >
     <div
       class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none"
     ></div>
 
     <div class="mb-8 relative z-10">
-      <h3 class="text-xl font-bold transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Professional Experience</h3>
-      <p class="text-sm mt-1 transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">
+      <h3
+        class="text-xl font-bold transition-colors"
+        :class="isDark ? 'text-white' : 'text-slate-800'"
+      >
+        Professional Experience
+      </h3>
+      <p
+        class="text-sm mt-1 transition-colors"
+        :class="isDark ? 'text-slate-400' : 'text-slate-500'"
+      >
         Highlight your career journey and key achievements.
       </p>
       <div
         class="mt-6 flex gap-3 p-4 rounded-lg relative z-10 transition-colors"
-        :class="isDark ? 'bg-blue-900/10 border border-blue-500/10' : 'bg-blue-600/10 border border-blue-600/20 shadow-sm'"
+        :class="
+          isDark
+            ? 'bg-blue-900/10 border border-blue-500/10'
+            : 'bg-blue-600/10 border border-blue-600/20 shadow-sm'
+        "
       >
         <div class="flex-shrink-0 mt-0.5">
           <svg
@@ -97,7 +114,10 @@ const generateDescription = async (index) => {
           >
             Pro Tip
           </h4>
-          <p class="text-xs leading-relaxed transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
+          <p
+            class="text-xs leading-relaxed transition-colors"
+            :class="isDark ? 'text-slate-400' : 'text-slate-600'"
+          >
             Use bullet points to list achievements in the description. Quantify
             results where possible (e.g., "Increased sales by 20%").
           </p>
@@ -107,7 +127,12 @@ const generateDescription = async (index) => {
 
     <div class="relative z-10">
       <div class="flex justify-between items-center mb-6">
-        <label class="text-sm font-medium transition-colors" :class="isDark ? 'text-slate-300' : 'text-slate-600'"> Work History </label>
+        <label
+          class="text-sm font-medium transition-colors"
+          :class="isDark ? 'text-slate-300' : 'text-slate-600'"
+        >
+          Work History
+        </label>
 
         <button
           @click="addExperience"
@@ -140,9 +165,20 @@ const generateDescription = async (index) => {
       <div
         v-if="data.length == 0"
         class="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-xl transition-colors"
-        :class="isDark ? 'border-slate-700/50 bg-slate-950/30' : 'border-gray-200 bg-gray-50'"
+        :class="
+          isDark
+            ? 'border-slate-700/50 bg-slate-950/30'
+            : 'border-gray-200 bg-gray-50'
+        "
       >
-        <div class="p-4 rounded-full mb-3 transition-colors" :class="isDark ? 'bg-slate-800/50 text-slate-500' : 'bg-gray-200 text-gray-400'">
+        <div
+          class="p-4 rounded-full mb-3 transition-colors"
+          :class="
+            isDark
+              ? 'bg-slate-800/50 text-slate-500'
+              : 'bg-gray-200 text-gray-400'
+          "
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -160,8 +196,16 @@ const generateDescription = async (index) => {
             <rect width="20" height="14" x="2" y="6" rx="2" />
           </svg>
         </div>
-        <p class="font-medium transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-500'">No experience added yet</p>
-        <p class="text-xs mt-1 transition-colors" :class="isDark ? 'text-slate-500' : 'text-slate-400'">
+        <p
+          class="font-medium transition-colors"
+          :class="isDark ? 'text-slate-400' : 'text-slate-500'"
+        >
+          No experience added yet
+        </p>
+        <p
+          class="text-xs mt-1 transition-colors"
+          :class="isDark ? 'text-slate-500' : 'text-slate-400'"
+        >
           Click the button above to add your first job.
         </p>
       </div>
@@ -171,16 +215,27 @@ const generateDescription = async (index) => {
           v-for="(experience, index) in data"
           :key="index"
           class="group relative border rounded-xl p-5 transition-all"
-          :class="isDark ? 'bg-slate-950 border-slate-800 hover:border-slate-600' : 'bg-gray-50 border-gray-200 hover:border-gray-400'"
+          :class="
+            isDark
+              ? 'bg-slate-950 border-slate-800 hover:border-slate-600'
+              : 'bg-gray-50 border-gray-200 hover:border-gray-400'
+          "
         >
           <div
             class="flex justify-between items-start mb-4 border-b pb-3 transition-colors"
             :class="isDark ? 'border-slate-800' : 'border-gray-200'"
           >
-            <h4 class="text-sm font-bold flex items-center gap-2 transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">
+            <h4
+              class="text-sm font-bold flex items-center gap-2 transition-colors"
+              :class="isDark ? 'text-white' : 'text-slate-800'"
+            >
               <span
                 class="flex items-center justify-center w-5 h-5 rounded-full text-[10px] border transition-colors"
-                :class="isDark ? 'bg-slate-800 text-slate-400 border-slate-700' : 'bg-gray-200 text-slate-600 border-gray-300'"
+                :class="
+                  isDark
+                    ? 'bg-slate-800 text-slate-400 border-slate-700'
+                    : 'bg-gray-200 text-slate-600 border-gray-300'
+                "
               >
                 {{ index + 1 }}
               </span>
@@ -333,14 +388,11 @@ const generateDescription = async (index) => {
             </div>
 
             <div class="relative group">
-              <textarea
+              <TiptapEditor
                 v-model="experience.description"
-                rows="4"
                 :disabled="generatingIndex === index"
-                class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y disabled:opacity-50"
-                :class="isDark ? 'bg-slate-900 border-slate-700 text-white' : 'bg-white border-gray-200 text-slate-800'"
-                placeholder="• Led a team of 5 developers...&#10;• Increased system performance by 20%..."
-              ></textarea>
+                :placeholder="'• Led a team of 5 developers...\n • Increased system performance by 20%...'"
+              />
 
               <Transition
                 enter-active-class="transition duration-300 ease-out"
