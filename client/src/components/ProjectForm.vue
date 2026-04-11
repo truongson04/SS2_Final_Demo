@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { toast } from "vue3-toastify";
 import clientApi from "../configs/api/clientApi";
 import { useTheme } from "../composables/useTheme";
+import TiptapEditor from "./TiptapEditor.vue";
 const data = defineModel("data");
 const { isDark } = useTheme();
 
@@ -376,18 +377,11 @@ const generateDescription = async (index) => {
             </div>
 
             <div class="relative group">
-              <textarea
+              <TiptapEditor
                 v-model="project.description"
-                rows="4"
                 :disabled="generatingIndex === index"
-                class="w-full px-3 py-2 border rounded-lg placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm leading-relaxed resize-y disabled:opacity-50"
-                :class="
-                  isDark
-                    ? 'bg-slate-900 border-slate-700 text-white'
-                    : 'bg-white border-gray-200 text-slate-800'
-                "
-                placeholder="• Led a team of 5 developers...&#10;• Increased system performance by 20%..."
-              ></textarea>
+                :placeholder="'• Led a team of 5 developers...\n • Increased system performance by 20%...'"
+              />
 
               <Transition
                 enter-active-class="transition duration-300 ease-out"

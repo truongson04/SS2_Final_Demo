@@ -125,6 +125,7 @@ const saveResume = async () => {
     console.log(error);
   }
 };
+
 // PDF CV
 const cvTemplate = ref(null);
 const printCV = async () => {
@@ -157,11 +158,11 @@ const printCV = async () => {
     <meta charset="utf-8">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"><\/script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
       body {
         margin: 0;
         padding: 0;
-        font-family: 'Inter', sans-serif;
+        font-family: 'Be Vietnam Pro', 'Inter', sans-serif;
         -webkit-print-color-adjust: exact;
       }
       /* Ensure the CV takes full width of the A4 page */

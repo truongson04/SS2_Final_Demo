@@ -229,7 +229,7 @@ watch(messages, scrollToBottom, { deep: true });
   bottom: 24px;
   right: 24px;
   z-index: 9999;
-  font-family: "Outfit", sans-serif;
+  font-family: "Be Vietnam Pro", "Inter", sans-serif;
 }
 
 /* Floating Action Button */
@@ -577,7 +577,7 @@ watch(messages, scrollToBottom, { deep: true });
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
-  font-family: "Outfit", sans-serif;
+  font-family: "Be Vietnam Pro", "Inter", sans-serif;
 }
 .ai-chatbox__input::placeholder {
   color: #64748b;

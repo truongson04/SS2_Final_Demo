@@ -1,8 +1,6 @@
-
 import Sessions from "../models/Sessions.js";
-import genAI from "../config/ai.js";
+import { voiceModel, genAI } from "../config/ai.js";
 import Resume from "../models/Resumes.js";
-
 
 export const enhanceProfessionalSummary = async (req, res) => {
   try {
@@ -48,48 +46,6 @@ export const enhanceProjectDescription = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
-export const interviewGenerate = async (req, res) => {
-  const { userContent } = req.body;
-  if (!userContent) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
-
-  const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
-  try {
-    const model = genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL,
-      generationConfig: {
-        responseMimeType: "application/json",
-      },
-      systemInstruction: `
-      You are a Senior Technical Recruiter.
-    Analyze the following CV and generate a list of interview questions.
-
-    **CRITICAL REQUIREMENT:**
-    The output must be a JSON array (no markdown formatting) complying with this structure:
-    
-         [
-            {
-                "id": "integer",
-                "category": "string (Technical/Behavioral/Project)",
-                "difficulty": "string (Low/Medium/High)",
-                "question": "string",
-                "suggestedAnswer":string (How to answer the question well ?)
-            }
-        ]
-    
-      `,
-    });
-    const result = await model.generateContent(userPrompt);
-    const response = await result.response;
-    const questions = response.text();
-    return res
-      .status(200)
-      .json({ message: "Generated successfully", questions });
-  } catch (error) {
-    return res.status(400).json({ message: "Two many request, please comeback later :))" });
-  }
-};
 // analysis resume
 export const analysisResume = async (req, res) => {
   const { userContent } = req.body;
@@ -131,14 +87,15 @@ Your task is to analyze the provided CV text and generate detailed, constructive
     const result = await model.generateContent(userPrompt);
     const response = await result.response;
     const analysis = response.text();
-    return res
-      .status(200)
-      .json({ message: "Generated successfully, this is our analysis for your resume", analysis });
+    return res.status(200).json({
+      message: "Generated successfully, this is our analysis for your resume",
+      analysis,
+    });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });
   }
-}
+};
 export const enhanceJobDescription = async (req, res) => {
   try {
     const { userContent } = req.body;
@@ -279,7 +236,11 @@ professional_summary:{
     });
     const response = JSON.parse(result.response.text());
     const newResume = await Resume.create({ userId, title, ...response });
-    res.json({ resumeId: newResume._id, message: 'Uploaded successfully but there could be some mistakes when extracting content, feel free to modify it :))' });
+    res.json({
+      resumeId: newResume._id,
+      message:
+        "Uploaded successfully but there could be some mistakes when extracting content, feel free to modify it :))",
+    });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: error.message });
@@ -305,102 +266,235 @@ const getSystemInstruction = (jobDescription, resumeContent) => {
 // interview with AI
 export const chatWithAi = async (req, res) => {
   try {
-    const { text, userContent, sessionId } = req.body;
+    const { text, userContent, sessionId, resumeId, voiceMode } = req.body;
     const userId = req.userId;
 
-    if (text === 'READY' && !sessionId) {
-
-      return res.status(200).json({ response: "Please paste your job description in the input chat to start" })
-
+    if (text === "READY" && !sessionId) {
+      return res.status(200).json({
+        response:
+          "Please paste your job description in the input chat to start",
+      });
     }
+
+    function createWavHeader(
+      dataLength,
+      sampleRate,
+      numChannels,
+      bitsPerSample,
+    ) {
+      const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+      const blockAlign = (numChannels * bitsPerSample) / 8;
+      const buffer = Buffer.alloc(44);
+
+      buffer.write("RIFF", 0);
+      buffer.writeUInt32LE(36 + dataLength, 4);
+      buffer.write("WAVE", 8);
+
+      buffer.write("fmt ", 12);
+      buffer.writeUInt32LE(16, 16);
+      buffer.writeUInt16LE(1, 20);
+      buffer.writeUInt16LE(numChannels, 22);
+      buffer.writeUInt32LE(sampleRate, 24);
+      buffer.writeUInt32LE(byteRate, 28);
+      buffer.writeUInt16LE(blockAlign, 32);
+      buffer.writeUInt16LE(bitsPerSample, 34);
+
+      buffer.write("data", 36);
+      buffer.writeUInt32LE(dataLength, 40);
+
+      return buffer;
+    }
+
+    // ==========================================
+    // HÀM PHỤ: Chỉ dùng để lồng tiếng (Voice Model)
+    // ==========================================
+    const generateAudio = async (textToSpeak) => {
+      if (!voiceMode) return null;
+      try {
+        const ttsModel = voiceModel.getGenerativeModel({
+          model: process.env.VOICE_MODEL,
+        });
+
+        const ttsResult = await ttsModel.generateContent({
+          contents: [{ role: "user", parts: [{ text: textToSpeak }] }],
+          generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: { voiceName: "Puck" },
+              },
+            },
+          },
+        });
+
+        const audioPart =
+          ttsResult.response.candidates?.[0]?.content?.parts?.find(
+            (p) => p.inlineData && p.inlineData.mimeType?.startsWith("audio/"),
+          );
+
+        if (!audioPart) return null;
+
+        const mimeType = audioPart.inlineData.mimeType;
+        const base64Data = audioPart.inlineData.data;
+
+        if (mimeType.includes("pcm") || mimeType.includes("L16")) {
+          // Extract sample rate if specified
+          const rateMatch = mimeType.match(/rate=(\d+)/);
+          const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+
+          const pcmBuffer = Buffer.from(base64Data, "base64");
+          const header = createWavHeader(pcmBuffer.length, sampleRate, 1, 16);
+          const wavBuffer = Buffer.concat([header, pcmBuffer]);
+
+          return `data:audio/wav;base64,${wavBuffer.toString("base64")}`;
+        }
+
+        return `data:${mimeType};base64,${base64Data}`;
+      } catch (err) {
+        console.error("Error with the model ", err.message);
+        return null;
+      }
+    };
+
+    // case with no session
     if (!sessionId) {
-
-
-
-      const model = genAI.getGenerativeModel({
+      // BƯỚC 1: Gọi Não (GEMINI_MODEL) để lấy Text
+      const modelConfig = {
         model: process.env.GEMINI_MODEL,
         systemInstruction: getSystemInstruction(text, userContent),
-      });
+      };
 
+      const model = genAI.getGenerativeModel(modelConfig);
+      const chat = model.startChat({ history: [] });
 
-      const chat = model.startChat({
-        history: [],
+      const result = await chat.sendMessage(
+        "Please start the interview. Ask the first question based on my Resume",
+      );
+      const firstQuestion = result.response.text();
 
-      });
-
-
-      const result = await chat.sendMessage("Please start the interview. Ask the first question based on my Resume");
-      const firstQuestion = await result.response.text();
-
+      const audioBase64 = await generateAudio(firstQuestion);
 
       const newSession = new Sessions({
         userId,
-        contextData: {
-          jobDescription: text,
-          resumeContent: userContent,
-        },
+        resumeId,
+        contextData: { jobDescription: text, resumeContent: userContent },
         history: [
-          {
-            role: 'user',
-            parts: [{ text: 'Ask the first question' }]
-          },
-          {
-            role: "model",
-            parts: [{ text: firstQuestion }],
-          },
+          { role: "user", parts: [{ text: "Ask the first question" }] },
+          { role: "model", parts: [{ text: firstQuestion }] },
         ],
       });
 
       await newSession.save();
-      return res.status(200).json({ response: firstQuestion, sessionId: newSession._id });
+      return res.status(200).json({
+        response: firstQuestion,
+        audioData: audioBase64,
+        sessionId: newSession._id,
+      });
     }
 
-
-
+    // ==========================================
+    // TRƯỜNG HỢP 2: ĐANG CHAT QUA LẠI (ĐÃ CÓ SESSION)
+    // ==========================================
     const currentSession = await Sessions.findOne({ _id: sessionId });
     if (!currentSession) {
       return res.status(404).json({ message: "Session not found" });
     }
 
-
-    const model = genAI.getGenerativeModel({
+    // BƯỚC 1: Gọi Não (GEMINI_MODEL) để lấy câu trả lời bằng Text
+    const modelConfig = {
       model: process.env.GEMINI_MODEL,
       systemInstruction: getSystemInstruction(
         currentSession.contextData.jobDescription,
-        currentSession.contextData.resumeContent
+        currentSession.contextData.resumeContent,
       ),
-    });
+    };
 
+    const model = genAI.getGenerativeModel(modelConfig);
 
     const geminiHistory = currentSession.history.slice(-6).map((msg) => ({
       role: msg.role,
       parts: [{ text: msg.parts[0].text }],
     }));
 
-    const chat = model.startChat({
-      history: geminiHistory,
-
-    });
-
-
+    const chat = model.startChat({ history: geminiHistory });
     const result = await chat.sendMessage(text);
-    const aiResponse = await result.response.text()
+    const aiResponse = result.response.text();
 
+    const audioBase64 = await generateAudio(aiResponse);
 
     currentSession.history.push(
       { role: "user", parts: [{ text: text }] },
-      { role: "model", parts: [{ text: aiResponse }] }
+      { role: "model", parts: [{ text: aiResponse }] },
     );
-
     await currentSession.save();
 
-    return res.status(200).json({ response: aiResponse, sessionId: currentSession._id });
-
+    return res.status(200).json({
+      response: aiResponse,
+      audioData: audioBase64,
+      sessionId: currentSession._id,
+    });
   } catch (err) {
     console.error(err);
+    return res
+      .status(400)
+      .json({ message: "Something wrong", error: err.message });
+  }
+};
 
+// Get all interview sessions for a user
+export const getInterviewHistory = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { resumeId } = req.query;
 
-    return res.status(400).json({ message: "Something wrong", error: err.message });
+    const query = { userId };
+    if (resumeId) query.resumeId = resumeId;
+
+    const history = await Sessions.find(query)
+      .select("createdAt contextData.jobDescription status")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({ history });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+// Get a specific interview session
+export const getInterviewSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const userId = req.userId;
+
+    const session = await Sessions.findOne({ _id: sessionId, userId });
+    if (!session) {
+      return res
+        .status(404)
+        .json({ message: "Session not found or unauthorized" });
+    }
+
+    return res.status(200).json({ session });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+// Delete an interview session
+export const deleteInterviewSession = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const userId = req.userId;
+
+    const result = await Sessions.deleteOne({ _id: sessionId, userId });
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "Session not found or unauthorized" });
+    }
+
+    return res.status(200).json({ message: "Session deleted successfully" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
   }
 };
 
@@ -441,6 +535,8 @@ You can respond in Vietnamese or English based on the user's language.`,
     return res.status(200).json({ response: aiResponse });
   } catch (err) {
     console.error("Quick chat error:", err.message || err);
-    return res.status(400).json({ message: "Something went wrong", error: err.message });
+    return res
+      .status(400)
+      .json({ message: "Something went wrong", error: err.message });
   }
 };
