@@ -49,7 +49,9 @@ const isHistoryLoading = ref(false);
 const fetchHistory = async () => {
   isHistoryLoading.value = true;
   try {
-    const { data } = await clientApi.get(`/api/ai/interview/history?resumeId=${resumeId}`);
+    const { data } = await clientApi.get(
+      `/api/ai/interview/history?resumeId=${resumeId}`,
+    );
     interviewHistory.value = data.history;
   } catch (error) {
     console.error("Failed to fetch history:", error);
@@ -316,12 +318,12 @@ onMounted(async () => {
           </h2>
           <button
             @click="startNewInterview"
-            class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 hover:bg-cyan-500 hover:text-white transition-all shadow-lg shadow-cyan-500/10"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-slate-500/10 text-slate-500 border border-slate-500/20 hover:bg-slate-500 hover:text-white transition-all"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="10"
-              height="10"
+              width="12"
+              height="12"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -334,6 +336,29 @@ onMounted(async () => {
             </svg>
             New Chat
           </button>
+
+          <router-link
+            :to="`/app/voice/${resumeId}`"
+            class="flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 hover:scale-105 transition-all group"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="group-hover:animate-pulse"
+            >
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" x2="12" y1="19" y2="22" />
+            </svg>
+            Live Voice Mode
+          </router-link>
         </div>
       </div>
 
@@ -374,6 +399,30 @@ onMounted(async () => {
                   Start chat Interview
                 </span>
               </button>
+              <router-link
+                :to="`/app/voice/${resumeId}`"
+                class="flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 hover:scale-105 transition-all group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="group-hover:animate-pulse"
+                >
+                  <path
+                    d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"
+                  />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" x2="12" y1="19" y2="22" />
+                </svg>
+                Live Voice Mode
+              </router-link>
             </div>
 
             <div

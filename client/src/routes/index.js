@@ -15,7 +15,7 @@ import Otp from "../pages/Otp.vue";
 import AdminPage from "../pages/AdminPage.vue";
 import AdminResumes from "../pages/AdminResumes.vue";
 import PersonDetails from "../pages/PersonDetails.vue";
-
+import MicroInterview from "../pages/MicroInterview.vue";
 
 const routes = [
   {
@@ -28,13 +28,13 @@ const routes = [
     path: "/admin",
     name: "AdminPage",
     component: AdminPage,
-    beforeEnter: (to, from )=>{
-    if(localStorage.getItem("role")!=='admin'){
-    return{
-      path:"/login"
-    }
-    }
-    }, 
+    beforeEnter: (to, from) => {
+      if (localStorage.getItem("role") !== "admin") {
+        return {
+          path: "/login",
+        };
+      }
+    },
     meta: {
       requireLoggedIn: true,
     },
@@ -43,8 +43,8 @@ const routes = [
     path: "/admin/resumes",
     name: "AdminResumes",
     component: AdminResumes,
-    beforeEnter: (to, from)=>{
-      if(localStorage.getItem("role") !== 'admin'){
+    beforeEnter: (to, from) => {
+      if (localStorage.getItem("role") !== "admin") {
         return { path: "/login" };
       }
     },
@@ -53,20 +53,19 @@ const routes = [
     },
   },
   {
-    path:"/admin/:userId",
-    name:"PersonDetails",
-    component:PersonDetails,
-     beforeEnter: (to, from )=>{
-    if(localStorage.getItem("role")!=='admin'){
-    return{
-      path:"/login"
-    }
-    }
-    }, 
-     meta: {
+    path: "/admin/:userId",
+    name: "PersonDetails",
+    component: PersonDetails,
+    beforeEnter: (to, from) => {
+      if (localStorage.getItem("role") !== "admin") {
+        return {
+          path: "/login",
+        };
+      }
+    },
+    meta: {
       requireLoggedIn: true,
     },
-
   },
   {
     path: "/app",
@@ -88,6 +87,11 @@ const routes = [
         path: "interview/:resumeId",
         name: "Interview",
         component: Interview,
+      },
+      {
+        path: "voice/:resumeId",
+        name: "LiveChat",
+        component: MicroInterview,
       },
       {
         path: "analysis/:resumeId",
@@ -126,15 +130,15 @@ const routes = [
     },
   },
   {
-    path: '/forgot',
-    name: 'Forgot',
-    component: ForgotPassword
+    path: "/forgot",
+    name: "Forgot",
+    component: ForgotPassword,
   },
   {
-    path: '/otp',
-    name: 'OTP',
-    component: Otp
-  }
+    path: "/otp",
+    name: "OTP",
+    component: Otp,
+  },
 ];
 const router = createRouter({
   history: createWebHistory(),
