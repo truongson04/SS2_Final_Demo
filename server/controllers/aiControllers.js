@@ -246,27 +246,28 @@ professional_summary:{
     return res.status(400).json({ message: error.message });
   }
 };
-const getSystemInstruction = (jobDescription, resumeContent) => {
+const getSystemInstruction = (jobDescription, resumeContent, language = "English") => {
   return `
     You are an expert Hiring Manager conducting a professional job interview.
     CONTEXT:
     - JOB DESCRIPTION: ${jobDescription}
     - CANDIDATE'S RESUME: ${JSON.stringify(resumeContent)}
+    - INTERVIEW LANGUAGE: ${language}
     
     RULES:
     1. Start immediately with the first question.
     2. One question at a time.
     3. Be professional and probing.
     4. Do not repeat "I am ready".
+    5. You MUST conduct the interview and respond entirely in the specified INTERVIEW LANGUAGE (${language}).
     
     ACTION: Analyze the data and ask the first question now.
-    You can response in  Vietnamese or English based on the language in the JOB DESCRIPTION
   `;
 };
 // interview with AI
 export const chatWithAi = async (req, res) => {
   try {
-    const { text, userContent, sessionId, resumeId, voiceMode } = req.body;
+    const { text, userContent, sessionId, resumeId, voiceMode, language = "English", voiceName = "Puck" } = req.body;
     const userId = req.userId;
 
     if (text === "READY" && !sessionId) {
@@ -305,10 +306,7 @@ export const chatWithAi = async (req, res) => {
       return buffer;
     }
 
-    // ==========================================
-    // HÀM PHỤ: Chỉ dùng để lồng tiếng (Voice Model)
-    // ==========================================
-    const generateAudio = async (textToSpeak) => {
+    const generateAudio = async (textToSpeak, currentVoiceName) => {
       if (!voiceMode) return null;
       try {
         const ttsModel = voiceModel.getGenerativeModel({
@@ -321,7 +319,7 @@ export const chatWithAi = async (req, res) => {
             responseModalities: ["AUDIO"],
             speechConfig: {
               voiceConfig: {
-                prebuiltVoiceConfig: { voiceName: "Puck" },
+                prebuiltVoiceConfig: { voiceName: currentVoiceName || "Puck" },
               },
             },
           },
@@ -338,7 +336,6 @@ export const chatWithAi = async (req, res) => {
         const base64Data = audioPart.inlineData.data;
 
         if (mimeType.includes("pcm") || mimeType.includes("L16")) {
-          // Extract sample rate if specified
           const rateMatch = mimeType.match(/rate=(\d+)/);
           const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
 
@@ -358,28 +355,27 @@ export const chatWithAi = async (req, res) => {
 
     // case with no session
     if (!sessionId) {
-      // BƯỚC 1: Gọi Não (GEMINI_MODEL) để lấy Text
       const modelConfig = {
         model: process.env.GEMINI_MODEL,
-        systemInstruction: getSystemInstruction(text, userContent),
+        systemInstruction: getSystemInstruction(text, userContent, language),
       };
 
       const model = genAI.getGenerativeModel(modelConfig);
       const chat = model.startChat({ history: [] });
 
       const result = await chat.sendMessage(
-        "Please start the interview. Ask the first question based on my Resume",
+        `Please start the interview. Ask the first question based on my Resume. Make sure to use ${language}.`
       );
       const firstQuestion = result.response.text();
 
-      const audioBase64 = await generateAudio(firstQuestion);
+      const audioBase64 = await generateAudio(firstQuestion, voiceName);
 
       const newSession = new Sessions({
         userId,
         resumeId,
-        contextData: { jobDescription: text, resumeContent: userContent },
+        contextData: { jobDescription: text, resumeContent: userContent, language, voiceName },
         history: [
-          { role: "user", parts: [{ text: "Ask the first question" }] },
+          { role: "user", parts: [{ text: `Ask the first question. Make sure to use ${language}.` }] },
           { role: "model", parts: [{ text: firstQuestion }] },
         ],
       });
@@ -392,20 +388,20 @@ export const chatWithAi = async (req, res) => {
       });
     }
 
-    // ==========================================
-    // TRƯỜNG HỢP 2: ĐANG CHAT QUA LẠI (ĐÃ CÓ SESSION)
-    // ==========================================
     const currentSession = await Sessions.findOne({ _id: sessionId });
     if (!currentSession) {
       return res.status(404).json({ message: "Session not found" });
     }
 
-    // BƯỚC 1: Gọi Não (GEMINI_MODEL) để lấy câu trả lời bằng Text
+    const sessionLanguage = currentSession.contextData.language || language;
+    const sessionVoiceName = currentSession.contextData.voiceName || voiceName;
+
     const modelConfig = {
       model: process.env.GEMINI_MODEL,
       systemInstruction: getSystemInstruction(
         currentSession.contextData.jobDescription,
         currentSession.contextData.resumeContent,
+        sessionLanguage
       ),
     };
 
@@ -420,7 +416,7 @@ export const chatWithAi = async (req, res) => {
     const result = await chat.sendMessage(text);
     const aiResponse = result.response.text();
 
-    const audioBase64 = await generateAudio(aiResponse);
+    const audioBase64 = await generateAudio(aiResponse, sessionVoiceName);
 
     currentSession.history.push(
       { role: "user", parts: [{ text: text }] },

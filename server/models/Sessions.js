@@ -15,7 +15,9 @@ const interviewSessionSchema = new mongoose.Schema({
         resumeContent:{
             type:Object,
             required:true
-        }
+        },
+        language: { type: String, default: "English" },
+        voiceName: { type: String, default: "Puck" }
     },
     history:[
         {
