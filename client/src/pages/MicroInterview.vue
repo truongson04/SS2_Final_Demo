@@ -39,6 +39,20 @@ const audioAnalyserData = ref([]);
 const sessionId = ref("");
 const isReady = ref(false);
 const userInput = ref("");
+
+// Language & Voice
+const selectedLanguage = ref("English");
+const languages = ["English", "Vietnamese"];
+
+const selectedVoice = ref("Puck");
+const voices = [
+  { id: "Puck", name: "Puck", description: "Confident, professional male" },
+  { id: "Charon", name: "Charon", description: "Authoritative, deep male" },
+  { id: "Kore", name: "Kore", description: "Clear, articulate female" },
+  { id: "Fenrir", name: "Fenrir", description: "Strong, dynamic male" },
+  { id: "Aoede", name: "Aoede", description: "Warm, expressive female" },
+];
+
 const messages = ref([
   {
     role: "ai",
@@ -54,7 +68,7 @@ const scrollToBottom = () => {
     });
   }
 };
-
+// hàm để phát âm thanh khi server trả về cho client
 const playAudio = (base64Audio, textFallback = "") => {
   if (currentAudio) {
     currentAudio.pause();
@@ -138,7 +152,7 @@ const lastMessageText = computed(() => {
   if (messages.value.length === 0) return "";
   return messages.value[messages.value.length - 1].text;
 });
-
+// gửi giọng nói lên server
 const sendMessage = async (overrideText = null) => {
   const message = overrideText || userInput.value;
   if (!message || message.trim() === "") return;
@@ -161,8 +175,10 @@ const sendMessage = async (overrideText = null) => {
       sessionId: sessionId.value,
       resumeId: resumeId,
       voiceMode: true, // Request AUDIO response from Gemini!
+      language: selectedLanguage.value,
+      voiceName: selectedVoice.value,
     });
-    console.log(data);
+
     if (data.sessionId && !sessionId.value) {
       sessionId.value = data.sessionId;
       isReady.value = true;
@@ -239,6 +255,7 @@ onMounted(async () => {
   }
 
   // Initialize SpeechRecognition
+  // hàm nhận diện giọng nói
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognition) {
@@ -257,7 +274,7 @@ onMounted(async () => {
       const transcript = event.results[0][0].transcript;
 
       if (transcript.trim()) {
-        toast.success(`Recognized: "${transcript}"`);
+        toast.success("Voice recognized successfully!!");
         sendMessage(transcript);
       } else {
         toast.info("Didn't catch that. Please try again.");
@@ -386,6 +403,63 @@ const startInitialInterview = async () => {
           <p class="opacity-60 text-sm">
             Please provide the Job Description to configure the AI Interviewer.
           </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label
+              class="block text-sm font-medium mb-1"
+              :class="isDark ? 'text-slate-300' : 'text-slate-700'"
+              >Interview Language</label
+            >
+            <select
+              v-model="selectedLanguage"
+              class="w-full bg-transparent border border-white/20 rounded-xl p-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm transition-all"
+              :class="
+                isDark
+                  ? 'text-white border-slate-700 bg-slate-900/50'
+                  : 'text-slate-800 border-gray-300 bg-white/50'
+              "
+            >
+              <option
+                v-for="lang in languages"
+                :key="lang"
+                :value="lang"
+                :class="
+                  isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-800'
+                "
+              >
+                {{ lang }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium mb-1"
+              :class="isDark ? 'text-slate-300' : 'text-slate-700'"
+              >AI Voice</label
+            >
+            <select
+              v-model="selectedVoice"
+              class="w-full bg-transparent border border-white/20 rounded-xl p-3 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm transition-all"
+              :class="
+                isDark
+                  ? 'text-white border-slate-700 bg-slate-900/50'
+                  : 'text-slate-800 border-gray-300 bg-white/50'
+              "
+            >
+              <option
+                v-for="voice in voices"
+                :key="voice.id"
+                :value="voice.id"
+                :class="
+                  isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-800'
+                "
+              >
+                {{ voice.name }} - {{ voice.description }}
+              </option>
+            </select>
+          </div>
         </div>
 
         <textarea
