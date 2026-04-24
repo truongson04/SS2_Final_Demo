@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, nextTick, computed } from "vue";
 import clientApi from "../configs/api/clientApi";
-import useAuth from "../../store/auth";
+import useAuth from "../store/auth";
 import { marked } from "marked";
 import { useTheme } from "../composables/useTheme";
 

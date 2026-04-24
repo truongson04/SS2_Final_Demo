@@ -636,7 +636,7 @@ import { useTheme } from "../composables/useTheme";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
-import useAuth from "../../store/auth";
+import useAuth from "../store/auth";
 import AdminLoading from "./AdminLoading.vue";
 
 // hàm thêm heading cho bảng

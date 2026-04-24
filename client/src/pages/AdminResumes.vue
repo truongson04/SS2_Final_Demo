@@ -521,7 +521,7 @@ import { ref, onMounted, computed, onUnmounted } from "vue";
 import { useTheme } from "../composables/useTheme";
 import clientApi from "../configs/api/clientApi";
 import { toast } from "vue3-toastify";
-import useAuth from "../../store/auth";
+import useAuth from "../store/auth";
 import AdminLoading from "./AdminLoading.vue";
 import ResumeDisplay from "../components/ResumeDisplay.vue";
 

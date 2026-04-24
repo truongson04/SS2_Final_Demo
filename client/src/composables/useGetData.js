@@ -1,4 +1,4 @@
-import useAuth from "../../store/auth";
+import useAuth from "../store/auth";
 import clientApi from "../configs/api/clientApi";
 const getUserData = async () => {
   const authStore = useAuth();
@@ -10,7 +10,7 @@ const getUserData = async () => {
         headers: { Authorization: token },
       });
       if (data.user) {
-        authStore.login(token, data.user);
+        authStore.login(token, data.user, false);
       }
     } else {
       authStore.loading = false;

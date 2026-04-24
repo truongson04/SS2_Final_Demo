@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import useAuth from "../../../store/auth";
+import useAuth from "../../store/auth";
 import LogoutModal from "../LogoutModal.vue";
 const router = useRouter();
 const authStore = useAuth();

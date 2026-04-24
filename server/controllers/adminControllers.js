@@ -28,18 +28,15 @@ export async function getDashboardStats(req, res) {
       },
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        message: "Failed to load dashboard stats",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "Failed to load dashboard stats",
+      error: error.message,
+    });
   }
 }
 
 export async function getAllUsers(req, res) {
   try {
-    console.log("ok");
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const search = req.query.search || "";
@@ -340,11 +337,9 @@ export async function toggleResumeLock(req, res) {
   try {
     const { resumeId, isLocked } = req.body;
     await Resume.updateOne({ _id: resumeId }, { $set: { isLocked } });
-    return res
-      .status(200)
-      .json({
-        message: `Resume has been ${isLocked ? "locked" : "unlocked"}.`,
-      });
+    return res.status(200).json({
+      message: `Resume has been ${isLocked ? "locked" : "unlocked"}.`,
+    });
   } catch (error) {
     console.error("Lock/Unlock Error: ", error);
     return res
