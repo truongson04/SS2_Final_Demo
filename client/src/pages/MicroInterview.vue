@@ -30,8 +30,8 @@ let recognition = null;
 let speechResult = false;
 let speechError = false;
 
-const isTexting = ref(false); // Indicates AI is thinking
-const isAiSpeaking = ref(false); // Indicates AI is talking
+const isTexting = ref(false);
+const isAiSpeaking = ref(false);
 let currentAudio = null;
 const audioAnalyserData = ref([]);
 
