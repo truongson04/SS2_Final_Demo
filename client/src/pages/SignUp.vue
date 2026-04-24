@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import clientApi from "../configs/api/clientApi";
-import useAuth from "../../store/auth";
+import useAuth from "../store/auth";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 import Otp from "./Otp.vue";
@@ -47,8 +47,6 @@ const handleSubmit = async () => {
 
     authStore.login(data.token, data.user);
     localStorage.setItem("token", data.token);
-
-    router.push("/login");
   } catch (error) {
     console.log(error);
     toast.error(error?.response?.data?.message || error.message, {

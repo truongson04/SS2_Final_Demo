@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { onMounted, ref } from "vue";
-import useAuth from "../../store/auth";
+import useAuth from "../store/auth";
 import getUserData from "../composables/useGetData";
 import LogoutModal from "./LogoutModal.vue";
 import { useTheme } from "../composables/useTheme";

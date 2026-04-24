@@ -119,6 +119,7 @@ const deleteResume = async (resumeId) => {
 };
 onMounted(() => {
   loadAllResumes();
+  console.log();
 });
 </script>
 <template>

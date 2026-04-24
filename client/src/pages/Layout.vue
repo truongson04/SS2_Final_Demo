@@ -1,5 +1,5 @@
 <script setup>
-import useAuth from "../../store/auth.js";
+import useAuth from "../store/auth.js";
 import Navbar from "../components/Navbar.vue";
 import Loading from "../components/Loading.vue";
 import Login from "../pages/Login.vue";

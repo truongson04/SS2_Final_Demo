@@ -6,7 +6,7 @@ import ResumeBuilder from "../pages/ResumeBuilder.vue";
 import Preview from "../pages/Preview.vue";
 import Login from "../pages/Login.vue";
 import SignUp from "../pages/SignUp.vue";
-import useAuth from "../../store/auth";
+import useAuth from "../store/auth";
 import getUserData from "../composables/useGetData";
 import Interview from "../pages/Interview.vue";
 import Analysis from "../pages/Analysis.vue";
@@ -29,7 +29,8 @@ const routes = [
     name: "AdminPage",
     component: AdminPage,
     beforeEnter: (to, from) => {
-      if (localStorage.getItem("role") !== "admin") {
+      const role = (localStorage.getItem("role") || "").toLowerCase();
+      if (role !== "admin") {
         return {
           path: "/login",
         };
@@ -44,7 +45,8 @@ const routes = [
     name: "AdminResumes",
     component: AdminResumes,
     beforeEnter: (to, from) => {
-      if (localStorage.getItem("role") !== "admin") {
+      const role = (localStorage.getItem("role") || "").toLowerCase();
+      if (role !== "admin") {
         return { path: "/login" };
       }
     },
@@ -57,7 +59,8 @@ const routes = [
     name: "PersonDetails",
     component: PersonDetails,
     beforeEnter: (to, from) => {
-      if (localStorage.getItem("role") !== "admin") {
+      const role = (localStorage.getItem("role") || "").toLowerCase();
+      if (role !== "admin") {
         return {
           path: "/login",
         };
@@ -110,9 +113,11 @@ const routes = [
     name: "Login",
     component: Login,
     beforeEnter: (to, from) => {
-      if (localStorage.getItem("token")) {
+      const token = localStorage.getItem("token");
+      const role = (localStorage.getItem("role") || "").toLowerCase();
+      if (token) {
         return {
-          path: "/app",
+          path: role === "admin" ? "/admin" : "/app",
         };
       }
     },
@@ -122,9 +127,11 @@ const routes = [
     name: "Signup",
     component: SignUp,
     beforeEnter: (to, from) => {
-      if (localStorage.getItem("token")) {
+      const token = localStorage.getItem("token");
+      const role = (localStorage.getItem("role") || "").toLowerCase();
+      if (token) {
         return {
-          path: "/app",
+          path: role === "admin" ? "/admin" : "/app",
         };
       }
     },
@@ -145,6 +152,13 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from) => {
+  if (to.path === "/" && localStorage.getItem("token")) {
+    const role = (localStorage.getItem("role") || "").toLowerCase();
+    return {
+      path: role === "admin" ? "/admin" : "/app",
+    };
+  }
+
   if (
     to.meta.requireLoggedIn &&
     !localStorage.getItem("token") &&

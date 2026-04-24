@@ -246,7 +246,11 @@ professional_summary:{
     return res.status(400).json({ message: error.message });
   }
 };
-const getSystemInstruction = (jobDescription, resumeContent, language = "English") => {
+const getSystemInstruction = (
+  jobDescription,
+  resumeContent,
+  language = "English",
+) => {
   return `
     You are an expert Hiring Manager conducting a professional job interview.
     CONTEXT:
@@ -267,7 +271,15 @@ const getSystemInstruction = (jobDescription, resumeContent, language = "English
 // interview with AI
 export const chatWithAi = async (req, res) => {
   try {
-    const { text, userContent, sessionId, resumeId, voiceMode, language = "English", voiceName = "Puck" } = req.body;
+    const {
+      text,
+      userContent,
+      sessionId,
+      resumeId,
+      voiceMode,
+      language = "English",
+      voiceName = "Puck",
+    } = req.body;
     const userId = req.userId;
 
     if (text === "READY" && !sessionId) {
@@ -305,7 +317,7 @@ export const chatWithAi = async (req, res) => {
 
       return buffer;
     }
-
+    // hàm chuyển đổi âm thanh thành giọng nói
     const generateAudio = async (textToSpeak, currentVoiceName) => {
       if (!voiceMode) return null;
       try {
@@ -364,7 +376,7 @@ export const chatWithAi = async (req, res) => {
       const chat = model.startChat({ history: [] });
 
       const result = await chat.sendMessage(
-        `Please start the interview. Ask the first question based on my Resume. Make sure to use ${language}.`
+        `Please start the interview. Ask the first question based on my Resume. Make sure to use ${language}.`,
       );
       const firstQuestion = result.response.text();
 
@@ -373,9 +385,19 @@ export const chatWithAi = async (req, res) => {
       const newSession = new Sessions({
         userId,
         resumeId,
-        contextData: { jobDescription: text, resumeContent: userContent, language, voiceName },
+        contextData: {
+          jobDescription: text,
+          resumeContent: userContent,
+          language,
+          voiceName,
+        },
         history: [
-          { role: "user", parts: [{ text: `Ask the first question. Make sure to use ${language}.` }] },
+          {
+            role: "user",
+            parts: [
+              { text: `Ask the first question. Make sure to use ${language}.` },
+            ],
+          },
           { role: "model", parts: [{ text: firstQuestion }] },
         ],
       });
@@ -401,7 +423,7 @@ export const chatWithAi = async (req, res) => {
       systemInstruction: getSystemInstruction(
         currentSession.contextData.jobDescription,
         currentSession.contextData.resumeContent,
-        sessionLanguage
+        sessionLanguage,
       ),
     };
 
