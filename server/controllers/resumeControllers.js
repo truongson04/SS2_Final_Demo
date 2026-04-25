@@ -2,6 +2,7 @@ import imagekit from "../config/imageKit.js";
 import Resume from "../models/Resumes.js";
 import fs from "fs";
 import puppeteer from "puppeteer";
+import puppeteerCore from "puppeteer-core";
 export const createResume = async (req, res) => {
   try {
     const userId = req.userId;
@@ -148,18 +149,30 @@ export const saveResume = async (req, res) => {
   const { htmlContent } = req.body;
 
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--disable-gpu",
-      ],
-    });
+    let browser;
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
+      const chromium = (await import("@sparticuz/chromium")).default;
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+        ignoreHTTPSErrors: true,
+      });
+    } else {
+      browser = await puppeteer.launch({
+        headless: "new",
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--disable-gpu",
+        ],
+      });
+    }
     const page = await browser.newPage();
 
     // Set a desktop viewport to ensure md: and lg: classes are applied correctly

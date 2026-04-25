@@ -7,12 +7,14 @@ import { toast } from "vue3-toastify";
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuth();
+const isLoading = ref(false);
 const formData = ref({
   email: "",
   password: "",
 });
 const handleSubmit = async () => {
   try {
+    isLoading.value = true;
     authStore.loading = true;
 
     const { data } = await clientApi.post(`/api/users/login`, formData.value);
@@ -23,6 +25,7 @@ const handleSubmit = async () => {
   } catch (error) {
     toast.error(error?.response?.data?.message || error.message);
   } finally {
+    isLoading.value = false;
     authStore.loading = false;
   }
 };
@@ -156,9 +159,11 @@ const handleGithubSignIn = async () => {
 
           <button
             type="submit"
-            class="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-lg shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition duration-300 transform active:scale-[0.98]"
+            :disabled="isLoading"
+            class="w-full py-3 px-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-lg shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] transition duration-300 transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2"
           >
-            Sign In
+            <span v-if="isLoading" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            <span>{{ isLoading ? 'Signing In...' : 'Sign In' }}</span>
           </button>
         </form>
 
