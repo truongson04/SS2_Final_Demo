@@ -63,10 +63,10 @@ export async function loginUser(req, res) {
         message: "Invalid email",
       });
     }
-    if(!user.isActive){
+    if (!user.isActive) {
       return res.status(400).json({
-        message:"You have been banned, please contact the admin for details"
-      })
+        message: "You have been banned, please contact the admin for details",
+      });
     }
     const checkPassword = await user.comparePassword(password);
     if (!checkPassword) {
@@ -100,7 +100,6 @@ export const getUserById = async (req, res) => {
 };
 // get CV
 export const getUserResumes = async (req, res) => {
-
   try {
     const userId = req.userId;
     const resumes = await Resume.find({ userId });
@@ -312,7 +311,7 @@ export const sendOTP = async (req, res) => {
 </body>
 </html>
     `;
-    
+
     sendEmail(email, `CV Builder Verification + ${Date.now()}`, messageContent);
     return res.status(200).json({
       message:

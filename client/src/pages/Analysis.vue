@@ -60,7 +60,9 @@ onMounted(async () => {
 
   <div
     class="h-screen flex flex-col lg:flex-row overflow-hidden relative font-sans transition-colors duration-300"
-    :class="isDark ? 'bg-slate-950 text-slate-300' : 'bg-gray-50 text-slate-700'"
+    :class="
+      isDark ? 'bg-slate-950 text-slate-300' : 'bg-gray-50 text-slate-700'
+    "
   >
     <div
       class="absolute inset-0 bg-[url('https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/hero/bg-with-grid.png')] bg-cover bg-center opacity-5 pointer-events-none"
@@ -68,20 +70,34 @@ onMounted(async () => {
 
     <div
       class="w-full lg:w-[40%] h-full flex flex-col border-r relative z-10 transition-colors"
-      :class="isDark ? 'border-white/5 bg-slate-900/30' : 'border-gray-200 bg-white'"
+      :class="
+        isDark ? 'border-white/5 bg-slate-900/30' : 'border-gray-200 bg-white'
+      "
     >
       <div
         class="h-14 border-b flex items-center px-6 transition-colors"
-        :class="isDark ? 'border-white/5 bg-slate-950/80 backdrop-blur' : 'border-gray-200 bg-white'"
+        :class="
+          isDark
+            ? 'border-white/5 bg-slate-950/80 backdrop-blur'
+            : 'border-gray-200 bg-white'
+        "
       >
         <router-link
           :to="`/app/builder/${resumeId}`"
           class="inline-flex gap-2 items-center transition-all group mr-10"
-          :class="isDark ? 'text-slate-400 hover:text-cyan-400' : 'text-slate-500 hover:text-indigo-600'"
+          :class="
+            isDark
+              ? 'text-slate-400 hover:text-cyan-400'
+              : 'text-slate-500 hover:text-indigo-600'
+          "
         >
           <div
             class="p-1.5 rounded-full border transition-colors"
-            :class="isDark ? 'bg-slate-900 border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10' : 'bg-gray-100 border-gray-300 group-hover:border-indigo-400'"
+            :class="
+              isDark
+                ? 'bg-slate-900 border-slate-700 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10'
+                : 'bg-gray-100 border-gray-300 group-hover:border-indigo-400'
+            "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -108,7 +124,10 @@ onMounted(async () => {
           Original Resume
         </h2>
       </div>
-      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 transition-colors" :class="isDark ? 'bg-slate-950/50' : 'bg-gray-50'">
+      <div
+        class="flex-1 overflow-y-auto custom-scrollbar p-6 transition-colors"
+        :class="isDark ? 'bg-slate-950/50' : 'bg-gray-50'"
+      >
         <div class="flex flex-col items-center min-h-full">
           <div
             class="relative w-full max-w-[21cm] origin-top transform scale-[0.8] xl:scale-[0.9] transition-transform duration-300"
@@ -144,7 +163,9 @@ onMounted(async () => {
 
         <div
           class="relative w-28 h-28 rounded-2xl rotate-3 flex items-center justify-center border shadow-[0_0_30px_rgba(6,182,212,0.15)] group-hover:rotate-0 group-hover:scale-105 transition-all duration-300 ease-out z-10"
-          :class="isDark ? 'bg-slate-900 border-white/10' : 'bg-white border-gray-200'"
+          :class="
+            isDark ? 'bg-slate-900 border-white/10' : 'bg-white border-gray-200'
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -157,7 +178,11 @@ onMounted(async () => {
             stroke-linecap="round"
             stroke-linejoin="round"
             class="text-slate-300 group-hover:text-white transition-colors"
-            :class="isDark ? 'text-slate-300' : 'text-slate-500 group-hover:text-slate-800'"
+            :class="
+              isDark
+                ? 'text-slate-300'
+                : 'text-slate-500 group-hover:text-slate-800'
+            "
           >
             <path
               d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
@@ -192,7 +217,11 @@ onMounted(async () => {
 
       <h2
         class="text-3xl md:text-4xl font-bold text-center mb-4 tracking-tight transition-colors"
-        :class="isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-slate-400' : 'text-slate-800'"
+        :class="
+          isDark
+            ? 'text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-slate-400'
+            : 'text-slate-800'
+        "
       >
         Resume Audit AI
       </h2>
@@ -235,9 +264,16 @@ onMounted(async () => {
 
       <div
         class="mt-10 inline-flex items-center justify-center gap-6 px-5 py-2 rounded-full mx-auto border transition-colors"
-        :class="isDark ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm' : 'bg-white border-gray-200 shadow-sm'"
+        :class="
+          isDark
+            ? 'bg-slate-900/50 border-white/5 backdrop-blur-sm'
+            : 'bg-white border-gray-200 shadow-sm'
+        "
       >
-        <div class="flex items-center gap-2 text-xs font-mono transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
+        <div
+          class="flex items-center gap-2 text-xs font-mono transition-colors"
+          :class="isDark ? 'text-slate-400' : 'text-slate-600'"
+        >
           <span class="relative flex h-2 w-2">
             <span
               class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
@@ -249,9 +285,15 @@ onMounted(async () => {
           AI Model Ready
         </div>
 
-        <div class="w-px h-3 transition-colors" :class="isDark ? 'bg-slate-700' : 'bg-gray-300'"></div>
+        <div
+          class="w-px h-3 transition-colors"
+          :class="isDark ? 'bg-slate-700' : 'bg-gray-300'"
+        ></div>
 
-        <div class="flex items-center gap-2 text-xs font-mono transition-colors" :class="isDark ? 'text-slate-400' : 'text-slate-600'">
+        <div
+          class="flex items-center gap-2 text-xs font-mono transition-colors"
+          :class="isDark ? 'text-slate-400' : 'text-slate-600'"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="12"
@@ -281,7 +323,11 @@ onMounted(async () => {
     >
       <div
         class="h-14 border-b flex items-center justify-between px-6 z-20 transition-colors"
-        :class="isDark ? 'border-white/5 bg-slate-900/80 backdrop-blur' : 'border-gray-200 bg-white'"
+        :class="
+          isDark
+            ? 'border-white/5 bg-slate-900/80 backdrop-blur'
+            : 'border-gray-200 bg-white'
+        "
       >
         <h2
           class="text-lg font-bold tracking-tight flex items-center gap-2 transition-colors"
@@ -314,7 +360,11 @@ onMounted(async () => {
         <div class="max-w-4xl mx-auto space-y-8">
           <div
             class="relative p-6 rounded-2xl border shadow-2xl flex items-center justify-between overflow-hidden transition-colors"
-            :class="isDark ? 'bg-gradient-to-br from-slate-900 to-slate-900 border-white/10' : 'bg-white border-gray-100'"
+            :class="
+              isDark
+                ? 'bg-gradient-to-br from-slate-900 to-slate-900 border-white/10'
+                : 'bg-white border-gray-100'
+            "
           >
             <div
               class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none"
@@ -327,15 +377,26 @@ onMounted(async () => {
               >
                 ATS Compatibility Score
               </h3>
-              <p class="text-2xl font-bold mb-2 transition-colors" :class="isDark ? 'text-white' : 'text-gray-900'">Overall Quality</p>
-              <p class="text-sm max-w-sm transition-colors" :class="isDark ? 'text-slate-500' : 'text-gray-500'">
+              <p
+                class="text-2xl font-bold mb-2 transition-colors"
+                :class="isDark ? 'text-white' : 'text-gray-900'"
+              >
+                Overall Quality
+              </p>
+              <p
+                class="text-sm max-w-sm transition-colors"
+                :class="isDark ? 'text-slate-500' : 'text-gray-500'"
+              >
                 {{ analysisResult.summary }}
               </p>
             </div>
 
             <div
               class="relative w-24 h-24 flex items-center justify-center rounded-full border-4 shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-colors"
-              :class="[getScoreColor(analysisResult.score), isDark ? 'bg-slate-950' : 'bg-white']"
+              :class="[
+                getScoreColor(analysisResult.score),
+                isDark ? 'bg-slate-950' : 'bg-white',
+              ]"
             >
               <span class="text-3xl font-bold font-mono">{{
                 analysisResult.score
@@ -447,7 +508,12 @@ onMounted(async () => {
                   src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbHpwZzV4aTh0eXF3ejBiZGg0bWk5bmg0ODlpeTZjaGZsZDkxeW12NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2IudUHdI075HL02Pkk/giphy.gif"
                 />
               </div>
-              <h3 class="font-bold text-lg transition-colors" :class="isDark ? 'text-white' : 'text-slate-800'">Recommended Actions</h3>
+              <h3
+                class="font-bold text-lg transition-colors"
+                :class="isDark ? 'text-white' : 'text-slate-800'"
+              >
+                Recommended Actions
+              </h3>
             </div>
 
             <div class="space-y-4">
@@ -455,14 +521,23 @@ onMounted(async () => {
                 v-for="(item, i) in analysisResult.improvements"
                 :key="i"
                 class="flex gap-4 p-3 rounded-lg border transition-colors"
-                :class="isDark ? 'bg-slate-800/50 hover:bg-slate-800 border-white/5' : 'bg-white hover:bg-gray-50 border-gray-200'"
+                :class="
+                  isDark
+                    ? 'bg-slate-800/50 hover:bg-slate-800 border-white/5'
+                    : 'bg-white hover:bg-gray-50 border-gray-200'
+                "
               >
                 <div
                   class="flex-shrink-0 w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-bold border border-cyan-500/30"
                 >
                   {{ i + 1 }}
                 </div>
-                <p class="text-sm leading-relaxed transition-colors" :class="isDark ? 'text-slate-300' : 'text-slate-600'">{{ item }}</p>
+                <p
+                  class="text-sm leading-relaxed transition-colors"
+                  :class="isDark ? 'text-slate-300' : 'text-slate-600'"
+                >
+                  {{ item }}
+                </p>
               </div>
             </div>
           </div>

@@ -49,7 +49,6 @@ const loadExistingResume = async () => {
     if (data.resume) {
       resumeData.value = data.resume;
       initialResume = ref(_.cloneDeep(data.resume));
-      document.title = data.resume.title;
     }
   } catch (error) {
     router.push("/app");
