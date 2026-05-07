@@ -76,7 +76,6 @@ const loadSession = async (id) => {
       text: h.parts[0].text,
     }));
 
-    // Remove the 'Ask the first question' user message if present (it's internal)
     if (messages.value[0]?.text === "Ask the first question") {
       messages.value.shift();
     }
@@ -683,8 +682,8 @@ onMounted(async () => {
           class="w-64 border-l transition-colors hidden xl:flex flex-col"
           :class="
             isDark
-              ? 'border-white/5 bg-slate-900/20'
-              : 'border-gray-200 bg-gray-50/50'
+              ? 'border-white/5 bg-slate-600'
+              : 'border-gray-200 bg-gray-300'
           "
         >
           <div
@@ -692,7 +691,7 @@ onMounted(async () => {
             :class="isDark ? 'border-white/5' : 'border-gray-200'"
           >
             <h3
-              class="text-xs font-bold uppercase tracking-widest text-slate-500"
+              class="text-xs font-bold uppercase tracking-widest text-slate-200"
             >
               History
             </h3>

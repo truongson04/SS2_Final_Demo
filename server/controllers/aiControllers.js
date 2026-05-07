@@ -93,7 +93,9 @@ Your task is to analyze the provided CV text and generate detailed, constructive
     });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ message: error.message });
+    return res.status(500).json({
+      message: "Try again later as the server is experiencing high demand ",
+    });
   }
 };
 export const enhanceJobDescription = async (req, res) => {
