@@ -11,16 +11,11 @@ The repository is organized into a monorepo structure containing:
 - `client`: A reactive and modern frontend built with Vue 3 and Vite.
 - `server`: A robust RESTful API backend built with Node.js, Express, and MongoDB.
 
-## ✨ Key Features
+## Member list
 
-- **Advanced Resume Builder**: Built with Tiptap rich-text editor, offering structural formatting, multiple professional templates, and a live preview.
-- **AI-Assisted Resume Enhancement**: Leverage Google's Gemini AI to generate impactful bullet points, summarize experiences, and refine resume content.
-- **Interactive AI Mock Interviews**:
-  - **Text-based Chat**: Practice interview questions in a conversational chat interface.
-  - **Live Voice Interviews**: Real-time mock interviews utilizing Speech-to-Text (STT) and Text-to-Speech (TTS) for a realistic interview experience.
-- **Secure Authentication & Authorization**: Supports standard email/password login as well as Google OAuth. Includes role-based routing (e.g., dedicated Admin dashboard redirection).
-- **High-Quality PDF Export**: Reliable resume rendering and PDF generation mechanisms.
-- **Cloud Media Management**: Seamless user avatar and asset uploads managed via ImageKit and Multer.
+Vũ Thị Xuân- 2301140104
+Lê Như Quỳnh - 2301140084
+Bạch Đăng Trường Sơn- 2201140075
 
 ## 🛠 Tech Stack
 
@@ -43,6 +38,17 @@ The repository is organized into a monorepo structure containing:
 - **PDF Generation**: Puppeteer
 - **File Uploads**: Multer, ImageKit
 - **Email Services**: Nodemailer
+
+## ✨ Key Features
+
+- **Advanced Resume Builder**: Built with Tiptap rich-text editor, offering structural formatting, multiple professional templates, and a live preview.
+- **AI-Assisted Resume Enhancement**: Leverage Google's Gemini AI to generate impactful bullet points, summarize experiences, and refine resume content.
+- **Interactive AI Mock Interviews**:
+  - **Text-based Chat**: Practice interview questions in a conversational chat interface.
+  - **Live Voice Interviews**: Real-time mock interviews utilizing Speech-to-Text (STT) and Text-to-Speech (TTS) for a realistic interview experience.
+- **Secure Authentication & Authorization**: Supports standard email/password login as well as Google OAuth. Includes role-based routing (e.g., dedicated Admin dashboard redirection).
+- **High-Quality PDF Export**: Reliable resume rendering and PDF generation mechanisms.
+- **Cloud Media Management**: Seamless user avatar and asset uploads managed via ImageKit and Multer.
 
 ## 📂 Project Structure
 
@@ -201,6 +207,11 @@ Open your web browser and navigate to `http://localhost:5173` to view the applic
 ### Server (`server/`)
 
 - `npm start`: Starts the backend server using Nodemon for automatic restarts upon file changes (`nodemon --inspect ./index.js`).
+
+### Demo account
+
+- **Normal user** Email: vobin53175@keecs.com/ password: 123
+- **Admin** : Email: wifeba1054@desiys.com/ password : 123
 
 ## 🤝 Contributing
 
