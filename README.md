@@ -12,10 +12,10 @@ The repository is organized into a monorepo structure containing:
 - `server`: A robust RESTful API backend built with Node.js, Express, and MongoDB.
 
 ## Member list
-
-Vũ Thị Xuân- 2301140104
-Lê Như Quỳnh - 2301140084
-Bạch Đăng Trường Sơn- 2201140075
+Group 02 (SS2-CLC-02)  
+Vũ Thị Xuân- 2301140104  
+Lê Như Quỳnh - 2301140084  
+Bạch Đăng Trường Sơn- 2201140075  
 
 ## 🛠 Tech Stack
 
