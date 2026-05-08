@@ -12,10 +12,11 @@ The repository is organized into a monorepo structure containing:
 - `server`: A robust RESTful API backend built with Node.js, Express, and MongoDB.
 
 ## Member list
+
 Group 02 (SS2-CLC-02)  
 Vũ Thị Xuân- 2301140104  
 Lê Như Quỳnh - 2301140084  
-Bạch Đăng Trường Sơn- 2201140075  
+Bạch Đăng Trường Sơn- 2201140075
 
 ## 🛠 Tech Stack
 
@@ -163,7 +164,9 @@ IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 AUTH_EMAIL=your_smtp_user_email
 PASS_AUTH_EMAIL=your_smtp_password_or_app_password
 ```
-The frontend only need 1 environmental variable, inside `/client` directory, create .env file and copy this into it 
+
+The frontend only need 1 environmental variable, inside `/client` directory, create .env file and copy this into it
+
 ```env
 VITE_BASE_URL='http://localhost:3600'
 ```
@@ -216,6 +219,13 @@ Open your web browser and navigate to `http://localhost:5173` to view the applic
 
 - **Normal user** Email: vobin53175@keecs.com/ password: 123
 - **Admin** : Email: wifeba1054@desiys.com/ password : 123
+
+## Project's limitation
+
+- **Security Limitations (Token Storage):** The current authentication implementation stores Access Tokens within localStorage for development simplicity and ease of client-side access. However, this approach introduces potential security concerns, particularly increased exposure to Cross-Site Scripting (XSS) attacks. A more secure token management strategy should be adopted in future iterations to mitigate these vulnerabilities.
+- **Dependency on External APIs:** The application is highly dependent on external AI services, particularly the free-tier Gemini API. As a result, the system occasionally experiences rate-limiting issues, including “Too Many Requests” responses and buffer timeout errors. These constraints may negatively impact application responsiveness and overall user experience during periods of high usage.
+- **Limitations in PDF AI Parsing:** The current implementation of useTextFromPdf.js effectively extracts textual content from uploaded PDF documents; however, it demonstrates limitations in processing embedded visual elements. Specifically, the parser is not yet capable of reliably isolating or extracting user avatar images directly from uploaded CV documents, which restricts the effectiveness of certain AI-enhanced profile features.
+- **Codebase Maintainability and Architectural Technical Debt:** The current source code structure contains several maintainability concerns that may hinder long-term scalability and collaborative development. On the frontend, some Vue components have grown excessively large, with certain files exceeding 800 lines of code, leading to reduced readability, limited reusability, and increased debugging complexity. These components should be refactored into smaller, modular, and reusable subcomponents following component-based design principles. On the backend, several controllers have evolved into “fat controllers,” containing excessive business logic and tightly coupled responsibilities. To address this architectural debt, the system should adopt a layered architecture pattern by separating concerns into dedicated service, repository, and controller layers. This restructuring would improve code maintainability, scalability, testability, and adherence to clean architecture principles.
 
 ## 🤝 Contributing
 
