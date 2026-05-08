@@ -163,7 +163,7 @@ IMAGEKIT_PRIVATE_KEY=your_imagekit_private_key
 AUTH_EMAIL=your_smtp_user_email
 PASS_AUTH_EMAIL=your_smtp_password_or_app_password
 ```
-The frontend only neen 1 environmental variable, inside `/client` directory, create .env file and copy this into it 
+The frontend only need 1 environmental variable, inside `/client` directory, create .env file and copy this into it 
 ```env
 VITE_BASE_URL='http://localhost:3600'
 ```
