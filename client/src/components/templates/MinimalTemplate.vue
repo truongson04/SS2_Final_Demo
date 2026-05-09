@@ -154,15 +154,16 @@ const formatDate = (dateStr) => {
         >
           <div>
             <h3 class="font-medium">
-              {{ edu.degree }} {{ edu.field ? `in ${edu.field}` : "" }}
+              {{ edu.degree }}
             </h3>
             <p class="text-gray-600">{{ edu.institution }}</p>
-            <p v-if="edu.gpa" class="text-sm text-gray-500">
-              GPA: {{ edu.gpa }}
-            </p>
+            <div class="flex items-center gap-4 text-sm text-gray-500 mt-1">
+              <span v-if="edu.field">Major: {{ edu.field }}</span>
+              <span v-if="edu.gpa">GPA: {{ edu.gpa }}</span>
+            </div>
             <div
               v-if="edu.description"
-              class="text-gray-600 text-sm mt-1 prose prose-sm max-w-none"
+              class="text-gray-600 text-sm mt-2 prose prose-sm max-w-none"
               v-html="edu.description"
             ></div>
           </div>

@@ -97,24 +97,55 @@
         >
           Education
         </h2>
-        <div class="space-y-5">
-          <div v-for="(edu, index) in data.education" :key="index">
-            <p class="font-bold text-slate-800 leading-snug">
+        <div class="space-y-6">
+          <div
+            v-for="(edu, index) in data.education"
+            :key="index"
+            class="relative"
+          >
+            <h3 class="text-base font-bold text-slate-800 leading-snug">
               {{ edu.degree }}
+            </h3>
+            <p class="text-sm font-medium text-slate-600 mt-1">
+              {{ edu.institution }}
             </p>
-            <p class="text-sm text-slate-600 mt-0.5">{{ edu.institution }}</p>
-            <p class="text-xs text-slate-400 mt-1 font-medium tracking-wide">
-              {{ formatDate(edu.graduation_date) }}
+
+            <div class="flex flex-wrap items-center gap-2.5 mt-2.5">
+              <span
+                v-if="edu.graduation_date"
+                class="text-xs font-bold uppercase tracking-wider"
+                :style="{ color: accentColor }"
+              >
+                {{ formatDate(edu.graduation_date) }}
+              </span>
+
+              <span
+                v-if="edu.graduation_date && edu.gpa"
+                class="text-slate-300 text-xs"
+                >•</span
+              >
+
+              <span
+                v-if="edu.gpa"
+                class="px-2 py-0.5 bg-slate-200/60 rounded-md text-xs font-semibold text-slate-600"
+              >
+                GPA: {{ edu.gpa }}
+              </span>
+            </div>
+
+            <p v-if="edu.field" class="text-sm text-slate-700 mt-2">
+              <span class="font-semibold text-slate-800">Major:</span>
+              {{ edu.field }}
             </p>
+
             <div
               v-if="edu.description"
-              class="text-xs text-slate-600 mt-2 prose prose-sm max-w-none"
+              class="text-xs text-slate-600 mt-3 pl-3 border-l-2 border-slate-200 prose prose-sm max-w-none leading-relaxed"
               v-html="edu.description"
             ></div>
           </div>
         </div>
       </section>
-
       <section v-if="data.skills?.length">
         <h2
           class="text-sm font-bold tracking-widest text-slate-400 uppercase mb-4"
