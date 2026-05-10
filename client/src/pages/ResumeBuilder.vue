@@ -95,7 +95,9 @@ const handleShare = () => {
 
 const saveResume = async () => {
   try {
-    let updatedResume = structuredClone(toRaw(resumeData.value));
+    let updatedResume = structuredClone(
+      JSON.parse(JSON.stringify(resumeData.value)),
+    );
 
     if (typeof resumeData.value.personal_info.image === "object") {
       delete updatedResume.personal_info.image;
@@ -122,6 +124,7 @@ const saveResume = async () => {
     initialResume = ref(_.cloneDeep(resumeData.value));
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 
