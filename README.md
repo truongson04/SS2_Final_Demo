@@ -174,6 +174,7 @@ VITE_BASE_URL='http://localhost:3600'
 #### How to get the keys:
 
 - **MongoDB URL**: If using Atlas, click "Connect" -> "Connect your application" and copy the connection string. Replace `<password>` with your database user password.
+  **_Note on Database Setup_**: Our application uses Mongoose. Once you connect to MongoDB Atlas using the connection string, the database schema and collections will be automatically initialized upon the first server startup and data entry. No manual schema migration or seeding script is required.
 - **Google OAuth**: Go to the Google Cloud Console, create a project, set up the OAuth consent screen, and create Web Application Credentials to get the ID and Secret.
 - **GitHub OAuth**: Go to GitHub -> Settings -> Developer settings -> OAuth Apps, register a new application to get the ID and Secret.
 - **Gemini AI**: Visit [Google AI Studio](https://aistudio.google.com/) and generate API keys for standard features and voice TTS.
