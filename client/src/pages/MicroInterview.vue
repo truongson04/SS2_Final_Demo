@@ -41,8 +41,12 @@ const isReady = ref(false);
 const userInput = ref("");
 
 // Language & Voice
-const selectedLanguage = ref("English");
+const selectedLanguage = ref("en-US");
 const languages = ["English", "Vietnamese"];
+const languagesObj = {
+  English: "en-US",
+  Vietnamese: "vi-VN",
+};
 
 const selectedVoice = ref("Puck");
 const voices = [
@@ -116,6 +120,9 @@ const playAudio = (base64Audio, textFallback = "") => {
     }
   } else if (textFallback) {
     playBrowserTTS(textFallback);
+    toast.info(
+      "Our TTS model has trouble. The default voice in your browser is speaking. We will fix this as soon as possible. Sorry for that !!",
+    );
   }
 };
 
@@ -168,6 +175,11 @@ const sendMessage = async (overrideText = null) => {
   }
 
   try {
+    const languageName =
+      Object.keys(languagesObj).find(
+        (key) => languagesObj[key] === selectedLanguage.value,
+      ) || "English";
+
     const { data } = await clientApi.post(`/api/ai/chat`, {
       userContent: cloneResume.value,
       role: "user",
@@ -175,7 +187,7 @@ const sendMessage = async (overrideText = null) => {
       sessionId: sessionId.value,
       resumeId: resumeId,
       voiceMode: true, // Request AUDIO response from Gemini!
-      language: selectedLanguage.value,
+      language: languageName,
       voiceName: selectedVoice.value,
     });
 
@@ -226,6 +238,7 @@ const toggleRecording = () => {
     }
 
     try {
+      recognition.lang = selectedLanguage.value;
       recognition.start();
       isRecording.value = true;
     } catch (err) {
@@ -262,11 +275,13 @@ onMounted(async () => {
     recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = "en-US";
+    recognition.lang = selectedLanguage.value;
+    console.log("Speech recognition initialized with:", selectedLanguage.value);
 
     recognition.onstart = () => {
       speechResult = false;
       speechError = false;
+      console.log(selectedLanguage.value);
     };
 
     recognition.onresult = (event) => {
@@ -424,7 +439,7 @@ const startInitialInterview = async () => {
               <option
                 v-for="lang in languages"
                 :key="lang"
-                :value="lang"
+                :value="languagesObj[lang]"
                 :class="
                   isDark ? 'bg-slate-800 text-white' : 'bg-white text-slate-800'
                 "

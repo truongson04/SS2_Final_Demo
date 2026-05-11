@@ -125,7 +125,7 @@ export const updateResume = async (req, res) => {
 
     const updatedResume = await Resume.findOneAndUpdate(
       { userId, _id: resumeId, isLocked: false },
-      { $set: resumeDataClone },
+      { $set: { ...resumeDataClone, ai_analysis: null } },
       { new: true },
     );
 

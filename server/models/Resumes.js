@@ -72,6 +72,10 @@ const resumeSchema = new mongoose.Schema(
         description: { type: String },
       },
     ],
+    ai_analysis: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true },
 );

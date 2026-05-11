@@ -20,7 +20,7 @@ const getScoreColor = (score) => {
     return "text-yellow-400 border-yellow-500 shadow-yellow-500/50";
   return "text-red-400 border-red-500 shadow-red-500/50";
 };
-const handleStart = async () => {
+const handleStart = async (forceRefresh = false) => {
   isGenerating.value = true;
   let cloneResume = structuredClone(toRaw(resumeData.value));
 
@@ -29,12 +29,17 @@ const handleStart = async () => {
   delete cloneResume.template;
   delete cloneResume.title;
   delete cloneResume.personal_info;
+  delete cloneResume.ai_analysis;
   try {
     const { data } = await clientApi.post("/api/ai/analysis", {
       userContent: cloneResume,
+      resumeId: resumeId,
+      forceRefresh: forceRefresh,
     });
     analysisResult.value = JSON.parse(data.analysis);
-    toast.success(data.message);
+    if (!data.isCached) {
+      toast.success(data.message);
+    }
   } catch (error) {
     toast.error(error.message);
 
@@ -48,6 +53,15 @@ onMounted(async () => {
     isGenerating.value = true;
     const { data } = await clientApi.get(`/api/resumes/get/${resumeId}`);
     resumeData.value = data.resume;
+
+    // Check if there's already a cached analysis
+    if (resumeData.value.ai_analysis) {
+      try {
+        analysisResult.value = JSON.parse(resumeData.value.ai_analysis);
+      } catch (e) {
+        console.error("Failed to parse cached analysis", e);
+      }
+    }
   } catch (error) {
     toast.error("Failed to load your resume " + error.message);
   } finally {
@@ -354,6 +368,34 @@ onMounted(async () => {
           </svg>
           AI Resume Audit
         </h2>
+
+        <button
+          @click="handleStart(true)"
+          class="flex items-center gap-2 px-4 py-1.5 rounded-lg border text-xs font-bold transition-all active:scale-95"
+          :class="
+            isDark
+              ? 'border-white/10 bg-slate-900/50 text-slate-300 hover:text-cyan-400 hover:border-cyan-500/50'
+              : 'border-gray-200 bg-gray-50 text-slate-600 hover:text-indigo-600 hover:border-indigo-300'
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+            <path d="M21 3v5h-5" />
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+            <path d="M3 21v-5h5" />
+          </svg>
+          Refresh Analysis
+        </button>
       </div>
 
       <div class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-8">
