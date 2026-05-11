@@ -182,7 +182,8 @@ VITE_BASE_URL='http://localhost:3600'
 - **Google OAuth**: Go to the Google Cloud Console, create a project, set up the OAuth consent screen, and create Web Application Credentials to get the ID and Secret.
 - **GitHub OAuth**: Go to GitHub -> Settings -> Developer settings -> OAuth Apps, register a new application to get the ID and Secret.
 - **Gemini AI**: Visit [Google AI Studio](https://aistudio.google.com/) and generate API keys for standard features and voice TTS.
-- **ImageKit**: Sign up at [ImageKit.io](https://imagekit.io/), go to the Developer section, and copy your Private Key. -**GROQ API**: Sign up at [https://groq.com], go to API KEYS
+- **ImageKit**: Sign up at [ImageKit.io](https://imagekit.io/), go to the Developer section, and copy your Private Key.
+- **GROQ API**: Sign up at [https://groq.com], go to API KEYS
 
 ### Step 4: Run the Application
 
