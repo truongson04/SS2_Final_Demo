@@ -1,5 +1,5 @@
 import Sessions from "../models/Sessions.js";
-import { voiceModel, genAI } from "../config/ai.js";
+import { voiceModel, genAI, groq } from "../config/ai.js";
 import Resume from "../models/Resumes.js";
 
 export const enhanceProfessionalSummary = async (req, res) => {
@@ -48,13 +48,28 @@ export const enhanceProjectDescription = async (req, res) => {
 };
 // analysis resume
 export const analysisResume = async (req, res) => {
-  const { userContent } = req.body;
-  if (!userContent) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
-
-  const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
   try {
+    const { userContent, resumeId, forceRefresh } = req.body;
+    const userId = req.userId;
+
+    if (!userContent) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Check for cached analysis if resumeId is provided and forceRefresh is false
+    if (resumeId && !forceRefresh) {
+      const resume = await Resume.findOne({ _id: resumeId, userId });
+      if (resume && resume.ai_analysis) {
+        return res.status(200).json({
+          message: "Loaded from cache",
+          analysis: resume.ai_analysis,
+          isCached: true,
+        });
+      }
+    }
+
+    const userPrompt = `This is my CV content ${JSON.stringify(userContent)}`;
+
     const model = genAI.getGenerativeModel({
       model: process.env.GEMINI_MODEL,
       generationConfig: {
@@ -87,9 +102,19 @@ Your task is to analyze the provided CV text and generate detailed, constructive
     const result = await model.generateContent(userPrompt);
     const response = await result.response;
     const analysis = response.text();
+
+    // Store analysis in the resume document if resumeId is provided
+    if (resumeId) {
+      await Resume.updateOne(
+        { _id: resumeId, userId },
+        { $set: { ai_analysis: analysis } },
+      );
+    }
+
     return res.status(200).json({
       message: "Generated successfully, this is our analysis for your resume",
       analysis,
+      isCached: false,
     });
   } catch (error) {
     console.log(error);
@@ -369,18 +394,24 @@ export const chatWithAi = async (req, res) => {
 
     // case with no session
     if (!sessionId) {
-      const modelConfig = {
-        model: process.env.GEMINI_MODEL,
-        systemInstruction: getSystemInstruction(text, userContent, language),
-      };
-
-      const model = genAI.getGenerativeModel(modelConfig);
-      const chat = model.startChat({ history: [] });
-
-      const result = await chat.sendMessage(
-        `Please start the interview. Ask the first question based on my Resume. Make sure to use ${language}.`,
+      const systemInstruction = getSystemInstruction(
+        text,
+        userContent,
+        language,
       );
-      const firstQuestion = result.response.text();
+
+      const completion = await groq.chat.completions.create({
+        messages: [
+          { role: "system", content: systemInstruction },
+          {
+            role: "user",
+            content: `Please start the interview. Ask the first question based on my Resume. Make sure to use ${language}.`,
+          },
+        ],
+        model: "llama-3.3-70b-versatile",
+      });
+
+      const firstQuestion = completion.choices[0].message.content;
 
       const audioBase64 = await generateAudio(firstQuestion, voiceName);
 
@@ -397,7 +428,9 @@ export const chatWithAi = async (req, res) => {
           {
             role: "user",
             parts: [
-              { text: `Ask the first question. Make sure to use ${language}.` },
+              {
+                text: `Ask the first question. Make sure to use ${language}.`,
+              },
             ],
           },
           { role: "model", parts: [{ text: firstQuestion }] },
@@ -420,25 +453,27 @@ export const chatWithAi = async (req, res) => {
     const sessionLanguage = currentSession.contextData.language || language;
     const sessionVoiceName = currentSession.contextData.voiceName || voiceName;
 
-    const modelConfig = {
-      model: process.env.GEMINI_MODEL,
-      systemInstruction: getSystemInstruction(
-        currentSession.contextData.jobDescription,
-        currentSession.contextData.resumeContent,
-        sessionLanguage,
-      ),
-    };
+    const systemInstruction = getSystemInstruction(
+      currentSession.contextData.jobDescription,
+      currentSession.contextData.resumeContent,
+      sessionLanguage,
+    );
 
-    const model = genAI.getGenerativeModel(modelConfig);
+    const messages = [
+      { role: "system", content: systemInstruction },
+      ...currentSession.history.slice(-10).map((msg) => ({
+        role: msg.role === "model" ? "assistant" : "user",
+        content: msg.parts[0].text,
+      })),
+      { role: "user", content: text },
+    ];
 
-    const geminiHistory = currentSession.history.slice(-6).map((msg) => ({
-      role: msg.role,
-      parts: [{ text: msg.parts[0].text }],
-    }));
+    const completion = await groq.chat.completions.create({
+      messages,
+      model: "llama-3.3-70b-versatile",
+    });
 
-    const chat = model.startChat({ history: geminiHistory });
-    const result = await chat.sendMessage(text);
-    const aiResponse = result.response.text();
+    const aiResponse = completion.choices[0].message.content;
 
     const audioBase64 = await generateAudio(aiResponse, sessionVoiceName);
 
